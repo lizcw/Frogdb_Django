@@ -1,0 +1,62 @@
+{% extends "frogs/layout.html" %}{% block content %}
+<h1>View Shipment Details
+</h1>
+<div class="leftpanel">
+  <table id="view-table" class="ui-responsive">
+    <tbody>
+      <tr>
+        <th>AQIS Permit ID</th>
+        <td>{{shipment.aqis|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>QEN</th>
+        <td>{{shipment.qen|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Females</th>
+        <td>{{shipment.females|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Males</th>
+        <td>{{shipment.males|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Arrival Date</th>
+        <td>{{shipment.arrival_date|date:"d-M-Y"}}</td>
+      </tr>
+      <tr>
+        <th>Species</th>
+        <td>{{shipment.get_species_display|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Supplier</th>
+        <td>{{shipment.get_supplier_display|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Country</th>
+        <td>{{shipment.get_country_display|force_escape}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>{% endblock %}{% block sidebar %}
+<div class="widget">
+  <h1>Menu</h1>
+  <table class="sidemenu">
+    <tr>
+      <td><a href="#popupMenu" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+        <div id="popupMenu" data-history="false" data-role="popup" data-theme="b">
+          <ul data-role="listview" data-inset="true" style="min-width:210px;">
+            <li data-role="list-divider">Choose an action</li>
+            <li><a href="{% url 'frogs:permitedit' shipment.id %}">Edit</a>
+            </li>
+            <li><a href="#">Delete</a>
+            </li>
+            <li><a href="#">View Frogs</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>{% endblock %}

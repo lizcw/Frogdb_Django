@@ -1,0 +1,114 @@
+{% extends "layout.html" %}{% block content %}
+<h1>View Frog Details
+</h1>
+<div class="leftpanel">
+  <table id="view-table" class="ui-responsive">
+    <tbody>
+      <tr>
+        <th>Frog ID</th>
+        <td>{{frog.frogid|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Tank #</th>
+        <td>{{frog.tankid|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Gender</th>
+        <td>{{frog.gender|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Species</th>
+        <td>{{frog.species|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Condition</th>
+        <td>{{frog.condition|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>QEN</th>
+        <td>{{frog.qen|force_escape}}</td>
+      </tr>
+      <tr>
+        <th>Location</th>
+        <td class="red">{{frog.location|force_escape}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="rightpanel">
+  <div id="dorsal" class="thumb">
+    <p>Dorsal Photo</p><a href="#popupFrogd_" + frog.frogid="+ frog.frogid" data-rel="popup" data-position-to="window" data-transition="fade"><img{% __pyjade_attrs attrs=[('src',('http://127.0.0.1:5984/frogdb/'+frog._id)), ('+/dorsalimage',(True))] %} width="80"{% __pyjade_attrs attrs=[('alt',(''+"{}".format(frog.frogid)+''))] %} class="popphoto"/></a>
+    <div id="popupFrogd_" + frog.frogid="+ frog.frogid" data-role="popup" data-overlay-theme="b" data-theme="b" data-corners="false"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img{% __pyjade_attrs attrs=[('src',('http://127.0.0.1:5984/frogdb/'+frog._id)), ('+/dorsalimage',(True))] %} style="max-height:512px;"{% __pyjade_attrs attrs=[('alt',('Frog ID '+"{}".format(frog.frogid)+''))] %} class="popphoto"/>
+    </div>
+  </div>
+  <div id="ventral" class="thumb">
+    <p>Ventral Photo</p><a href="#popupFrogv_" + frog.frogid="+ frog.frogid" data-rel="popup" data-position-to="window" data-transition="fade"><img{% __pyjade_attrs attrs=[('src',('http://127.0.0.1:5984/frogdb/'+frog._id)), ('+/ventralimage',(True))] %} width="80"{% __pyjade_attrs attrs=[('alt',(''+"{}".format(frog.frogid)+''))] %} class="popphoto"/></a>
+    <div id="popupFrogv_" + frog.frogid="+ frog.frogid" data-role="popup" data-overlay-theme="b" data-theme="b" data-corners="false"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img{% __pyjade_attrs attrs=[('src',('http://127.0.0.1:5984/frogdb/'+frog._id)), ('+/ventralimage',(True))] %} style="max-height:512px;"{% __pyjade_attrs attrs=[('alt',('Frog ID '+"{}".format(frog.frogid)+''))] %} class="popphoto"/>
+    </div>
+  </div>
+</div>
+<div class="details">
+  <h2>Death Details
+  </h2>
+  <table id="death-table" class="ui-responsive">
+    <thead>
+      <tr>
+        <th>Death</th>
+        <th>Date</th>
+        <th>Initials</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{frog.death|force_escape}}</td>
+        <td>{{frog.death_date|force_escape}}</td>
+        <td>{{frog.death_initials|force_escape}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="details">
+  <h2>Disposal Details
+  </h2>
+  <table id="disposal-table" class="ui-responsive">
+    <thead>
+      <tr>
+        <th>Disposal action</th>
+        <th>Date</th>
+        <th>Run #</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Autoclaved</td>
+        <td>{{frog.autoclave_date|force_escape}}</td>
+        <td>{{frog.autoclave_run|force_escape}}</td>
+      </tr>
+      <tr>
+        <td>Incinerated</td>
+        <td>{{frog.incinerate_date|force_escape}}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>{% endblock %}{% block sidebar %}
+<div class="widget">
+  <h1>Menu</h1>
+  <div class="sidemenu"><a href="#popupMenu" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+    <div id="popupMenu" data-history="false" data-role="popup" data-theme="b">
+      <ul data-role="listview" data-inset="true" style="min-width:210px;">
+        <li data-role="list-divider">Choose an action</li>
+        <li><a href="/frogs">View All</a>
+        </li>
+        <li><a{% __pyjade_attrs attrs=[('href',('/operations/'+"{}".format(frog._id)+''))] %}>Operations</a>
+        </li>
+        <li><a{% __pyjade_attrs attrs=[('href',('/frogs/edit/'+"{}".format(frog._id)+''))] %}>Edit</a>
+        </li>
+        <li><a{% __pyjade_attrs attrs=[('href',('/frogs/death/'+"{}".format(frog._id)+''))] %}>Death</a>
+        </li>
+        <li><a{% __pyjade_attrs attrs=[('href',('/frogs/disposal/'+"{}".format(frog._id)+''))] %}>Disposal</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>{% endblock %}

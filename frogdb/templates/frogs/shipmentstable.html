@@ -1,0 +1,47 @@
+{% extends "layout.html" %}{% block content %}
+<p>List of Shipments
+</p>
+<p class="info">{{message|force_escape}}</p><a href="/shipments/create" class="button">Create New Shipment</a>{% if  (shipments.length) %}
+<input id="filterTable-input" data-type="search"/>
+<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+  <thead>
+    <tr>
+      <th>AQIS ID</th>
+      <th>QEN</th>
+      <th>Species</th>
+      <th>Females</th>
+      <th>Males</th>
+      <th>Arrival</th>
+      <th>Supplier</th>
+      <th>Country</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for shipment in shipments|__pyjade_iter:1 %}
+    <tr>
+      <td>{{shipment.aqis|force_escape}}</td>
+      <td>{{shipment.qen|force_escape}}</td>
+      <td>{{shipment.species|force_escape}}</td>
+      <td>{{shipment.females|force_escape}}</td>
+      <td>{{shipment.males|force_escape}}</td>
+      <td>{{shipment.arrivaldate|force_escape}}</td>
+      <td>{{shipment.supplier|force_escape}}</td>
+      <td>{{shipment.country|force_escape}}</td>
+      <td><a{% __pyjade_attrs attrs=[('href',('#popupMenu_'+))] %} shipment._id="shipment._id" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+        <div{% __pyjade_attrs attrs=[('id',('popupMenu_'+shipment._id))] %} data-history="false" data-role="popup" data-theme="b">
+          <ul data-role="listview" data-inset="true" style="min-width:210px;">
+            <li data-role="list-divider">Choose an action</li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/shipments/view/'+"{}".format(shipment._id)+''))] %}>View details</a>
+            </li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/shipments/edit/'+"{}".format(shipment._id)+''))] %}>Edit</a>
+            </li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/shipments/delete/'+"{}".format(shipment._id)+''))] %}>Delete</a>
+            </li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/frogs/byShipment/'+"{}".format(shipment._id)+'/0/0'))] %}>View Frogs</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}{% endblock %}

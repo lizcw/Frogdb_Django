@@ -1,0 +1,46 @@
+{% extends "frogs/layout.html" %}{% block content %}
+<h1>List</h1>
+{% if shipments %}
+<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+  <thead>
+    <tr>
+        <th>AQIS Permit</th>
+        <th>QEN</th>
+        <th>Date of Arrival</th>
+        <th>Species</th>
+        <th>Country</th>
+        <th>Supplier</th>
+        <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for shipment in shipments %}
+    <tr>
+        <td>{{shipment.aqis|force_escape}}</td>
+        <td>{{shipment.qen|force_escape}}</td>
+        <td>{{shipment.arrival_date|date:"d-M-Y"}}</td>
+        <td>{{shipment.get_species_display}}</td>
+        <td>{{shipment.get_country_display|force_escape}}</td>
+        <td>{{shipment.get_supplier_display|force_escape}}</td>
+        <td>
+          <a href="#popupMenu_{{ shipment.id }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+          <div id="popupMenu_{{ shipment.id }}" data-history="false" data-role="popup" data-theme="b">
+              <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                <li data-role="list-divider">Choose an action</li>
+                <li>
+                    <a href="{% url 'frogs:permitview' shipment.id %}">View details</a>
+                </li>
+                <li>
+                    <a href="{% url 'frogs:permitedit' shipment.id %}">Edit</a>
+                </li>
+                <li>
+                    <a href="#">Delete</a>
+                </li>
+                <li>
+                    <a href="#">View Frogs</a>
+                </li>
+              </ul>
+            </div>
+        </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}{% endblock %}

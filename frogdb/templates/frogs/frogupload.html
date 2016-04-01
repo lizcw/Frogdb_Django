@@ -1,0 +1,21 @@
+{% extends "layout.html" %}{% block content %}
+<h1>Upload frog images for Frog ID {{frog.frogid|escape}}
+</h1>
+{% if  message %}
+<p>{{message|force_escape}}</p>{% endif %}
+<form action="/frogs/upload" method="POST" enctype="multipart/form-data"{% __pyjade_attrs attrs=[('data-ajax',("false"))] %}>
+  <input id="id" type="hidden"{% __pyjade_attrs attrs=[('value',(''+"{}".format(frog._id)+''))] %} name="id"/>
+  <div class="control-group">
+    <label for="dorsalimage">Upload Dorsal Image</label>
+    <div class="controls">
+      <input id="dorsalimage" type="file" name="dorsalimage"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ventralimage">Upload Ventral Image</label>
+    <div class="controls">
+      <input id="ventralimage" type="file" name="ventralimage"/>
+    </div>
+  </div>
+  <input id="submit"{% __pyjade_attrs attrs=[('type',("submit" value="Upload Images"))] %}/>
+</form>{% endblock %}

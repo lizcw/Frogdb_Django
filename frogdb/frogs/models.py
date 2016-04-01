@@ -10,19 +10,22 @@ LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
 DEATHTYPES = (('culled', 'Culled'), ('found', "Found dead"), ('alive', 'Not dead'))
 QAP_LIST = (('AIBN','Q1629 (QC1)'), ('QBI', 'Q1881 (QC1)'), ('IMB L2', 'Q1695 (QC2)'))
 WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'))
+SUPPLIER_LIST=(('nasco','NASCO'),('xenopus','Xenopus One'), ('uq','UQ'))
+COUNTRY_LIST=(('usa','USA'),('australia','Australia'))
+GENDERS=(('female','Female'),('male','Male'))
 # Create your models here.
 
 
 class Permit(models.Model):
 
-    qen = models.CharField(_("QEN"), max_length=10)
+    qen = models.CharField(_("QEN"), max_length=20)
     arrival_date = models.DateTimeField(_("Arrival date"))
-    aqis = models.CharField(_("AQIS"), max_length=10)
+    aqis = models.CharField(_("AQIS"), max_length=20)
     females = models.IntegerField(_("Females"), default=0)
     males = models.IntegerField(_("Males"), default=0)
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
-    supplier = models.CharField(_("Supplier"), max_length=30)
-    country = models.CharField(_("Country"), max_length=30)
+    supplier = models.CharField(_("Supplier"), max_length=30, choices=SUPPLIER_LIST)
+    country = models.CharField(_("Country"), max_length=30, choices=COUNTRY_LIST)
 
     def __str__(self):
         return self.qen
@@ -36,18 +39,19 @@ class Frog(models.Model):
     qen = models.ForeignKey(Permit, on_delete=models.CASCADE)
     frogid = models.CharField(_("Frog ID"), max_length=30)
     tankid = models.IntegerField(_("Tank ID"), default=0)
+    gender = models.CharField(_("Gender"), max_length=10, choices=GENDERS)
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
     current_location = models.CharField(_("Current Location"), max_length=80, choices=LOCATION_LIST)
-    condition = models.CharField(_("Oocyte Health Condition"), max_length=100)
-    remarks = models.TextField(_("General Remarks"))
-    aec = models.CharField(_("AEC"), max_length=80)
-    death = models.CharField(_("Type of Death"), max_length=10, choices=DEATHTYPES)
-    death_date = models.DateField("Date of Death")
-    death_initials = models.CharField(_("Initials"), max_length=10)
+    condition = models.CharField(_("Oocyte Health Condition"), max_length=100, null=True, blank=True)
+    remarks = models.TextField(_("General Remarks"),null=True, blank=True)
+    aec = models.CharField(_("AEC"), max_length=80,null=True, blank=True)
+    death = models.CharField(_("Type of Death"), max_length=10, null=True, blank=True, choices=DEATHTYPES)
+    death_date = models.DateField("Date of Death", null=True, blank=True)
+    death_initials = models.CharField(_("Initials"), max_length=10, null=True, blank=True)
     disposed = models.BooleanField(_("Disposed"), default=False)
-    autoclave_date = models.DateField("Autoclave Date")
-    autoclave_run = models.IntegerField(_("Autoclave Run"), default=0)
-    incineration_date = models.DateField(_("Incineration Date"))
+    autoclave_date = models.DateField("Autoclave Date", null=True, blank=True)
+    autoclave_run = models.IntegerField(_("Autoclave Run"), default=0, null=True, blank=True)
+    incineration_date = models.DateField(_("Incineration Date"), null=True, blank=True)
 
     def __str__(self):
         return self.frogid
@@ -111,3 +115,17 @@ class Experiment(models.Model):
 
     def __str__(self):
         return self.used
+
+#
+# class Supplier(models.Model):
+#     name = models.CharField(_("Name"))
+#
+#     def __str__(self):
+#         return self.name
+#
+#
+# class Country(models.Model):
+#     name = models.CharField(_("Name"))
+#
+#     def __str__(self):
+#         return self.name

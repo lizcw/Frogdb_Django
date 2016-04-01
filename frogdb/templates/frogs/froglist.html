@@ -1,0 +1,47 @@
+{% extends "frogs/layout.html" %}{% block content %}
+<p>List of frogs
+</p>
+<p class="info">{{message|force_escape}}</p><a href="{% url 'frogs:frogcreate' %}" class="button">Create New Frog</a>
+{% if frogs %}
+<input id="filterTable-input" data-type="search"/>
+<table id="frogs-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+  <thead>
+    <tr>
+      <th>Frog ID</th>
+      <th>Gender</th>
+      <th>Species</th>
+      <th>Condition</th>
+      <th>QEN</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for frog in frogs %}
+    <tr>
+      <td>{{frog.frogid|escape}}</td>
+      <td>{{frog.gender|force_escape}}</td>
+      <td>{{frog.species|force_escape}}</td>
+      <td>{{frog.condition|force_escape}}</td>
+      <td>{{frog.qen|force_escape}}</td>
+      <td>
+          <a href="#popupMenu_{{ frog.frogid }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+          <div id="popupMenu_{{ frog.frogid }}" data-history="false" data-role="popup" data-theme="b">
+              <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                <li data-role="list-divider">Choose an action</li>
+                <li>
+                    <a href="#">View details</a>
+                </li>
+                <li>
+                    <a href="#">Edit</a>
+                </li>
+                <li>
+                    <a href="#">Delete</a>
+                </li>
+                <li>
+                    <a href="#">View Frogs</a>
+                </li>
+              </ul>
+            </div>
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}{% endblock %}
