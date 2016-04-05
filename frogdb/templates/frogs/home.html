@@ -1,0 +1,29 @@
+{% extends 'frogs/base.html' %}
+
+<div class="container">
+
+    {% if user.is_authenticated %}
+        {% block profile %}
+            <p>Welcome, {{ user.username }}. </p>
+            {% include "frogs/profile.html" %}
+        {% endblock %}
+
+        {% if shipment_list %}
+            <p><a href="{% url 'frogs:permitlist' %}">View Permits</a></p>
+        {% else %}
+            <p><a href="{% url 'frogs:permitcreate' %}">Create New Permit</a></p>
+        {% endif %}
+        {% block sidebar %}
+            {% include "frogs/sidenav.html" %}
+        {% endblock %}
+    {% else %}
+        {% if errors %}
+            <p>{{ errors }}</p>
+        {% else %}
+            <p>Please login to browse this database.</p>
+        {% endif %}
+            <p align="right"><a href="/frogs">Back</a></p>
+    {% endif %}
+
+</div>
+

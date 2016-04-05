@@ -86,8 +86,9 @@ ul {
 }
 table {
   border-collapse: separate;
-  border-spacing: 0;
+  /*border-spacing: 0;*/
   vertical-align: middle;
+  padding:10px;
 }
 caption,
 th,
@@ -96,6 +97,7 @@ td {
   font-weight: normal;
   vertical-align: middle;
 }
+th { padding: 5px;}
 a img {
   border: none;
 }
@@ -104,13 +106,13 @@ a img {
  * background color as variables
  */
 body {
-  font-family: 'Georgia';
+  /*font-family: 'Georgia';*/
   background-color: #faf9f0;
   color: #444;
 }
 header {
-  font-family: 'Quicksand';
-  padding: 50px 10px;
+  /*font-family: 'Quicksand';*/
+  padding: 50px 10px 0px 10px;
   color: #fff;
   font-size: 25px;
   text-align: center;
@@ -123,14 +125,29 @@ header {
   text-shadow: 0px -1px 0px #df1806;
 }
 #navigation{
-	margin: 0 2px 5px 2px;
-	padding-bottom:10px;
+	margin: 2px 0px 0px 0px;
 	clear:both;
 	border-right:1px;
+
+}
+#profile {
+    width:150px;
+    float:right;
+    clear:both;
+    top:0;
+    right:0;
+	position:absolute;
+}
+a.headerlink {
+    text-decoration:none;
+    color:white !important;
+}
+a.headerlink:hover{
+    color:#faf9f0;
 }
 .container {
-  width: 700px;
-  margin: 50px auto;
+  width: 900px;
+  margin: 20px auto;
   overflow: hidden;
 }
 .frontpage-container {
@@ -151,6 +168,12 @@ header {
 .rightpanel{
 	float:right;
 }
+.centrepanel{
+    align: center;
+    width:400px;
+    overflow:hidden;
+    margin-left:40%;
+}
 #dorsal{
 	max-width:200px;
 	padding:10px;
@@ -160,8 +183,8 @@ header {
 	padding:10px;
 }
 .sidebar {
-  float: right;
-  width: 200px;
+  float: left;
+  margin-left:80px;
 }
 .sidebar .widget {
 /*
@@ -191,14 +214,22 @@ header {
   padding: 0px 10px;
   margin-bottom: 10px;
 }
-.red{
+.errorlist{
 	color:red;
 }
 h1 {
-	font-size: 1.2em;
+	font-size: 1.4em;
 	font-weight: bold;
 }
-p {
+h2 {
+    font-size: 1.4em;
+    color:#0066cc;
+    padding:5px;
+    margin-bottom: 15px;
+    border-bottom: 1px gray solid;
+    background-color:white;
+}
+table, p {
   line-height: 1.8;
 }
 th {
@@ -207,9 +238,15 @@ th {
 footer {
   width: 500px;
   margin: 50px auto;
+  overflow:hidden;
   border-top: 1px dotted #ccc;
   padding-top: 5px;
   font-size: 13px;
+
+}
+footer p{
+    text-align:center;
+    font-size: 0.8em;
 }
 .pagination-holder {
     padding: 0 20px;

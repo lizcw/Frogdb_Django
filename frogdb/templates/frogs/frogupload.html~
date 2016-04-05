@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block content %}
+{% extends "layout.html" %}{% block content %}
 <h1>Upload frog images for Frog ID {{frog.frogid|escape}}
 </h1>
 {% if  message %}

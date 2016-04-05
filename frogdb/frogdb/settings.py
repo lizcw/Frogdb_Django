@@ -65,15 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'loaders': [
-                # PyJade part:   ##############################
-                ('pyjade.ext.django.Loader', (
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ))
-            ],
-            'builtins': ['pyjade.ext.django.templatetags'],
-        },
+         },
     },
 ]
 
@@ -132,3 +124,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL ='/frogs/home/'

@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 SPECIES_LIST = ( ('x.borealis', 'X.borealis'), ('x.laevis', 'X.laevis'))
 LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
@@ -13,13 +14,13 @@ WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'))
 SUPPLIER_LIST=(('nasco','NASCO'),('xenopus','Xenopus One'), ('uq','UQ'))
 COUNTRY_LIST=(('usa','USA'),('australia','Australia'))
 GENDERS=(('female','Female'),('male','Male'))
-# Create your models here.
+# DB list models
 
-
+# DB models
 class Permit(models.Model):
 
-    qen = models.CharField(_("QEN"), max_length=20)
-    arrival_date = models.DateTimeField(_("Arrival date"))
+    qen = models.CharField(_("QEN"), max_length=20, unique=True)
+    arrival_date = models.DateField(_("Arrival date"))
     aqis = models.CharField(_("AQIS"), max_length=20)
     females = models.IntegerField(_("Females"), default=0)
     males = models.IntegerField(_("Males"), default=0)
@@ -30,6 +31,9 @@ class Permit(models.Model):
     def __str__(self):
         return self.qen
 
+    def get_absolute_url(self):
+        return reverse('permit_detail', args=[str(self.pk)])
+
     def arrived_recently(self):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.arrival_date <= now
@@ -37,7 +41,7 @@ class Permit(models.Model):
 
 class Frog(models.Model):
     qen = models.ForeignKey(Permit, on_delete=models.CASCADE)
-    frogid = models.CharField(_("Frog ID"), max_length=30)
+    frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
     tankid = models.IntegerField(_("Tank ID"), default=0)
     gender = models.CharField(_("Gender"), max_length=10, choices=GENDERS)
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
@@ -55,6 +59,9 @@ class Frog(models.Model):
 
     def __str__(self):
         return self.frogid
+
+    def get_absolute_url(self):
+        return reverse('frog_detail', args=[str(self.pk)])
 
     def died_recently(self):
         now = timezone.now()

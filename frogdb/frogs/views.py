@@ -1,13 +1,14 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.utils import timezone
+from .models import Permit, Frog, Operation
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm,OperationForm, LoginForm
 
-from .models import Permit, Frog
-from .forms import PermitForm, FrogForm, OperationForm
-
-
+## Index page
 class IndexView(generic.ListView):
     template_name = 'frogs/index.html'
     context_object_name = 'shipment_list'
@@ -15,55 +16,69 @@ class IndexView(generic.ListView):
         """Return the last five published questions."""
         return Permit.objects.order_by('-arrival_date')[:5]
 
-#### PERMITS/SHIPMENTS
-class PermitList(generic.ListView):
-    template_name = 'frogs/list.html'
-    context_object_name = 'shipments'
+## Home page - Landing page on login
+class HomeView(generic.ListView):
+    template_name = 'frogs/home.html'
+    context_object_name = 'shipment_list'
 
     def get_queryset(self):
         """Return the last five published questions."""
         return Permit.objects.order_by('-arrival_date')[:5]
+## Login
+def logoutfrogdb(request):
+    logout(request)
+    return redirect('/frogs')
+    # Redirect to a success page.
 
+def loginfrogdb(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    print('DEBUG: user=', user)
+    message = None
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            # Redirect to a success page.
+        else:
+            # Return a 'disabled account' error message
+            message = 'Your account has been disabled. Please contact admin.'
+    else:
+        # Return an 'invalid login' error message.
+        message = 'Login credentials are invalid. Please try again'
+    return render(request, "frogs/home.html", {'errors': message, 'user': user})
 
-class PermitView(generic.DetailView):
+#### PERMITS/SHIPMENTS
+class PermitList(generic.ListView):
+    template_name = 'frogs/shipmentlist.html'
+    context_object_name = 'shipment_list'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Permit.objects.order_by('-arrival_date')
+
+class PermitDetail(generic.DetailView):
     model = Permit
     context_object_name = 'shipment'
     template_name = 'frogs/shipmentview.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(PermitView, self).get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
 
+class PermitCreate(generic.CreateView):
+    model = Permit
+    template_name = 'frogs/permitcreate.html'
+    form_class = PermitForm
+    success_url = reverse_lazy('frogs:permit_list')
 
-def create_permit(request):
-    if request.method == "POST":
-        form = PermitForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            #post.author = request.user
-            #post.published_date = timezone.now()
-            post.save()
-            #return redirect('post_detail', pk=post.pk)
-            return redirect("frogs/permitlist")
-    else:
-        form = PermitForm()
-    return render(request, "frogs/create.html", {'form': form, 'itemtype': 'Shipment'})
+class PermitUpdate(generic.UpdateView):
+    model = Permit
+    form_class = PermitForm
+    template_name = 'frogs/permitcreate.html'
+    success_url = reverse_lazy('frogs:permit_list')
 
-#TODO - not working
-def edit_permit(request, permit_id):
-    #permit = get_object_or_404(Permit, pk=permit_id)
+class PermitDelete(generic.DeleteView):
+    model = Permit
+    success_url = reverse_lazy("frogs:permit_list")
 
-    if request.method == "POST":
-        form = PermitForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            return redirect("frogs/permitlist")
-    else:
-        permit = Permit.objects.get(pk=permit_id)
-        form = PermitForm(instance=permit)
-    return render(request, "frogs/create.html", {'form': form, 'itemtype': 'Edit Shipment'})
 
 ########## FROGS ############################################
 class FrogList(generic.ListView):
@@ -73,37 +88,83 @@ class FrogList(generic.ListView):
     def get_queryset(self):
         return Frog.objects.order_by('-frogid')
 
-
-class FrogView(generic.DetailView):
+class FrogDetail(generic.DetailView):
     model = Frog
     context_object_name = 'frog'
     template_name = 'frogs/frogview.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(FrogView, self).get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
+class FrogCreate(generic.CreateView):
+    model = Frog
+    template_name = 'frogs/frogcreate.html'
+    form_class = FrogForm
+    success_url = reverse_lazy('frogs:frog_list')
 
+class FrogUpdate(generic.UpdateView):
+    model = Frog
+    form_class = FrogForm
+    template_name = 'frogs/frogcreate.html'
+    success_url = reverse_lazy('frogs:frog_list')
 
-def create_frog(request):
-    if request.method == "POST":
-        form = FrogForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            return redirect("frogs/froglist")
-    else:
-        form = FrogForm()
-    return render(request, "frogs/create.html", {'form': form, 'itemtype': 'Frog'})
+class FrogDelete(generic.DeleteView):
+    model = Frog
+    success_url = reverse_lazy("frogs:frog_list")
 
-############### OPERATIONS ##############################
-def create_operation(request):
-    if request.method == "POST":
-        form = OperationForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            return redirect("frogs/permitlist")
-    else:
-        form = OperationForm()
-    return render(request, "frogs/create.html", {'form': form, 'itemtype': 'Operation'})
+class FrogDeath(generic.UpdateView):
+    model = Frog
+    form_class = FrogDeathForm
+    context_object_name = 'frog'
+    template_name = 'frogs/frogdeath.html'
+    success_url = reverse_lazy('frogs:frog_list')
+
+class FrogDisposal(generic.UpdateView):
+    model = Frog
+    form_class = FrogDisposalForm
+    context_object_name = 'frog'
+    template_name = 'frogs/frogdisposal.html'
+    success_url = reverse_lazy('frogs:frog_list')
+
+########## OPERATIONS ############################################
+class OperationList(generic.ListView):
+    template_name = 'frogs/operationlist.html'
+    context_object_name = 'operations'
+
+    def get_frog(self):
+        frog_id = self.kwargs['frogid']
+        return Frog.objects.get(frogid=frog_id)
+
+    def get_queryset(self):
+        frog_id = self.kwargs['frogid']
+        print('DEBUG:2 frogid=', frog_id)
+        return Operation.objects.filter(frogid__id=frog_id)
+
+class OperationSummary(generic.ListView):
+    template_name = 'frogs/operationsummary.html'
+    context_object_name = 'operations'
+
+    def get_queryset(self):
+        return Operation.objects.filter('-frogid')
+
+class OperationDetail(generic.DetailView):
+    model = Operation
+    context_object_name = 'operation'
+    template_name = 'frogs/operationview.html'
+
+class OperationCreate(generic.CreateView):
+    model = Operation
+    template_name = 'frogs/operationcreate.html'
+    form_class = OperationForm
+    success_url = reverse_lazy('frogs:operation_list')
+
+ #   def __init__(self):
+ #       frog_id = self.kwargs['frogid']
+ #       return Frog.objects.get(frogid=frog_id)
+
+class OperationUpdate(generic.UpdateView):
+    model = Operation
+    form_class = OperationForm
+    template_name = 'frogs/operationcreate.html'
+    success_url = reverse_lazy('frogs:operation_list')
+
+class OperationDelete(generic.DeleteView):
+    model = Operation
+    success_url = reverse_lazy("frogs:operation_list")

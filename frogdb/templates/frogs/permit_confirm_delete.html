@@ -1,0 +1,12 @@
+{% extends "frogs/base.html" %}
+
+{% block content %}
+<div class="centrepanel">
+    <h2>Confirm delete </h2>
+    <form action="" method="post">{% csrf_token %}
+        <p>Are you sure you want to delete "{{ object }}"?</p>
+        <input type="submit" value="Confirm" />
+        <button type="button" class="btn" onclick="javascript:history.back();return false;">Cancel</button>
+    </form>
+    </div>
+{% endblock %}

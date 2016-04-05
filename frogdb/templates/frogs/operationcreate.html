@@ -1,0 +1,46 @@
+{% extends "layout.html" %}{% block content %}
+<h1>Create new operation details
+</h1>
+{% if  message %}
+<p>{{message|force_escape}}</p>{% endif %}
+<form id="operation-edit" action="/operations/create" method="POST" class="ui-responsive">
+  <fieldset legend="Create"></fieldset>
+  <div class="control-group">
+    <label for="opnum">Operation Number:</label>
+    <div class="controls">
+      <input id="opnum" type="number" name="opnum"{% __pyjade_attrs attrs=[('value',(''+"{}".format(opnum)+''))] %}/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="opdate">Operation Date:</label>
+    <div class="controls">
+      <input id="opdate" name="opdate" type="date"{% __pyjade_attrs attrs=[('data-clear-btn',("false"))] %}/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="anesthetic">Anaesthetic</label>
+    <div class="controls">
+      <input id="anesthetic" name="anesthetic" type="text"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="volume">Volume of Oocytes (ml)</label>
+    <div class="controls">
+      <input id="volume" name="volume" type="number"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="comments">Comments</label>
+    <div class="controls">
+      <input id="comments" name="comments" type="text"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="initials">Initials</label>
+    <div class="controls">
+      <input id="initials" name="initials" type="text"/>
+    </div>
+  </div>
+  <input id="id" type="hidden"{% __pyjade_attrs attrs=[('value',(''+"{}".format(frogid)+''))] %} name="frogid"/>
+  <input type="submit" value="Save" class="btn btn-success"/>
+</form>{% endblock %}

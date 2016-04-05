@@ -1,4 +1,4 @@
-{% extends "frogs/base.html" %}
+{% extends "frogs/layout.html" %}
 
 {% block content %}
     <h1>New {{ itemtype }} </h1>

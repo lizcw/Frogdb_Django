@@ -1,0 +1,42 @@
+{% extends "layout.html" %}{% block content %}
+<p>Summary of operations for Frog Species
+</p>
+<p class="info">{{message|force_escape}}</p>{% if  (summaries.length) %}
+<table id="frogdetails" data-role="table" class="ui-responsive">
+  <thead>
+    <tr>
+      <th>Frog No</th>
+      <th>No Ops</th>
+      <th>Last Op</th>
+      <th>Next Op</th>
+      <th>Oocyte/health condition</th>
+      <th>General</th>
+      <th>Tank</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for summary in summaries|__pyjade_iter:1 %}
+    <tr>
+      <td>{{summary.frognum|force_escape}}</td>
+      <td>{{summary.num_ops|force_escape}}</td>
+      <td>{{summary.last_op|force_escape}}</td>
+      <td>{{summary.next_op|force_escape}}</td>
+      <td>{{summary.condition|force_escape}}</td>
+      <td>{{summary.general|force_escape}}</td>
+      <td>{{summary.tankid|force_escape}}</td>
+      <td><a{% __pyjade_attrs attrs=[('href',('#popupMenu_'+))] %} summary.frog_id="summary.frog_id" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+        <div{% __pyjade_attrs attrs=[('id',('popupMenu_'+summary.frog_id))] %} data-history="false" data-role="popup" data-theme="b">
+          <ul data-role="listview" data-inset="true" style="min-width:210px;">
+            <li data-role="list-divider">Choose an action</li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/frogs/view/'+"{}".format(summary.frog_id)+''))] %}>View Frog</a>
+            </li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/operations/edit/'+"{}".format(summary.frog_id)+''))] %}>Edit Operation</a>
+            </li>
+            <li><a{% __pyjade_attrs attrs=[('href',('/operations/'+"{}".format(summary.frog_id)+''))] %}>All operations for this frog</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}{% endblock %}

@@ -1,8 +1,6 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h1>Permit List</h1>
-<p><a href="{% url 'frogs:permit_create' %}">Create New Permit</a></p>
-{% if shipment_list %}
-<h2>Recent Shipments</h2>
+{% extends "frogs/layout.html" %}{% block content %}
+<h1>List</h1>
+{% if shipments %}
 <table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
   <thead>
     <tr>
@@ -15,7 +13,7 @@
         <th>Actions</th>
     </tr>
   </thead>
-  <tbody>{% for shipment in shipment_list %}
+  <tbody>{% for shipment in shipments %}
     <tr>
         <td>{{shipment.aqis|force_escape}}</td>
         <td>{{shipment.qen|force_escape}}</td>
@@ -29,13 +27,13 @@
               <ul data-role="listview" data-inset="true" style="min-width:210px;">
                 <li data-role="list-divider">Choose an action</li>
                 <li>
-                    <a href="{% url 'frogs:permit_detail' shipment.id %}">View details</a>
+                    <a href="{% url 'frogs:permitview' shipment.id %}">View details</a>
                 </li>
                 <li>
-                    <a href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
+                    <a href="{% url 'frogs:permitedit' shipment.id %}">Edit</a>
                 </li>
                 <li>
-                    <a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
+                    <a href="#">Delete</a>
                 </li>
                 <li>
                     <a href="#">View Frogs</a>

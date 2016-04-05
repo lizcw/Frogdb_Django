@@ -1,0 +1,15 @@
+{% extends "frogs/base.html" %}{% block content %}
+<div class="centrepanel">
+  {% if form.is_bound %}
+      <h2>Edit Frog Details</h2>
+  {% else %}
+      <h2>New Frog Details</h2>
+  {% endif %}
+  <form id="frog-edit" method="POST" class="post-form ui-responsive">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="save btn btn-default">Save</button>
+    <button type="button" class="btn" onclick="javascript:history.back();return false;">Cancel</button>
+  </form>
+</div>
+{% endblock %}

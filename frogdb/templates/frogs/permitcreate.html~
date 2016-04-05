@@ -1,7 +1,7 @@
-{% extends "frogs/base.html" %}
+{% extends "frogs/layout.html" %}
 
 {% block content %}
-    <h1>New {{ itemtype }} </h1>
+    <h1>New Shipment</h1>
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>
