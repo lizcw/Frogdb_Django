@@ -34,9 +34,45 @@
       </tr>
     </tbody>
   </table>
+  <hr/>
+<h2>Operations
+  </h2>
 
+  <table id="ops-table" data-role="table" class="ui-responsive">
+  <thead>
+    <tr>
+      <th>Number</th>
+      <th>Date</th>
+      <th>Anaesthetic</th>
+      <th>Volume</th>
+      <th>Comments</th>
+      <th>Initials</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for operation in frog.operation_set.all %}
+    <tr>
+      <td>{{operation.opnum}}</td>
+      <td>{{operation.opdate|date:"d-M-Y"}}</td>
+      <td>{{operation.anesthetic|force_escape}}</td>
+      <td>{{operation.volume|force_escape}}</td>
+      <td>{{operation.comments|force_escape}}</td>
+      <td>{{operation.initials|force_escape}}</td>
+      <td><a href="#popupMenu_{{ operation.id }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+        <div id="popupMenu_{{ operation.id }}" data-history="false" data-role="popup" data-theme="b">
+          <ul data-role="listview" data-inset="true" style="min-width:210px;">
+            <li data-role="list-divider">Choose an action</li>
+            <li><a href="{% url 'frogs:operation_update' operation.id %}">Edit</a>
+            </li>
+            <li><a href="{% url 'frogs:operation_delete' operation.id %}">Delete</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>
 <hr/>
-
   <h2>Death Details
   </h2>
   <table id="death-table" class="ui-responsive">
@@ -50,7 +86,7 @@
     <tbody>
       <tr>
         <td>{{frog.death|force_escape}}</td>
-        <td>{{frog.death_date|force_escape}}</td>
+        <td>{{frog.death_date|date:"d-M-Y"}}</td>
         <td>{{frog.death_initials|force_escape}}</td>
       </tr>
     </tbody>
@@ -69,19 +105,18 @@
     <tbody>
       <tr>
         <td>Autoclaved</td>
-        <td>{{frog.autoclave_date|force_escape}}</td>
+        <td>{{frog.autoclave_date|date:"d-M-Y"}}</td>
         <td>{{frog.autoclave_run|force_escape}}</td>
       </tr>
       <tr>
         <td>Incinerated</td>
-        <td>{{frog.incineration_date|force_escape}}</td>
+        <td>{{frog.incineration_date|date:"d-M-Y"}}</td>
         <td></td>
       </tr>
     </tbody>
   </table>
 </div>
-{% endblock %}
-{% block sidebar %}
+
 <div class="rightpanel">
 <table>
     <tr>
@@ -90,7 +125,7 @@
         <li data-role="list-divider">Choose an action</li>
         <li><a href="{% url 'frogs:frog_update' frog.id %}">Edit</a>
         </li>
-        <li><a href="{% url 'frogs:operation_list' frog.id %}">Operations</a>
+        <li><a href="{% url 'frogs:operation_create' frog.id %}">Operation</a>
         </li>
         <li><a href="{% url 'frogs:frog_death' frog.id %}">Death</a>
         </li>

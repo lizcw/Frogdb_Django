@@ -101,7 +101,7 @@ class OperationForm(ModelForm):
                   'comments',
                   'initials')
         widgets = {
-            'opdate': DateInput(format=('%d-%m-%Y'),
+            'opdate': DateInput(format=('%Y-%m-%d'),
                                 attrs={'class': 'myDateClass',
                                         'type': 'date',
                                         'placeholder': 'Select a date'}

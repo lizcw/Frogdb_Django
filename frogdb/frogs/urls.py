@@ -31,7 +31,6 @@ urlpatterns = [
         views.FrogDeath.as_view(), name="frog_death"),
     url(r'^frog/(?P<pk>\d+)/disposal/$',
         views.FrogDisposal.as_view(), name="frog_disposal"),
-    url(r'^operation/list/(?P<frogid>\w+)/$', views.OperationList.as_view(), name='operation_list'),
     url(r'^operation/summary/$', views.OperationSummary.as_view(), name='operation_summary'),
     url(r'^operation/create/(?P<frogid>\w+)/$',
         views.OperationCreate.as_view(), name="operation_create"),

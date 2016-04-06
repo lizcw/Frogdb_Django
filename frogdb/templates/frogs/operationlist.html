@@ -27,7 +27,7 @@
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody>{% for operation in operations %}
+  <tbody>{% for operation in frog.operations %}
     <tr>
       <td>{{operation.operation_num|force_escape}}</td>
       <td>{{operation.operation_date|force_escape}}</td>

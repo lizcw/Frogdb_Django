@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 SPECIES_LIST = ( ('x.borealis', 'X.borealis'), ('x.laevis', 'X.laevis'))
 LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
@@ -67,6 +68,31 @@ class Frog(models.Model):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.death_date <= now
 
+    # derived fields
+    def last_operation(self):
+        totalops = self.operation_set.count()
+        lastop = None
+        if (totalops > 0):
+            lastop = self.operation_set.order_by('opnum')[totalops - 1]
+            return lastop.opdate
+
+    def num_operations(self):
+         return self.operation_set.count()
+
+    def next_operation(self):
+        lastop = self.last_operation()
+        #add 6 months
+        nextop = lastop + datetime.timedelta(6 * 365 / 12)
+        return nextop
+
+
+
+def validate_only_x_operations(obj):
+    model = obj.__class__
+    #frog = obj.frogid
+    max = obj.maxops()
+    if (obj.opnum > max):
+        raise ValidationError("Can only create %d %s" % (max, model.__name__))
 
 class Operation(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
@@ -79,6 +105,13 @@ class Operation(models.Model):
 
     def __str__(self):
         return self.opnum
+
+    def clean(self):
+        validate_only_x_operations(self)
+
+    #max ops per frog
+    def maxops(self):
+        return int(6)
 
 
 class TransferApproval(models.Model):
