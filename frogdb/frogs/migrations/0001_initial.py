@@ -94,6 +94,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Qap',
+            fields=[
+                ('qap', models.CharField(max_length=80, primary_key=True, serialize=False, verbose_name='QAP')),
+                ('building', models.CharField(max_length=60, verbose_name='Building')),
+            ],
+        ),
+        migrations.CreateModel(
             name='TransferApproval',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

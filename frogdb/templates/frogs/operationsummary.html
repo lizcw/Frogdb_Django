@@ -1,8 +1,9 @@
 {% extends "frogs/base.html" %}{% block content %}
-<p>Summary of operations for Frog Species
-</p>
-
-<table id="frogdetails" data-role="table" class="ui-responsive">
+<h2>Summary of operations for Frog Species
+</h2>
+{% if summaries %}
+<input id="filterTable-input" data-type="search"/>
+<table id="operations-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
   <thead>
     <tr>
       <th>Frog No</th>
@@ -33,4 +34,7 @@
     </div></td>
     </tr>{% endfor %}
   </tbody>
-</table>{% endblock %}
+</table>
+{% else %}
+<p>No operations in database</p>
+{% endif %}{% endblock %}

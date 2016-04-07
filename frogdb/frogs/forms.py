@@ -2,7 +2,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.forms import ModelForm, DateInput
-from .models import Permit, Frog, Operation
+from .models import Permit, Frog, Operation, Transfer
 
 
 class LoginForm(AuthenticationForm):
@@ -105,5 +105,22 @@ class OperationForm(ModelForm):
                                 attrs={'class': 'myDateClass',
                                         'type': 'date',
                                         'placeholder': 'Select a date'}
+                                ),
+        }
+
+class TransferForm(ModelForm):
+    class Meta:
+        model = Transfer
+        fields = ('operationid',
+                  'volume',
+                  'transfer_date',
+                  'transporter',
+                  'method',
+                  'transferapproval',)
+        widgets = {
+            'transfer_date': DateInput(format=('%Y-%m-%d'),
+                    attrs={'class': 'myDateClass',
+                           'type': 'date',
+                           'placeholder': 'Select a date'}
                                 ),
         }

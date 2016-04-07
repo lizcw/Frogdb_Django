@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Permit, Frog, Operation
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm,OperationForm, LoginForm
+from .models import Permit, Frog, Operation, Transfer
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm
 
 ## Index page
 class IndexView(generic.ListView):
@@ -150,7 +150,7 @@ class OperationDetail(generic.DetailView):
 
 
 ## 1. Set frogid then 2. Increment opnum
-## TODO: Limits: 6 operations and 6 mths apart
+## Limits: 6 operations and 6 mths apart - in Model
 class OperationCreate(generic.CreateView):
     model = Operation
     template_name = 'frogs/operationcreate.html'
@@ -192,3 +192,44 @@ class OperationDelete(generic.DeleteView):
     def get_success_url(self):
         frog = Frog.objects.filter(frogid=self.object.frogid)
         return reverse('frogs:frog_detail', args=[frog[0].id])
+
+########## TRANSFERS ############################################
+class TransferList(generic.ListView):
+    template_name = 'frogs/transferlist.html'
+    context_object_name = 'transfer_list'
+
+    def get_queryset(self):
+        return Transfer.objects.order_by('-transfer_date')
+
+class TransferDetail(generic.DetailView):
+    model = Transfer
+
+    def get_context_data(self, **kwargs):
+        context = super(TransferDetail, self).get_context_data(**kwargs)
+        return context
+
+class TransferCreate(generic.CreateView):
+    model = Transfer
+    template_name = 'frogs/transfercreate.html'
+    form_class = TransferForm
+
+    def get_initial(self):
+        opid = self.kwargs.get('operationid')
+        op = Operation.objects.get(pk=opid)
+        print('DEBUG: opid=', opid)
+        return {'operationid': op}
+
+    def get_success_url(self):
+        return reverse('frogs:transfer_detail', args=[self.object.id])
+
+class TransferUpdate(generic.UpdateView):
+    model = Transfer
+    form_class = TransferForm
+    template_name = 'frogs/transfercreate.html'
+
+    def get_success_url(self):
+        return reverse('frogs:transfer_detail', args=[self.object.id])
+
+class TransferDelete(generic.DeleteView):
+    model = Transfer
+    success_url = reverse_lazy("frogs:transfer_list")

@@ -10,16 +10,24 @@ LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
                  ('disposed_aibn', 'Disposed of at AIBN Animal House'),
                  ('disposed_oh', 'Disposed of at Otto Hirschfeld Animal House'))
 DEATHTYPES = (('culled', 'Culled'), ('found', "Found dead"), ('alive', 'Not dead'))
-QAP_LIST = (('AIBN','Q1629 (QC1)'), ('QBI', 'Q1881 (QC1)'), ('IMB L2', 'Q1695 (QC2)'))
+#QAP_LIST = (('AIBN','Q1629 (QC1)'), ('QBI', 'Q1881 (QC1)'), ('IMB L2', 'Q1695 (QC2)'))
 WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'))
 SUPPLIER_LIST=(('nasco','NASCO'),('xenopus','Xenopus One'), ('uq','UQ'))
 COUNTRY_LIST=(('usa','USA'),('australia','Australia'))
 GENDERS=(('female','Female'),('male','Male'))
 # DB list models
 
+
+class Qap(models.Model):
+    qap = models.CharField(_("QAP"), max_length=80, primary_key=True)
+    building = models.CharField(_("Building"), max_length=60, null=False)
+
+    def __str__(self):
+        return self.building
+
+
 # DB models
 class Permit(models.Model):
-
     qen = models.CharField(_("QEN"), max_length=20, unique=True)
     arrival_date = models.DateField(_("Arrival date"))
     aqis = models.CharField(_("AQIS"), max_length=20)
@@ -44,7 +52,7 @@ class Frog(models.Model):
     qen = models.ForeignKey(Permit, on_delete=models.CASCADE)
     frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
     tankid = models.IntegerField(_("Tank ID"), default=0)
-    gender = models.CharField(_("Gender"), max_length=10, choices=GENDERS)
+    gender = models.CharField(_("Gender"), max_length=10, default="female", choices=GENDERS)
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
     current_location = models.CharField(_("Current Location"), max_length=80, choices=LOCATION_LIST)
     condition = models.CharField(_("Oocyte Health Condition"), max_length=100, null=True, blank=True)
@@ -85,15 +93,6 @@ class Frog(models.Model):
         nextop = lastop + datetime.timedelta(6 * 365 / 12)
         return nextop
 
-
-
-def validate_only_x_operations(obj):
-    model = obj.__class__
-    #frog = obj.frogid
-    max = obj.maxops()
-    if (obj.opnum > max):
-        raise ValidationError("Can only create %d %s" % (max, model.__name__))
-
 class Operation(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
     opnum = models.IntegerField(_("Operation Number"), default=1)
@@ -104,37 +103,54 @@ class Operation(models.Model):
     initials = models.CharField(_("Operated by"), max_length=10)
 
     def __str__(self):
-        return self.opnum
+        opref = "Frog %s Operation %d" % (self.frogid, self.opnum)
+        return opref
 
     def clean(self):
-        validate_only_x_operations(self)
+        max = self.maxops()
+        if self.opnum > max:
+            raise ValidationError("Can only create %d operations per frog" % max)
 
-    #max ops per frog
+    #max ops per frog - ?configurable
     def maxops(self):
         return int(6)
 
 
 class TransferApproval(models.Model):
-    tfr_from = models.CharField(_("Transfer from"), max_length=30, choices=QAP_LIST)
-    tfr_to = models.CharField(_("Transfer to"), max_length=30, choices=QAP_LIST)
+    tfr_from = models.ForeignKey(Qap, verbose_name="Transfer from", related_name="tfr_from")
+    tfr_to = models.ForeignKey(Qap, verbose_name="Transfer to", related_name="tfr_to")
     sop = models.CharField(_("SOP details"), max_length=100)
 
     def __str__(self):
+        return self.get_fromto()
+
+    # Return string with from-to
+    def get_fromto(self):
+        fromto = "%s to %s" % (self.tfr_from.building, self.tfr_to.building)
+        return fromto
+
+    def get_sop(self):
         return self.sop
 
 
 class Transfer(models.Model):
-    tfr_from = models.CharField(_("Transfer from"), max_length=30, choices=QAP_LIST)
-    tfr_to = models.CharField(_("Transfer to"), max_length=30, choices=QAP_LIST)
-    transferapproval = models.ForeignKey(TransferApproval)
-    operationid = models.ForeignKey(Operation, on_delete=models.CASCADE)
+    transferapproval = models.ForeignKey(TransferApproval, verbose_name="Transfer from/to")
+    operationid = models.ForeignKey(Operation, verbose_name="Operation", on_delete=models.CASCADE)
     volume = models.SmallIntegerField("Volume carried (ml)")
-    tfr_date = models.DateField("Transfer date")
+    transfer_date = models.DateField("Transfer date")
     transporter = models.CharField(_("Transporter Name or Initials"), max_length=120)
+    method = models.CharField(_("Method"), max_length=120)
 
     def __str__(self):
-        return self.volume
+        return str(self.id)
 
+    def maxvol(self):
+        return self.operationid.volume
+
+    def clean(self):
+        max = self.maxvol()
+        if self.volume > max:
+            raise ValidationError("Can only transfer maximum %d ml" % max)
 
 class Experiment(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
@@ -156,7 +172,9 @@ class Experiment(models.Model):
     def __str__(self):
         return self.used
 
-#
+
+
+
 # class Supplier(models.Model):
 #     name = models.CharField(_("Name"))
 #
