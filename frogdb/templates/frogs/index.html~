@@ -1,0 +1,41 @@
+{% extends "frogs/base.html" %}{% block content %}
+<div class="frontpage-container">
+  <h1>Welcome</h1>
+  <p>The QBI Frog database stores information of 
+the Quarantine Frog Colony housed at AIBN.  
+This includes information on identification, health, 
+oocyte harvests and tracking and disposal of all quarantine 
+material.
+  </p>
+  <p>The Frog database replaces currently handwritten data forms
+and manually generated reports.
+  </p>
+  {% if shipment_list %}
+  <p class="info">Database contains {{ shipment_list|length }} shipments
+  </p>
+  {% else %}
+  <p><a href="{% url 'frogs:permitcreate' %}" class="button">Create Shipment</a>
+  </p>
+  {% endif %}
+</div>{% endblock %}
+
+{% block sidebar %}
+  {% if not user.is_authenticated %}
+    <div class="widget">
+      <h1>Login</h1>
+      <div class="loginbox">
+        <form id="loginform" name="login" method="post" action="{% url 'frogs:loginform' %}">
+          {% csrf_token %}
+          <label for="username">Username: <span>*</span>
+          </label>
+          <input id="username" type="text" value="" placeholder="" name="username"/>
+          <label for="password">Password: <span>*</span>
+          </label>
+          <input id="password" type="password" value="" placeholder="" name="password"/>
+          <input type="submit" value="Login" data-inline="true" data-transition="fade" data-theme="c"/>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock %}

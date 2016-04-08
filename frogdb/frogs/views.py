@@ -5,16 +5,37 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.views import generic
 from django.utils import timezone
+from django.template import Context, Template
 from .models import Permit, Frog, Operation, Transfer
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm
 
 ## Index page
 class IndexView(generic.ListView):
-    template_name = 'frogs/index.html'
-    context_object_name = 'shipment_list'
+    template_name ='frogs/index.html'
+    context_object_name = 'datalist'
+
+
+    def get_shipment_count(self):
+        return Permit.objects.count()
+
+    def get_frog_count(self):
+        return Frog.objects.count()
+
+    def get_transfer_count(self):
+        return Transfer.objects.count()
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['shipment_list']= self.get_shipment_count()
+        context['frog_list'] = self.get_frog_count()
+        context['transfer_list']= self.get_transfer_count()
+        print('DEBUG:Context=', context)
+        print('DEBUG:Context.frog_list=', context['frog_list'])
+        return context
+
     def get_queryset(self):
         """Return the last five published questions."""
-        return Permit.objects.order_by('-arrival_date')[:5]
+        return Permit.objects.all()
 
 ## Home page - Landing page on login
 class HomeView(generic.ListView):
@@ -46,7 +67,7 @@ def loginfrogdb(request):
     else:
         # Return an 'invalid login' error message.
         message = 'Login credentials are invalid. Please try again'
-    return render(request, "frogs/home.html", {'errors': message, 'user': user})
+    return render(request, "frogs/index.html", {'errors': message, 'user': user})
 
 #### PERMITS/SHIPMENTS
 class PermitList(generic.ListView):

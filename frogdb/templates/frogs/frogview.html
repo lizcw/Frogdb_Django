@@ -1,139 +1,147 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h2>View Frog Details
-</h2>
-<div class="leftpanel">
-  <table id="view-table" class="ui-responsive">
-    <tbody>
-      <tr>
-        <th>Frog ID</th>
-        <td>{{frog.frogid|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Tank #</th>
-        <td>{{frog.tankid|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Gender</th>
-        <td>{{frog.get_gender_display|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Species</th>
-        <td>{{frog.get_species_display|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Condition</th>
-        <td>{{frog.condition|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>QEN</th>
-        <td>{{frog.qen|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Location</th>
-        <td class="errorlist">{{frog.get_current_location_display|force_escape}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <div data-role="collapsible">
-    <h2>Operations</h2>
-    <table id="ops-table" data-role="table" class="ui-responsive">
-      <thead>
-        <tr>
-          <th>Number</th>
-          <th>Date</th>
-          <th>Anaesthetic</th>
-          <th>Volume</th>
-          <th>Comments</th>
-          <th>Initials</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>{% for operation in frog.operation_set.all %}
-        <tr>
-          <td>{{operation.opnum}}</td>
-          <td>{{operation.opdate|date:"d-M-Y"}}</td>
-          <td>{{operation.anesthetic|force_escape}}</td>
-          <td>{{operation.volume|force_escape}}</td>
-          <td>{{operation.comments|force_escape}}</td>
-          <td>{{operation.initials|force_escape}}</td>
-          <td><a href="#popupMenu_{{ operation.id }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
-            <div id="popupMenu_{{ operation.id }}" data-history="false" data-role="popup" data-theme="b">
-              <ul data-role="listview" data-inset="true" style="min-width:210px;">
-                <li data-role="list-divider">Choose an action</li>
-                <li><a href="{% url 'frogs:operation_update' operation.id %}">Edit</a>
-                </li>
-                <li><a href="{% url 'frogs:operation_delete' operation.id %}">Delete</a>
-                </li>
-                  <li><a href="{% url 'frogs:transfer_create' operation.id %}">Transfer</a>
-                </li>
-              </ul>
-            </div>
-          </td>
-        </tr>{% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <div data-role="collapsible">
-    <h2>Death Details</h2>
-    <table id="death-table" data-role="table" class="ui-responsive">
-      <thead>
-        <tr>
-          <th>Death</th>
-          <th>Date</th>
-          <th>Initials</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{frog.get_death_display|force_escape}}</td>
-          <td>{{frog.death_date|date:"d-M-Y"}}</td>
-          <td>{{frog.death_initials|force_escape}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div data-role="collapsible">
-    <h2>Disposal Details</h2>
-    <table id="disposal-table" data-role="table" class="ui-responsive">
-      <thead>
-        <tr>
-          <th>Disposal action</th>
-          <th>Date</th>
-          <th>Run #</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Autoclaved</td>
-          <td>{{frog.autoclave_date|date:"d-M-Y"}}</td>
-          <td>{{frog.autoclave_run|force_escape}}</td>
-        </tr>
-        <tr>
-          <td>Incinerated</td>
-          <td>{{frog.incineration_date|date:"d-M-Y"}}</td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+{% extends "frogs/base.html" %}{% block title %}Frog Details{% endblock %}{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>View Frog Details
+        </h2></div>
+    <div class="col-md-8">
+        <div class="well">
+            <table id="view-table" class="ui-responsive table table-hover">
+                <tbody>
+                <tr>
+                    <th>Frog ID</th>
+                    <td>{{frog.frogid|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Tank #</th>
+                    <td>{{frog.tankid|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>{{frog.get_gender_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Species</th>
+                    <td>{{frog.get_species_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Condition</th>
+                    <td>{{frog.condition|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>QEN</th>
+                    <td>{{frog.qen|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Location</th>
+                    <td class="errorlist">{{frog.get_current_location_display|force_escape}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-<div class="rightpanel">
-<table>
-    <tr>
-      <td>
-      <ul data-role="listview" data-inset="true" style="min-width:210px;">
-        <li data-role="list-divider">Choose an action</li>
-        <li><a href="{% url 'frogs:frog_update' frog.id %}">Edit</a>
-        </li>
-        <li><a href="{% url 'frogs:operation_create' frog.id %}">Operation</a>
-        </li>
-        <li><a href="{% url 'frogs:frog_death' frog.id %}">Death</a>
-        </li>
-        <li><a href="{% url 'frogs:frog_disposal' frog.id %}">Disposal</a>
-        </li>
-      </ul>
-    </td>
-    </tr>
-  </table>
+        <div data-role="collapsible" class="well">
+            <h2>Operations</h2>
+            <table id="ops-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Date</th>
+                    <th>Anaesthetic</th>
+                    <th>Volume</th>
+                    <th>Comments</th>
+                    <th>Initials</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>{% for operation in frog.operation_set.all %}
+                <tr>
+                    <td>{{operation.opnum}}</td>
+                    <td>{{operation.opdate|date:"d-M-Y"}}</td>
+                    <td>{{operation.anesthetic|force_escape}}</td>
+                    <td>{{operation.volume|force_escape}}</td>
+                    <td>{{operation.comments|force_escape}}</td>
+                    <td>{{operation.initials|force_escape}}</td>
+                    <td><a href="#popupMenu_{{ operation.id }}" data-rel="popup" data-transition="slideup"
+                           class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+                        <div id="popupMenu_{{ operation.id }}" data-history="false" data-role="popup" data-theme="b">
+                            <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                                <li data-role="list-divider">Choose an action</li>
+                                <li><a href="{% url 'frogs:operation_update' operation.id %}">Edit</a>
+                                </li>
+                                <li><a href="{% url 'frogs:operation_delete' operation.id %}">Delete</a>
+                                </li>
+                                <li><a href="{% url 'frogs:transfer_create' operation.id %}">Transfer</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div data-role="collapsible" class="well">
+            <h2>Death Details</h2>
+            <table id="death-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                <tr>
+                    <th>Death</th>
+                    <th>Date</th>
+                    <th>Initials</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{frog.get_death_display|force_escape}}</td>
+                    <td>{{frog.death_date|date:"d-M-Y"}}</td>
+                    <td>{{frog.death_initials|force_escape}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-role="collapsible" class="well">
+            <h2>Disposal Details</h2>
+            <table id="disposal-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                <tr>
+                    <th>Disposal action</th>
+                    <th>Date</th>
+                    <th>Run Number</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Autoclaved</td>
+                    <td>{{frog.autoclave_date|date:"d-M-Y"}}</td>
+                    <td>{{frog.autoclave_run|force_escape}}</td>
+                </tr>
+                <tr>
+                    <td>Incinerated</td>
+                    <td>{{frog.incineration_date|date:"d-M-Y"}}</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-4 rightpanel">
+        <table id="sidemenu" data-role="nav" class="ui-responsive table">
+            <tr>
+                <td>
+                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                        <li data-role="list-divider">Choose an action</li>
+                        <li><a href="{% url 'frogs:frog_update' frog.id %}">Edit</a>
+                        </li>
+                        <li><a href="{% url 'frogs:operation_create' frog.id %}">Operation</a>
+                        </li>
+                        <li><a href="{% url 'frogs:frog_death' frog.id %}">Death</a>
+                        </li>
+                        <li><a href="{% url 'frogs:frog_disposal' frog.id %}">Disposal</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>{% endblock %}

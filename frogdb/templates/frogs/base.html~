@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,
+    initial-scale=1"/>
+        <title>{% block title %}{% endblock %}{% trans "FrogDB"   %}</title>
+        {% load staticfiles %}
+        <link rel="icon" href="{% static "frogs/img/favicon.ico" %}" type="image/png"/>
+        <link rel="stylesheet" type="text/css" href="{% static "frogs/css/jquery.mobile-1.4.5.min.css" %}"/>
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+       <script type="text/javascript" src="{% static "frogs/js/jquery-1.7.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "frogs/js/jquery.mobile-1.4.5.min.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 550px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+        
+    /* On small screens, set height to 'auto' for the grid */
+    @media screen and (max-width: 767px) {
+      .row.content {height: auto;} 
+    }
+  </style>
+    </head>
+    <body>
+		<nav class="navbar navbar-inverse visible-xs">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>                        
+		  </button>
+		  <a class="navbar-brand" href="#">Logo</a>
+		</div>
+		<div class="collapse navbar-collapse" id="myNavbar">
+		  <ul class="nav navbar-nav" data-role="listview">
+		  {% include "frogs/navlinks.html" %}
+		  </ul>
+		</div>
+	  </div>
+	</nav>
+	<div class="container-fluid">
+	  <div class="row content">
+		<div class="col-sm-3 sidenav hidden-xs">
+		  <h1>QBI FrogDB
+			<a href="/frogs/" class="headerlink"><img src="{% static 'frogs/img/kermit.png' %}" alt="QBI FrogDB"/></a></h1>
+			{% if user and user.is_authenticated %}
+			 <div class="profile">
+				<p>Welcome, {{ user.username }}. </p>
+			</div>
+		  {% endif %}
+		  <ul class="nav nav-pills nav-stacked" data-role="listview">
+			{% include "frogs/navlinks.html" %}
+		  {% if user and user.is_authenticated %}
+		  	{% include "frogs/profilelinks.html" %}
+		  {% endif %}
+		  </ul><br>
+		</div>
+		<br>
+		 {% block content %}{% endblock %}
+		</div>
+    </div>
+
+        <footer>
+        {% block footer_navigation %}
+            {% include "frogs/footer_navbar.html" %}
+        {% endblock %}
+            <p>Copyright (c) 2016 Queensland Brain Institute</p>
+        </footer>
+    </body>
+</html>

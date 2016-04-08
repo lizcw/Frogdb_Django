@@ -1,5 +1,5 @@
 <div id="navigation" data-role="navbar">
-  <ul class="nav navbar-nav">
+  <ul>
     <li><a href="/frogs/" class="ui-btn-active">Home</a>
     </li>
     <li><a href="{% url 'frogs:permit_list' %}">Permits</a>

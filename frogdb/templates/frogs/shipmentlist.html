@@ -1,9 +1,12 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h2>Shipments</h2>
-<p><a href="{% url 'frogs:permit_create' %}">Create New Shipment</a></p>
+{% extends "frogs/base.html" %}
+{% block title %}Shipments{% endblock %}
+{% block content %}
+<div class="container">
+<div class="page-header"><h2>Shipments</h2></div>
+<p><a href="{% url 'frogs:permit_create' %}" class="btn btn-info">Create New Shipment</a></p>
 {% if shipment_list %}
 <input id="filterTable-input" data-type="search"/>
-<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive table table-hover">
   <thead>
     <tr>
         <th>AQIS Permit</th>
@@ -45,4 +48,6 @@
         </td>
     </tr>{% endfor %}
   </tbody>
-</table>{% endif %}{% endblock %}
+</table>{% endif %}
+    </div>
+{% endblock %}

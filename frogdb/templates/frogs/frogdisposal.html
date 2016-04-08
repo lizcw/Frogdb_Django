@@ -1,9 +1,14 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h2>Disposal details for Frog ID {{frog.frogid|escape}}
-</h2>
-
-<form method="POST" class="post-form">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="save btn btn-default">Save</button>
-</form>{% endblock %}
+{% extends "frogs/base.html" %}{% block title %}Frog - disposal{% endblock %}{% block content %}
+<div class="container">
+    <div class="page-header"><h2>Disposal details for Frog ID {{frog.frogid|escape}}
+    </h2></div>
+    <div class="row col-md-6">
+        <div class="well">
+            <form method="POST" class="post-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="save btn btn-default">Save</button>
+            </form>
+        </div>
+    </div>
+</div>{% endblock %}

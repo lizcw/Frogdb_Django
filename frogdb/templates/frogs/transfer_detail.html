@@ -1,50 +1,54 @@
 {% extends "frogs/base.html" %}{% block content %}
-<h2>View Transfer Details</h2>
-<div class="leftpanel">
-  <table id="view-table" class="ui-responsive">
-    <tbody>
-      <tr>
-        <th>Frog ID</th>
-        <td>{{transfer.operationid.frogid|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Species</th>
-        <td>{{transfer.operationid.frogid.get_species_display|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Oocytes volume carried (ml)</th>
-        <td>{{transfer.volume|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Transporter</th>
-        <td>{{transfer.transporter|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Transfer Date</th>
-        <td>{{transfer.transfer_date|date:"d-M-Y"}}</td>
-      </tr>
-      <tr>
-        <th>Transported From/To</th>
-        <td>{{transfer.transferapproval|force_escape}}</td>
-      </tr>
+<div class="container">
+    <div class="page-header"><h2>View Transfer Details</h2>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <table id="view-table" class="ui-responsive table table-hover">
+                <tbody>
+                <tr>
+                    <th>Frog ID</th>
+                    <td>{{transfer.operationid.frogid|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Species</th>
+                    <td>{{transfer.operationid.frogid.get_species_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Oocytes volume carried (ml)</th>
+                    <td>{{transfer.volume|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Transporter</th>
+                    <td>{{transfer.transporter|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Transfer Date</th>
+                    <td>{{transfer.transfer_date|date:"d-M-Y"}}</td>
+                </tr>
+                <tr>
+                    <th>Transported From/To</th>
+                    <td>{{transfer.transferapproval|force_escape}}</td>
+                </tr>
 
-    </tbody>
-  </table>
+                </tbody>
+            </table>
+        </div>
 
-</div>{% endblock %}
-{% block sidebar %}
-<div  class="rightpanel">
-  <table>
-    <tr>
-      <td>
-          <ul data-role="listview" data-inset="true" style="min-width:210px;">
-            <li data-role="list-divider">Choose an action</li>
-            <li><a href="{% url 'frogs:transfer_update' transfer.id %}">Edit</a>
-            </li>
-            <li><a href="{% url 'frogs:transfer_delete' transfer.id %}">Delete</a>
-            </li>
-          </ul>
-      </td>
-    </tr>
-  </table>
+    </div>
+    <div class="col-md-4 rightpanel">
+        <table id="sidemenu" class="ui-responsive table">
+            <tr>
+                <td>
+                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                        <li data-role="list-divider">Choose an action</li>
+                        <li><a href="{% url 'frogs:transfer_update' transfer.id %}">Edit</a>
+                        </li>
+                        <li><a href="{% url 'frogs:transfer_delete' transfer.id %}">Delete</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>{% endblock %}

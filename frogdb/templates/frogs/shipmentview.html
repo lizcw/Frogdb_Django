@@ -1,59 +1,64 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h2>View Shipment Details</h2>
-<div class="leftpanel">
-  <table id="view-table" class="ui-responsive">
-    <tbody>
-      <tr>
-        <th>AQIS Permit ID</th>
-        <td>{{shipment.aqis|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>QEN</th>
-        <td>{{shipment.qen|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Females</th>
-        <td>{{shipment.females|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Males</th>
-        <td>{{shipment.males|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Arrival Date</th>
-        <td>{{shipment.arrival_date|date:"d-M-Y"}}</td>
-      </tr>
-      <tr>
-        <th>Species</th>
-        <td>{{shipment.get_species_display|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Supplier</th>
-        <td>{{shipment.get_supplier_display|force_escape}}</td>
-      </tr>
-      <tr>
-        <th>Country</th>
-        <td>{{shipment.get_country_display|force_escape}}</td>
-      </tr>
-    </tbody>
-  </table>
+{% extends "frogs/base.html" %}{% block title %}Shipment - details{% endblock %}{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>View Shipment Details</h2></div>
+    <div class="col-md-6">
+        <div class="well">
+            <table id="view-table" class="ui-responsive table table-hover">
+                <tbody>
+                <tr>
+                    <th>AQIS Permit ID</th>
+                    <td>{{shipment.aqis|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>QEN</th>
+                    <td>{{shipment.qen|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Females</th>
+                    <td>{{shipment.females|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Males</th>
+                    <td>{{shipment.males|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Arrival Date</th>
+                    <td>{{shipment.arrival_date|date:"d-M-Y"}}</td>
+                </tr>
+                <tr>
+                    <th>Species</th>
+                    <td>{{shipment.get_species_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Supplier</th>
+                    <td>{{shipment.get_supplier_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Country</th>
+                    <td>{{shipment.get_country_display|force_escape}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-</div>{% endblock %}
-{% block sidebar %}
-<div  class="rightpanel">
-  <table>
-    <tr>
-      <td>
-          <ul data-role="listview" data-inset="true" style="min-width:210px;">
-            <li data-role="list-divider">Choose an action</li>
-            <li><a href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
-            </li>
-            <li><a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
-            </li>
-            <li><a href="#">View Frogs</a>
-            </li>
-          </ul>
-      </td>
-    </tr>
-  </table>
+
+    <div class="col-md-4">
+        <table id="sidemenu" class="ui-responsive table">
+            <tr>
+                <td>
+                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                        <li data-role="list-divider">Choose an action</li>
+                        <li><a href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
+                        </li>
+                        <li><a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
+                        </li>
+                        <li><a href="#">View Frogs</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>{% endblock %}

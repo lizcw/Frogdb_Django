@@ -1,40 +1,46 @@
-{% extends "frogs/base.html" %}{% block content %}
-<h2>Summary of operations for Frog Species
-</h2>
-{% if summaries %}
-<input id="filterTable-input" data-type="search"/>
-<table id="operations-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
-  <thead>
-    <tr>
-      <th>Frog No</th>
-      <th>No Ops</th>
-      <th>Last Op</th>
-      <th>Next Op</th>
-      <th>Oocyte/health condition</th>
-      <th>General</th>
-      <th>Tank</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>{% for summary in summaries %}
-    <tr>
-      <td>{{summary.frogid|force_escape}}</td>
-      <td>{{summary.num_operations|force_escape}}</td>
-      <td>{{summary.last_operation|date:"d-M-Y"}}</td>
-      <td>{{summary.next_operation|date:"d-M-Y"}}</td>
-      <td>{{summary.condition|force_escape}}</td>
-      <td>{{summary.remarks|force_escape}}</td>
-      <td>{{summary.tankid|force_escape}}</td>
-      <td><a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a" href="#popupMenu_{{ summary.id}}" data-rel='popup' data-transition='slideup'>...</a>
-    <div id="popupMenu_{{ summary.id}}" data-history='false' data-role='popup' data-theme='b'>
-      <ul data-role='listview' data-inset='true' style='min-width:210px;'>
-       <li data-role='list-divider'>Choose an action</li>
-       <li><a href="{% url 'frogs:frog_detail' summary.id %}"> View Frog</a></li>
-      </ul>
-    </div></td>
-    </tr>{% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No operations in database</p>
-{% endif %}{% endblock %}
+{% extends "frogs/base.html" %}{% block title %}Operations{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header"><h2>Operations summary</h2></div>
+
+    {% if summaries %}
+    <input id="filterTable-input" data-type="search"/>
+    <table id="operations-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive table table-hover">
+        <thead>
+        <tr>
+            <th>Frog No</th>
+            <th>No Ops</th>
+            <th>Last Op</th>
+            <th>Next Op</th>
+            <th>Oocyte/health condition</th>
+            <th>General</th>
+            <th>Tank</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>{% for summary in summaries %}
+        <tr>
+            <td>{{summary.frogid|force_escape}}</td>
+            <td>{{summary.num_operations|force_escape}}</td>
+            <td>{{summary.last_operation|date:"d-M-Y"}}</td>
+            <td>{{summary.next_operation|date:"d-M-Y"}}</td>
+            <td>{{summary.condition|force_escape}}</td>
+            <td>{{summary.remarks|force_escape}}</td>
+            <td>{{summary.tankid|force_escape}}</td>
+            <td><a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+                   href="#popupMenu_{{ summary.id}}" data-rel='popup' data-transition='slideup'>...</a>
+                <div id="popupMenu_{{ summary.id}}" data-history='false' data-role='popup' data-theme='b'>
+                    <ul data-role='listview' data-inset='true' style='min-width:210px;'>
+                        <li data-role='list-divider'>Choose an action</li>
+                        <li><a href="{% url 'frogs:frog_detail' summary.id %}"> View Frog</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No operations in database</p>
+    {% endif %}
+</div>{% endblock %}
