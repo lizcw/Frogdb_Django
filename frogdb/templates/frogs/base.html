@@ -5,15 +5,16 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>QBI FrogDB - {% block title %}{% endblock %}</title>
+    {% load inplace_edit %}
     {% load staticfiles %}
     <link rel="icon" href="{% static "frogs/img/favicon.ico" %}" type="image/png"/>
     <link rel="stylesheet" type="text/css" href="{% static "frogs/css/jquery.mobile-1.4.5.min.css" %}"/>
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"/>
     <link rel="stylesheet" href="{% static "frogs/css/style.css" %}"/>
-    <script type="text/javascript" src="{% static "frogs/js/jquery-1.7.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "frogs/js/jquery-1.12.3.min.js" %}"></script>
     <script type="text/javascript" src="{% static "frogs/js/jquery.mobile-1.4.5.min.js" %}"></script>
     <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-
+    {% inplace_toolbar %}
   </head>
   <body>
 	<nav class="navbar navbar-default">

@@ -25,3 +25,6 @@ footer p{
     padding-top:10px;
     padding-right:10px;
     }
+input[type=checkbox] {
+    margin: 0 !important; /* turn off bootstrap */
+}

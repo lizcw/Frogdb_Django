@@ -32,13 +32,14 @@
                 <h3>Frogs</h3>
                 {% if frog_list %}
                 <p>The database currently contains {{ frog_list }} frogs.</p>
+                    {% if user.is_authenticated %}
+                    <p><a href="{% url 'frogs:frog_list' %}" class="btn btn-info">View Frogs</a>
+                    </p>
+                    {% endif %}
                 {% else %}
                 <p>There are no frogs in the database.</p>
                 {% endif %}
-                {% if user.is_authenticated %}
-                <p><a href="{% url 'frogs:permit_create' %}" class="btn btn-info">Create Frog</a>
-                </p>
-                {% endif %}
+
 
             </div>
         </div>
@@ -47,11 +48,12 @@
                 <h3>Transfers</h3>
                 {% if transfer_list %}
                 <p>The database currently contains {{ transfer_list }} transfers.</p>
+                    {% if user.is_authenticated %}
+                    <p><a href="{% url 'frogs:transfer_list' %}" class="btn btn-warning">View Transfers</a>
+                    </p>
+                    {% endif %}
                 {% else %}
                 <p>There are no transfers in the database.</p>
-                {% endif %}{% if user.is_authenticated %}
-                <p><a href="{% url 'frogs:permit_create' %}" class="btn btn-warning">Create Transfer</a>
-                </p>
                 {% endif %}
 
             </div>

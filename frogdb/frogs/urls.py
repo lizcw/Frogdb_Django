@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib.auth.views import login
-from . import views
+from . import views, reports
 
 app_name = 'frogs'
 urlpatterns = [
@@ -33,6 +33,8 @@ urlpatterns = [
         views.FrogDeath.as_view(), name="frog_death"),
     url(r'^frog/(?P<pk>\d+)/disposal/$',
         views.FrogDisposal.as_view(), name="frog_disposal"),
+    url(r'^frog/upload/(?P<frogid>\w+)/$',
+        views.FrogAttachment.as_view(), name="frog_upload"),
     url(r'^operation/summary/$',
         views.OperationSummary.as_view(), name='operation_summary'),
     url(r'^operation/create/(?P<frogid>\w+)/$',
@@ -45,6 +47,8 @@ urlpatterns = [
         views.OperationDelete.as_view(), name="operation_delete"),
     url(r'^transfer/list/$',
         views.TransferList.as_view(), name='transfer_list'),
+    url(r'^transfer/list/(?P<operationid>\w+)/$',
+        views.TransferList.as_view(), name='transfer_list_byop'),
     url(r'^transfer/create/(?P<operationid>\w+)/$',
         views.TransferCreate.as_view(), name="transfer_create"),
     url(r'^transfer/(?P<pk>\d+)/$',
@@ -53,4 +57,17 @@ urlpatterns = [
         views.TransferUpdate.as_view(), name="transfer_update"),
     url(r'^transfer/(?P<pk>\d+)/delete/$',
         views.TransferDelete.as_view(), name="transfer_delete"),
+    url(r'^experiment/list/$',
+        views.ExperimentList.as_view(), name='experiment_list'),
+    url(r'^experiment/list/(?P<transferid>\w+)/$',
+        views.ExperimentList.as_view(), name='experiment_list_bytransfer'),
+    url(r'^experiment/create/(?P<transferid>\w+)/$',
+        views.ExperimentCreate.as_view(), name="experiment_create"),
+    url(r'^experiment/(?P<pk>\d+)/$',
+        views.ExperimentDetail.as_view(), name="experiment_detail"),
+    url(r'^experiment/(?P<pk>\d+)/update/$',
+        views.ExperimentUpdate.as_view(), name="experiment_update"),
+    url(r'^experiment/(?P<pk>\d+)/delete/$',
+        views.ExperimentDelete.as_view(), name="experiment_delete"),
+    url(r'report/$', reports.some_view, name="test_report"),
     ]

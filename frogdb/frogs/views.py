@@ -6,8 +6,9 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.views import generic
 from django.utils import timezone
 from django.template import Context, Template
-from .models import Permit, Frog, Operation, Transfer
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
+from .forms import PermitForm, FrogForm, FrogDeathForm, \
+    FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm
 
 ## Index page
 class IndexView(generic.ListView):
@@ -152,6 +153,22 @@ class FrogDisposal(generic.UpdateView):
     def get_success_url(self):
         return reverse('frogs:frog_detail', args=[self.object.id])
 
+class FrogAttachment(generic.CreateView):
+    model = FrogAttachment
+    form_class = FrogAttachmentForm
+    context_object_name = 'frog'
+    template_name = 'frogs/frogupload.html'
+
+
+    def get_success_url(self):
+        return reverse('frogs:frog_detail', args=[self.object.frogid])
+
+    def get_initial(self):
+        fid = self.kwargs.get('frogid')
+        print('DEBUG: FROGID=', fid)
+        frog = Frog.objects.get(pk=fid)
+        return {'frogid': frog}
+
 ########## OPERATIONS ############################################
 class OperationSummary(generic.ListView):
     template_name = 'frogs/operationsummary.html'
@@ -220,7 +237,10 @@ class TransferList(generic.ListView):
     context_object_name = 'transfer_list'
 
     def get_queryset(self):
-        return Transfer.objects.order_by('-transfer_date')
+        if (self.kwargs.get('operationid')):
+            return Transfer.objects.filter(operationid=self.kwargs.get('operationid'))
+        else:
+            return Transfer.objects.order_by('-transfer_date')
 
 class TransferDetail(generic.DetailView):
     model = Transfer
@@ -254,3 +274,48 @@ class TransferUpdate(generic.UpdateView):
 class TransferDelete(generic.DeleteView):
     model = Transfer
     success_url = reverse_lazy("frogs:transfer_list")
+
+########## EXPERIMENTS ############################################
+class ExperimentList(generic.ListView):
+    template_name = 'frogs/experiment_list.html'
+    context_object_name = 'expt_list'
+
+    def get_queryset(self):
+        if (self.kwargs.get('transferid')):
+            return Experiment.objects.filter(transferid=self.kwargs.get('transferid'))
+        else:
+            return Experiment.objects.order_by('-transferid')
+
+class ExperimentDetail(generic.DetailView):
+    model = Experiment
+    context_object_name = 'expt'
+
+    def get_context_data(self, **kwargs):
+        context = super(ExperimentDetail, self).get_context_data(**kwargs)
+        return context
+
+class ExperimentCreate(generic.CreateView):
+    model = Experiment
+    template_name = 'frogs/transfercreate.html'
+    form_class = ExperimentForm
+
+    def get_initial(self):
+        opid = self.kwargs.get('transferid')
+        op = Transfer.objects.get(pk=opid)
+        location = op.transferapproval.tfr_to
+        return {'transferid': op, 'expt_location': location}
+
+    def get_success_url(self):
+        return reverse('frogs:experiment_detail', args=[self.object.id])
+
+class ExperimentUpdate(generic.UpdateView):
+    model = Experiment
+    form_class = ExperimentForm
+    template_name = 'frogs/experiment_create.html'
+
+    def get_success_url(self):
+        return reverse('frogs:experiment_detail', args=[self.object.id])
+
+class ExperimentDelete(generic.DeleteView):
+    model = Experiment
+    success_url = reverse_lazy("frogs:experiment_list")

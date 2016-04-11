@@ -1,0 +1,65 @@
+{% extends "frogs/base.html" %}{% load inplace_edit %}
+{% block title %}Experiments{% endblock %}
+{% block content %}
+<div class="container">
+<div class="page-header"><h2>Experiments</h2></div>
+
+{% if expt_list %}
+<input id="filterTable-input" data-type="search"/>
+<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive table table-hover">
+  <thead>
+    <tr>
+        <th>Date Received</th>
+        <th>Frog ID</th>
+        <th>Species</th>
+        <th>Volume Received</th>
+        <th>Volume Transferred</th>
+        <th>Volume Used</th>
+        <th>Experiments from</th>
+        <th>Experiments to</th>
+        <th>Disposed</th>
+        <th>Disposal Date</th>
+        <th>Solid/Liquid</th>
+        <th>Indicator Checked</th>
+        <th>Program Checked</th>
+    </tr>
+  </thead>
+  <tbody>{% for expt in expt_list %}
+    <tr>
+        <td>{{expt.transferid.transfer_date|date:"d-M-Y"}}</td>
+        <td>{{expt.transferid.operationid.frogid.frogid|force_escape}}</td>
+        <td>{{expt.transferid.operationid.frogid.get_species_display}}</td>
+        <td>{{expt.received}}</td>
+        <td>{{expt.transferred}}</td>
+        <td>{{expt.used}}</td>
+        <td>{{expt.expt_from|date:"d-M-Y"}}</td>
+        <td>{{expt.expt_to|date:"d-M-Y"}}</td>
+        <td>{% inplace_edit "expt.expt_disposed" %}</td>
+        <td>{{expt.disposal_date|date:"d-M-Y"}}</td>
+        <td>{% inplace_edit "expt.waste_type" %}</td>
+        <td>{% inplace_edit "expt.autoclave_indicator" %}</td>
+        <td>{% inplace_edit "expt.autoclave_complete" %}</td>
+
+        <td>
+          <a href="#popupMenu_{{ expt.id }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+          <div id="popupMenu_{{ expt.id }}" data-history="false" data-role="popup" data-theme="b">
+              <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                <li data-role="list-divider">Choose an action</li>
+                <li>
+                    <a href="{% url 'frogs:experiment_detail' expt.id %}">View details</a>
+                </li>
+                <li>
+                    <a href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
+                </li>
+                <li>
+                    <a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
+                </li>
+
+              </ul>
+            </div>
+        </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}
+    </div>
+{% endblock %}

@@ -11,10 +11,11 @@ LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
                  ('disposed_oh', 'Disposed of at Otto Hirschfeld Animal House'))
 DEATHTYPES = (('culled', 'Culled'), ('found', "Found dead"), ('alive', 'Not dead'))
 #QAP_LIST = (('AIBN','Q1629 (QC1)'), ('QBI', 'Q1881 (QC1)'), ('IMB L2', 'Q1695 (QC2)'))
-WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'))
+WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'), ('solid_liquid','Solid/Liquid'))
 SUPPLIER_LIST=(('nasco','NASCO'),('xenopus','Xenopus One'), ('uq','UQ'))
 COUNTRY_LIST=(('usa','USA'),('australia','Australia'))
 GENDERS=(('female','Female'),('male','Male'))
+IMAGETYPES=(('dorsal','Dorsal'),('ventral','Ventral'))
 # DB list models
 
 
@@ -93,6 +94,17 @@ class Frog(models.Model):
         nextop = lastop + datetime.timedelta(6 * 365 / 12)
         return nextop
 
+
+class FrogAttachment(models.Model):
+    frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
+    imgfile = models.ImageField(verbose_name="Image")
+    imagetype = models.CharField(_("Type"), max_length=10, choices=IMAGETYPES)
+    description = models.CharField(_("Description"), max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.imagetype
+
+
 class Operation(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
     opnum = models.IntegerField(_("Operation Number"), default=1)
@@ -142,10 +154,15 @@ class Transfer(models.Model):
     method = models.CharField(_("Method"), max_length=120)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.get_verbose())
 
     def maxvol(self):
         return self.operationid.volume
+
+    # Return string with from-to
+    def get_verbose(self):
+        verbose = "Frog %s: from operation %d on %s (total %d ml)" % (self.operationid.frogid, self.operationid.opnum, self.operationid.opdate, self.operationid.volume)
+        return verbose
 
     def clean(self):
         max = self.maxvol()
@@ -153,21 +170,21 @@ class Transfer(models.Model):
             raise ValidationError("Can only transfer maximum %d ml" % max)
 
 class Experiment(models.Model):
-    frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
+    transferid = models.ForeignKey(Transfer, on_delete=models.CASCADE, verbose_name="Oocyte source")
     received = models.SmallIntegerField("Oocytes received (ml)")
     transferred = models.SmallIntegerField("Oocytes transferred (ml)")
     used = models.SmallIntegerField("Oocytes used (ml)")
     expt_from = models.DateField("Experiments from")
     expt_to = models.DateField("Experiments to")
-    expt_location = models.CharField(_("Experiment location"), max_length=80)
-    expt_disposed = models.BooleanField(_("Disposed"))
-    disposal_sentby = models.CharField(_("Disposal sent by initials"), max_length=30)
-    disposal_date = models.DateField("Disposal date")
-    waste_type = models.CharField(_("Type of waste"), max_length=30, choices=WASTETYPES)
-    waste_content = models.CharField(_("Waste content"), max_length=30)
-    waste_qty = models.SmallIntegerField(_("Waste quantity"))
-    autoclave_indicator = models.BooleanField("Autoclave indicator")
-    autoclave_complete = models.BooleanField("Autoclave complete")
+    expt_location = models.ForeignKey(Qap, verbose_name="Experiment Location", related_name="expt_location")
+    expt_disposed = models.BooleanField(_("Disposed"), default=False)
+    disposal_sentby = models.CharField(_("Disposal sent by initials"), max_length=30, blank=True,null=True)
+    disposal_date = models.DateField("Disposal date", blank=True,null=True)
+    waste_type = models.CharField(_("Type of waste"), max_length=30, choices=WASTETYPES, blank=True,null=True)
+    waste_content = models.CharField(_("Waste content"), max_length=30, blank=True,null=True)
+    waste_qty = models.SmallIntegerField(_("Waste quantity"), blank=True, null=True)
+    autoclave_indicator = models.BooleanField("Autoclave indicator", default=False)
+    autoclave_complete = models.BooleanField("Autoclave complete", default=False)
 
     def __str__(self):
         return self.used

@@ -1,0 +1,96 @@
+{% extends "frogs/base.html" %}{% block content %}{% load inplace_edit %}
+<div class="container">
+    <div class="page-header"><h2>View Experiment Details</h2>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <table id="view-table" class="ui-responsive table table-hover">
+                <tbody>
+                <tr>
+                    <th>Frog ID</th>
+                    <td>{{expt.transferid.operationid.frogid|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Species</th>
+                    <td>{{expt.transferid.operationid.frogid.get_species_display|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Oocytes volume received (ml)</th>
+                    <td>{{expt.received|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Oocytes volume transferred (ml)</th>
+                    <td>{{expt.transferred|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Oocytes volume used (ml)</th>
+                    <td>{{expt.used|force_escape}}</td>
+                </tr>
+                <tr>
+                    <th>Experiment From</th>
+                    <td>{{expt.expt_from|date:"d-M-Y"}}</td>
+                </tr>
+                <tr>
+                    <th>Experiment To</th>
+                    <td>{{expt.expt_to|date:"d-M-Y"}}</td>
+                </tr>
+                <tr>
+                    <th>Experiment Location</th>
+                    <td>{{expt.expt_location}}</td>
+                </tr>
+                <tr>
+                    <th>Disposed of</th>
+                    <td>{% inplace_edit "expt.expt_disposed" %}</td>
+                </tr>
+                <tr>
+                    <th>Disposal sent by</th>
+                    <td>{{expt.disposal_sentby}}</td>
+                </tr>
+                 <tr>
+                    <th>Disposal date</th>
+                    <td>{{expt.disposal_date|date:"d-M-Y"}}</td>
+                </tr>
+                <tr>
+                    <th>Waste type</th>
+                    <td>{{expt.get_waste_type_display}}</td>
+                </tr>
+                <tr>
+                    <th>Waste content</th>
+                    <td>{{expt.waste_content}}</td>
+                </tr>
+                <tr>
+                    <th>Waste quantity</th>
+                    <td>{{expt.waste_qty}}</td>
+                </tr>
+                <tr>
+                    <th>Autoclave indicator</th>
+                    <td>{% inplace_edit "expt.autoclave_indicator" %}</td>
+                </tr>
+                <tr>
+                    <th>Autoclave complete</th>
+                    <td>{% inplace_edit "expt.autoclave_complete" %}</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="col-md-4 rightpanel">
+        <table id="sidemenu" class="ui-responsive table">
+            <tr>
+                <td>
+                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                        <li data-role="list-divider">Choose an action</li>
+                        <li><a href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
+                        </li>
+                        <li><a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
+                        </li>
+                        <li><a href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>{% endblock %}

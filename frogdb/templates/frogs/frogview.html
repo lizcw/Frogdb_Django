@@ -40,7 +40,7 @@
         </div>
 
         <div data-role="collapsible" class="well">
-            <h2>Operations</h2>
+            <h2>Operations <span class="badge">{{frog.operation_set.count}}</span></h2>
             <table id="ops-table" data-role="table" class="ui-responsive table table-hover">
                 <thead>
                 <tr>
@@ -70,12 +70,15 @@
                                 </li>
                                 <li><a href="{% url 'frogs:operation_delete' operation.id %}">Delete</a>
                                 </li>
-                                <li><a href="{% url 'frogs:transfer_create' operation.id %}">Transfer</a>
+                                <li><a href="{% url 'frogs:transfer_create' operation.id %}">Create Transfer</a>
+                                </li>
+                                <li><a href="{% url 'frogs:transfer_list_byop' operation.id %}">View Transfers <span class="badge">{{operation.transfer_set.count}}</span></a>
                                 </li>
                             </ul>
                         </div>
                     </td>
                 </tr>
+
                 {% endfor %}
                 </tbody>
             </table>
@@ -132,6 +135,8 @@
                     <ul data-role="listview" data-inset="true" style="min-width:210px;">
                         <li data-role="list-divider">Choose an action</li>
                         <li><a href="{% url 'frogs:frog_update' frog.id %}">Edit</a>
+                        </li>
+                        <li><a href="{% url 'frogs:frog_upload' frog.id %}">Images</a>
                         </li>
                         <li><a href="{% url 'frogs:operation_create' frog.id %}">Operation</a>
                         </li>

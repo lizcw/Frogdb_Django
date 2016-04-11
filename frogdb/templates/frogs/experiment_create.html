@@ -1,18 +1,21 @@
 {% extends "frogs/base.html" %}{% block content %}
 <div class="container">
     <div class="page-header">
-        <h1>Upload frog images for Frog ID {{frog.frogid|escape}}</h1>
+        {% if form.is_bound %}
+        <h2>Edit Experiment Details</h2>
+        {% else %}
+        <h2>New Experiment Details</h2>
+        {% endif %}
     </div>
-
     <div class="row col-md-6">
         <div class="well">
-            <form role="form" method="POST" enctype="multipart/form-data" data-ajax="false">
+            <form id="frog-edit" method="POST" role="form" class="post-form ui-responsive">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="save btn btn-default">Upload Images</button>
+                <button type="submit" class="save btn btn-default">Save</button>
                 <button type="button" class="btn" onclick="javascript:history.back();return false;">Cancel</button>
-
             </form>
         </div>
-    </div></div>
-    {% endblock %}
+    </div>
+</div>
+{% endblock %}

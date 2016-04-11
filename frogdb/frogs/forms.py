@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
-from django.forms import ModelForm, DateInput
-from .models import Permit, Frog, Operation, Transfer
+from django.forms import ModelForm, DateInput, ImageField
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
 
 
 class LoginForm(AuthenticationForm):
@@ -90,6 +90,18 @@ class FrogDisposalForm(ModelForm):
         }
 
 
+class FrogAttachmentForm(ModelForm):
+    class Meta:
+        model = FrogAttachment
+        fields = ('frogid',
+                  'imagetype',
+                  'imgfile'
+                  )
+        widgets = {
+            'imgfile': ImageField()
+        }
+
+
 class OperationForm(ModelForm):
     class Meta:
         model = Operation
@@ -124,3 +136,42 @@ class TransferForm(ModelForm):
                            'placeholder': 'Select a date'}
                                 ),
         }
+
+class ExperimentForm(ModelForm):
+    class Meta:
+        model = Experiment
+        waste_type = forms.SelectMultiple()
+        fields = ('transferid',
+                  'received',
+                  'transferred',
+                  'used',
+                  'expt_from',
+                  'expt_to',
+                  'expt_location',
+                  'expt_disposed',
+                  'disposal_sentby',
+                  'disposal_date',
+                  'waste_type',
+                  'waste_content',
+                  'waste_qty',
+                  'autoclave_indicator',
+                  'autoclave_complete')
+        widgets = {
+            'disposal_date': DateInput(format=('%Y-%m-%d'),
+                    attrs={'class': 'myDateClass',
+                           'type': 'date',
+                           'placeholder': 'Select a date'}
+                                ),
+
+            'expt_from': DateInput(format=('%Y-%m-%d'),
+                   attrs={'class': 'myDateClass',
+                          'type': 'date',
+                          'placeholder': 'Select a date'}
+                   ),
+
+            'expt_to': DateInput(format=('%Y-%m-%d'),
+                    attrs = {'class': 'myDateClass',
+                             'type': 'date',
+                             'placeholder': 'Select a date'}
+                    )
+            }

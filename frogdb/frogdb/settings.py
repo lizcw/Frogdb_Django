@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'inplaceeditform_bootstrap',  # it is very important that this app is before that inplaceeditform and inplaceeditform_extra_fields
+    'inplaceeditform',
+    # 'inplaceeditform_extra_fields',   this is optional but recommended
+    'bootstrap3_datetime', # this is optional but recommended
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -127,3 +131,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL ='/frogs/home/'
 LOGIN_URL ='/frogs/'
+
+# Optional, but recommended
+
+ADAPTOR_INPLACEEDIT = {}
+if 'inplaceeditform_extra_fields' in INSTALLED_APPS:
+    ADAPTOR_INPLACEEDIT['tiny'] = 'inplaceeditform_extra_fields.fields.AdaptorTinyMCEField'
+    # You can add the other adaptors of inplaceeditform_extra_fields
+    # https://pypi.python.org/pypi/django-inplaceedit-extra-fields#installation
+if 'bootstrap3_datetime' in INSTALLED_APPS:
+    ADAPTOR_INPLACEEDIT['date'] = 'inplaceeditform_bootstrap.fields.AdaptorDateBootStrapField'
+    ADAPTOR_INPLACEEDIT['datetime'] = 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField'
+
+INPLACEEDIT_EDIT_TOOLTIP_TEXT = 'Please doubleclick to edit'
