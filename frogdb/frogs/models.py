@@ -29,11 +29,11 @@ class Qap(models.Model):
 
 # DB models
 class Permit(models.Model):
-    qen = models.CharField(_("QEN"), max_length=20, unique=True)
-    arrival_date = models.DateField(_("Arrival date"))
     aqis = models.CharField(_("AQIS"), max_length=20)
+    qen = models.CharField(_("QEN"), max_length=20, unique=True)
     females = models.IntegerField(_("Females"), default=0)
     males = models.IntegerField(_("Males"), default=0)
+    arrival_date = models.DateField(_("Arrival date"))
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
     supplier = models.CharField(_("Supplier"), max_length=30, choices=SUPPLIER_LIST)
     country = models.CharField(_("Country"), max_length=30, choices=COUNTRY_LIST)
@@ -50,7 +50,7 @@ class Permit(models.Model):
 
 
 class Frog(models.Model):
-    qen = models.ForeignKey(Permit, on_delete=models.CASCADE)
+
     frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
     tankid = models.IntegerField(_("Tank ID"), default=0)
     gender = models.CharField(_("Gender"), max_length=10, default="female", choices=GENDERS)
@@ -58,8 +58,9 @@ class Frog(models.Model):
     current_location = models.CharField(_("Current Location"), max_length=80, choices=LOCATION_LIST)
     condition = models.CharField(_("Oocyte Health Condition"), max_length=100, null=True, blank=True)
     remarks = models.TextField(_("General Remarks"),null=True, blank=True)
+    qen = models.ForeignKey(Permit, verbose_name="QEN", on_delete=models.CASCADE)
     aec = models.CharField(_("AEC"), max_length=80,null=True, blank=True)
-    death = models.CharField(_("Type of Death"), max_length=10, null=True, blank=True, choices=DEATHTYPES)
+    death = models.CharField(_("Death"), max_length=10, null=True, blank=True, choices=DEATHTYPES)
     death_date = models.DateField("Date of Death", null=True, blank=True)
     death_initials = models.CharField(_("Initials"), max_length=10, null=True, blank=True)
     disposed = models.BooleanField(_("Disposed"), default=False)
@@ -78,6 +79,9 @@ class Frog(models.Model):
         return now - datetime.timedelta(days=1) <= self.death_date <= now
 
     # derived fields
+    def get_operations(self):
+        return self.operation_set.order_by('opnum')
+
     def last_operation(self):
         totalops = self.operation_set.count()
         lastop = None
@@ -94,6 +98,19 @@ class Frog(models.Model):
         nextop = lastop + datetime.timedelta(6 * 365 / 12)
         return nextop
 
+    def dorsalimage(self):
+        return self.get_image('dorsal')
+
+    def ventralimage(self):
+        return self.get_image('ventral')
+
+    def get_image(self,type):
+        img = None
+        if (self.frogattachment_set.count() > 0):
+            imgs = self.frogattachment_set.filter(imagetype=type)
+            if imgs.count() > 0:
+                img = imgs[0]
+        return img
 
 class FrogAttachment(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
@@ -103,6 +120,19 @@ class FrogAttachment(models.Model):
 
     def __str__(self):
         return self.imagetype
+
+    def clean(self):
+        #Check if replacing an image or new
+        #Get frog - get images - get type
+        frog = Frog.objects.get(pk=self.frogid.pk)
+        dorsal = frog.dorsalimage()
+        ventral = frog.ventralimage()
+        if dorsal is not None and self.imagetype =='dorsal':
+            dorsal.delete()
+        elif ventral is not None and self.imagetype =='ventral':
+            ventral.delete()
+
+            #raise ValidationError("Can only transfer maximum %d ml" % max)
 
 
 class Operation(models.Model):
@@ -188,8 +218,6 @@ class Experiment(models.Model):
 
     def __str__(self):
         return self.used
-
-
 
 
 # class Supplier(models.Model):

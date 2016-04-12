@@ -1,0 +1,12 @@
+{% extends "frogs/base.html" %}
+{% block title %}Frogs{% endblock %}
+{% block content %}{% load django_tables2 %}
+<div class="container">
+<div class="page-header"><h2>Frogs</h2></div>
+<p><a href="{% url 'frogs:frog_create' %}" class="btn btn-info">Create New Frog</a></p>
+{% if frogs %}
+<input id="filterTable-input" data-type="search"/>
+    {% render_table frogs %}
+{% endif %}
+    </div>
+{% endblock %}

@@ -39,10 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'inplaceeditform_bootstrap',  # it is very important that this app is before that inplaceeditform and inplaceeditform_extra_fields
-    'inplaceeditform',
-    # 'inplaceeditform_extra_fields',   this is optional but recommended
-    'bootstrap3_datetime', # this is optional but recommended
+    'django_tables2',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -129,6 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'frogs/static/media')
 LOGIN_REDIRECT_URL ='/frogs/home/'
 LOGIN_URL ='/frogs/'
 

@@ -1,4 +1,4 @@
-{% extends "frogs/base.html" %}{% block content %}{% load inplace_edit %}
+{% extends "frogs/base.html" %}{% block content %}
 <div class="container">
     <div class="page-header"><h2>View Experiment Details</h2>
     </div>
@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <th>Disposed of</th>
-                    <td>{% inplace_edit "expt.expt_disposed" %}</td>
+                    <td>{{expt.expt_disposed}}</td>
                 </tr>
                 <tr>
                     <th>Disposal sent by</th>
@@ -64,11 +64,11 @@
                 </tr>
                 <tr>
                     <th>Autoclave indicator</th>
-                    <td>{% inplace_edit "expt.autoclave_indicator" %}</td>
+                    <td>{{expt.autoclave_indicator}}</td>
                 </tr>
                 <tr>
                     <th>Autoclave complete</th>
-                    <td>{% inplace_edit "expt.autoclave_complete" %}</td>
+                    <td>{{expt.autoclave_complete}}</td>
                 </tr>
 
                 </tbody>

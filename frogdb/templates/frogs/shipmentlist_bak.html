@@ -1,0 +1,53 @@
+{% extends "frogs/base.html" %}
+{% block title %}Shipments{% endblock %}
+{% block content %}
+<div class="container">
+<div class="page-header"><h2>Shipments</h2></div>
+<p><a href="{% url 'frogs:permit_create' %}" class="btn btn-info">Create New Shipment</a></p>
+{% if shipment_list %}
+<input id="filterTable-input" data-type="search"/>
+<table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input" class="ui-responsive table table-hover">
+  <thead>
+    <tr>
+        <th>AQIS Permit</th>
+        <th>QEN</th>
+        <th>Date of Arrival</th>
+        <th>Species</th>
+        <th>Country</th>
+        <th>Supplier</th>
+        <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>{% for shipment in shipment_list %}
+    <tr>
+        <td>{{shipment.aqis|force_escape}}</td>
+        <td>{{shipment.qen|force_escape}}</td>
+        <td>{{shipment.arrival_date|date:"d-M-Y"}}</td>
+        <td>{{shipment.get_species_display}}</td>
+        <td>{{shipment.get_country_display|force_escape}}</td>
+        <td>{{shipment.get_supplier_display|force_escape}}</td>
+        <td>
+          <a href="#popupMenu_{{ shipment.id }}" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+          <div id="popupMenu_{{ shipment.id }}" data-history="false" data-role="popup" data-theme="b">
+              <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                <li data-role="list-divider">Choose an action</li>
+                <li>
+                    <a href="{% url 'frogs:permit_detail' shipment.id %}">View details</a>
+                </li>
+                <li>
+                    <a href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
+                </li>
+                <li>
+                    <a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
+                </li>
+                <li>
+                    <a href="#">View Frogs</a>
+                </li>
+              </ul>
+            </div>
+        </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endif %}
+    </div>
+{% endblock %}

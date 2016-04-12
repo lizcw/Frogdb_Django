@@ -91,14 +91,17 @@ class FrogDisposalForm(ModelForm):
 
 
 class FrogAttachmentForm(ModelForm):
+    imgfile = forms.ImageField()
+
     class Meta:
         model = FrogAttachment
         fields = ('frogid',
                   'imagetype',
-                  'imgfile'
+                  'imgfile',
+                  'description',
                   )
         widgets = {
-            'imgfile': ImageField()
+            'imgfile': forms.FileInput()
         }
 
 

@@ -6,9 +6,10 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.views import generic
 from django.utils import timezone
 from django.template import Context, Template
+from django_tables2 import RequestConfig
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
-from .forms import PermitForm, FrogForm, FrogDeathForm, \
-    FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm
+from .tables  import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable
 
 ## Index page
 class IndexView(generic.ListView):
@@ -72,12 +73,13 @@ def loginfrogdb(request):
 
 #### PERMITS/SHIPMENTS
 class PermitList(generic.ListView):
-    template_name = 'frogs/shipmentlist.html'
+    template_name = 'frogs/shipment_list.html'
     context_object_name = 'shipment_list'
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return Permit.objects.order_by('-arrival_date')
+        table = PermitTable(Permit.objects.order_by('-arrival_date'))
+        RequestConfig(self.request).configure(table)
+        return table
 
 class PermitDetail(generic.DetailView):
     model = Permit
@@ -104,11 +106,13 @@ class PermitDelete(generic.DeleteView):
 
 ########## FROGS ############################################
 class FrogList(generic.ListView):
-    template_name = 'frogs/froglist.html'
+    template_name = 'frogs/frog_list.html'
     context_object_name = 'frogs'
 
     def get_queryset(self):
-        return Frog.objects.order_by('-frogid')
+        table = FrogTable(Frog.objects.order_by('-frogid'))
+        RequestConfig(self.request).configure(table)
+        return table
 
 class FrogDetail(generic.DetailView):
     model = Frog
@@ -161,7 +165,7 @@ class FrogAttachment(generic.CreateView):
 
 
     def get_success_url(self):
-        return reverse('frogs:frog_detail', args=[self.object.frogid])
+        return reverse('frogs:frog_detail', args=[self.object.frogid.pk])
 
     def get_initial(self):
         fid = self.kwargs.get('frogid')
@@ -171,15 +175,19 @@ class FrogAttachment(generic.CreateView):
 
 ########## OPERATIONS ############################################
 class OperationSummary(generic.ListView):
-    template_name = 'frogs/operationsummary.html'
+    template_name = 'frogs/operation_summary.html'
     context_object_name = 'summaries'
 
     def get_queryset(self):
         #Get Operations first
         ops = Operation.objects.all().values_list('frogid')
-        print('DEBUG: ops=', ops)
-        #TODO Add species filter
-        return Frog.objects.filter(id__in=ops).order_by('-frogid')
+        if (self.kwargs.get('species')):
+            table = OperationTable(Frog.objects.filter(id__in=ops).order_by('-frogid'))
+        else:
+            table = OperationTable(Frog.objects.filter(id__in=ops).order_by('-frogid'))
+
+        RequestConfig(self.request).configure(table)
+        return table
 
 class OperationDetail(generic.DetailView):
     model = Operation
@@ -233,14 +241,16 @@ class OperationDelete(generic.DeleteView):
 
 ########## TRANSFERS ############################################
 class TransferList(generic.ListView):
-    template_name = 'frogs/transferlist.html'
+    template_name = 'frogs/transfer_list.html'
     context_object_name = 'transfer_list'
 
     def get_queryset(self):
         if (self.kwargs.get('operationid')):
-            return Transfer.objects.filter(operationid=self.kwargs.get('operationid'))
+            table = TransferTable(Transfer.objects.filter(operationid=self.kwargs.get('operationid')))
         else:
-            return Transfer.objects.order_by('-transfer_date')
+            table = TransferTable(Transfer.objects.order_by('-transfer_date'))
+        RequestConfig(self.request).configure(table)
+        return table
 
 class TransferDetail(generic.DetailView):
     model = Transfer
@@ -280,11 +290,15 @@ class ExperimentList(generic.ListView):
     template_name = 'frogs/experiment_list.html'
     context_object_name = 'expt_list'
 
+
     def get_queryset(self):
+        table = None
         if (self.kwargs.get('transferid')):
-            return Experiment.objects.filter(transferid=self.kwargs.get('transferid'))
+            table = ExperimentTable(Experiment.objects.filter(transferid=self.kwargs.get('transferid')))
         else:
-            return Experiment.objects.order_by('-transferid')
+            table = ExperimentTable(Experiment.objects.order_by('-transferid'))
+        RequestConfig(self.request).configure(table)
+        return table
 
 class ExperimentDetail(generic.DetailView):
     model = Experiment
@@ -319,3 +333,12 @@ class ExperimentUpdate(generic.UpdateView):
 class ExperimentDelete(generic.DeleteView):
     model = Experiment
     success_url = reverse_lazy("frogs:experiment_list")
+
+class DisposalList(generic.ListView):
+    template_name = 'frogs/disposal_list.html'
+    context_object_name = 'expt_list'
+
+    def get_queryset(self):
+        table = DisposalTable(Experiment.objects.filter(expt_disposed=False).order_by('-expt_to'))
+        RequestConfig(self.request).configure(table)
+        return table

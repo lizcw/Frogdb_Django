@@ -69,5 +69,7 @@ urlpatterns = [
         views.ExperimentUpdate.as_view(), name="experiment_update"),
     url(r'^experiment/(?P<pk>\d+)/delete/$',
         views.ExperimentDelete.as_view(), name="experiment_delete"),
+    url(r'^disposal/list/$',
+        views.DisposalList.as_view(), name="disposal_list"),
     url(r'report/$', reports.some_view, name="test_report"),
     ]

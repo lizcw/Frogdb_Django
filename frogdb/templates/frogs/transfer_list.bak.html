@@ -1,0 +1,61 @@
+{% extends "frogs/base.html" %}{% block title %}Transfers{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header"><h2>Transfers</h2></div>
+    {% if transfer_list %}
+    <input id="filterTable-input" data-type="search"/>
+    <table id="movie-table" data-role="table" data-filter="true" data-input="#filterTable-input"
+           class="ui-responsive table table-hover">
+        <thead>
+        <tr>
+            <th>Frog ID</th>
+            <th>Species</th>
+            <th>QEN</th>
+            <th>Oocytes carried</th>
+            <th>Transported by</th>
+            <th>Method</th>
+            <th>Transfer date</th>
+            <th>Transported from</th>
+            <th>Transported to</th>
+            <th>Transfer Approval SOP</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>{% for transfer in transfer_list %}
+        <tr>
+            <td>{{transfer.operationid.frogid|force_escape}}</td>
+            <td>{{transfer.operationid.frogid.get_species_display}}</td>
+            <td>{{transfer.operationid.frogid.qen|force_escape}}</td>
+            <td>{{transfer.volume}}</td>
+            <td>{{transfer.transporter}}</td>
+            <td>{{transfer.method}}</td>
+            <td>{{transfer.transfer_date|date:"d-M-Y"}}</td>
+            <td>{{transfer.transferapproval.tfr_from}}</td>
+            <td>{{transfer.transferapproval.tfr_to}}</td>
+            <td>{{transfer.transferapproval.sop}}</td>
+            <td>
+                <a href="#popupMenu_{{ shipment.id }}" data-rel="popup" data-transition="slideup"
+                   class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">...</a>
+                <div id="popupMenu_{{ shipment.id }}" data-history="false" data-role="popup" data-theme="b">
+                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
+                        <li data-role="list-divider">Choose an action</li>
+                        <li>
+                            <a href="{% url 'frogs:transfer_detail' transfer.id %}">View details</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'frogs:transfer_update' transfer.id %}">Edit</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'frogs:transfer_delete' transfer.id %}">Delete</a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No transfers in database</p>
+    {% endif %}
+</div>{% endblock %}

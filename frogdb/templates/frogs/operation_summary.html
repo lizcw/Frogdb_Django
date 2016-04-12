@@ -1,0 +1,12 @@
+{% extends "frogs/base.html" %}{% block title %}Operations{% endblock %}{% load render_table from django_tables2 %}
+{% block content %}
+<div class="container">
+    <div class="page-header"><h2>Operations summary</h2></div>
+
+    {% if summaries %}
+    <input id="filterTable-input" data-type="search"/>
+    {% render_table summaries %}
+    {% else %}
+    <p>No operations in database</p>
+    {% endif %}
+</div>{% endblock %}
