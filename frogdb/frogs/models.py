@@ -220,15 +220,52 @@ class Experiment(models.Model):
         return self.used
 
 
-# class Supplier(models.Model):
-#     name = models.CharField(_("Name"))
-#
-#     def __str__(self):
-#         return self.name
-#
-#
-# class Country(models.Model):
-#     name = models.CharField(_("Name"))
-#
-#     def __str__(self):
-#         return self.name
+class Supplier(models.Model):
+    name = models.CharField(_("Name"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Country(models.Model):
+    name = models.CharField(_("Name"), max_length=60)
+    code = models.CharField(_("Code"), max_length=5)
+
+    def __str__(self):
+        return self.name
+
+
+class Species(models.Model):
+    name = models.CharField(_("Species"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Imagetype(models.Model):
+    name = models.CharField(_("Image Type"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Wastetype(models.Model):
+    name = models.CharField(_("Waste Type"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Location(models.Model):
+    name = models.CharField(_("Current Location"), max_length=100)
+    brief = models.CharField(_("Abbreviation"), max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class Deathtype(models.Model):
+    name = models.CharField(_("Death Type"), max_length=100)
+
+    def __str__(self):
+        return self.name

@@ -35,7 +35,7 @@ urlpatterns = [
         views.FrogDisposal.as_view(), name="frog_disposal"),
     url(r'^frog/upload/(?P<frogid>\w+)/$',
         views.FrogAttachment.as_view(), name="frog_upload"),
-    url(r'^operation/summary/$',
+    url(r'^operation/summary/(?P<species>\w+(?:\.\w+)?)?/$',
         views.OperationSummary.as_view(), name='operation_summary'),
     url(r'^operation/create/(?P<frogid>\w+)/$',
         views.OperationCreate.as_view(), name="operation_create"),

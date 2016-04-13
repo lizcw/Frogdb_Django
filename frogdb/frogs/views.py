@@ -2,13 +2,15 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
 from django.views import generic
 from django.utils import timezone
 from django.template import Context, Template
 from django_tables2 import RequestConfig
+
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm
+    #, BatchExptDisposalForm
 from .tables  import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable
 
 ## Index page
@@ -78,7 +80,7 @@ class PermitList(generic.ListView):
 
     def get_queryset(self):
         table = PermitTable(Permit.objects.order_by('-arrival_date'))
-        RequestConfig(self.request).configure(table)
+        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         return table
 
 class PermitDetail(generic.DetailView):
@@ -111,7 +113,7 @@ class FrogList(generic.ListView):
 
     def get_queryset(self):
         table = FrogTable(Frog.objects.order_by('-frogid'))
-        RequestConfig(self.request).configure(table)
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
 class FrogDetail(generic.DetailView):
@@ -178,16 +180,26 @@ class OperationSummary(generic.ListView):
     template_name = 'frogs/operation_summary.html'
     context_object_name = 'summaries'
 
+
     def get_queryset(self):
         #Get Operations first
         ops = Operation.objects.all().values_list('frogid')
-        if (self.kwargs.get('species')):
-            table = OperationTable(Frog.objects.filter(id__in=ops).order_by('-frogid'))
-        else:
-            table = OperationTable(Frog.objects.filter(id__in=ops).order_by('-frogid'))
-
-        RequestConfig(self.request).configure(table)
+        self.species = self.kwargs.get('species')
+        print('DEBUG:OPS BY SPECIES=', self.species)
+        #Get queryset
+        #qs = super(OperationSummary, self).get_queryset()
+        qs = Frog.objects.all()
+        qs = qs.filter(id__in=ops).order_by('-frogid')
+        if (self.species is not None and self.species != 'all'):
+            qs = qs.filter(species=self.species.lower())
+            print('DEBUG:BY species=', qs.count())
+        table = OperationTable(qs)
+        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         return table
+
+    def get_success_url(self):
+        return reverse('frogs:operation_summary', args=[self.species])
+
 
 class OperationDetail(generic.DetailView):
     model = Operation
@@ -249,7 +261,7 @@ class TransferList(generic.ListView):
             table = TransferTable(Transfer.objects.filter(operationid=self.kwargs.get('operationid')))
         else:
             table = TransferTable(Transfer.objects.order_by('-transfer_date'))
-        RequestConfig(self.request).configure(table)
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
 class TransferDetail(generic.DetailView):
@@ -297,7 +309,7 @@ class ExperimentList(generic.ListView):
             table = ExperimentTable(Experiment.objects.filter(transferid=self.kwargs.get('transferid')))
         else:
             table = ExperimentTable(Experiment.objects.order_by('-transferid'))
-        RequestConfig(self.request).configure(table)
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
 class ExperimentDetail(generic.DetailView):
@@ -340,5 +352,19 @@ class DisposalList(generic.ListView):
 
     def get_queryset(self):
         table = DisposalTable(Experiment.objects.filter(expt_disposed=False).order_by('-expt_to'))
-        RequestConfig(self.request).configure(table)
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
+
+# class BatchExptDisposal(generic.FormView):
+#     model = Experiment
+#     form_class = BatchExptDisposalForm
+#     template_name="frogs/batchdisposal_create.html"
+#
+#     def form_valid(self, form):
+#         form.instance.created_by = self.request.user
+#         return super(BatchExptDisposal, self).form_valid(form)
+#
+#     def get_queryset(self):
+#         qs = Experiment.objects.filter(disposed=False)
+#         qs = qs.select_for_update()
+#         return qs

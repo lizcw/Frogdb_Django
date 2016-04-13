@@ -1,9 +1,14 @@
 {% extends "frogs/base.html" %}{% block title %}Operations{% endblock %}{% load render_table from django_tables2 %}
 {% block content %}
 <div class="container">
-    <div class="page-header"><h2>Operations summary</h2></div>
-
+    <div class="page-header"><h2>Operations summary: {{ species }} </h2></div>
     {% if summaries %}
+    <ul class="nav nav-pills">
+        <li class="active"><a data-toggle="pill" href="{% url 'frogs:operation_summary' 'all' %}">All</a></li>
+        <li><a data-toggle="pill" href="{% url 'frogs:operation_summary' 'X.borealis' %}">X.borealis</a></li>
+        <li><a data-toggle="pill" href="{% url 'frogs:operation_summary' 'X.laevis' %}">X.laevis</a></li>
+    </ul>
+
     <input id="filterTable-input" data-type="search"/>
     {% render_table summaries %}
     {% else %}

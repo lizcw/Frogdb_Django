@@ -28,3 +28,7 @@ footer p{
 input[type=checkbox] {
     margin: 0 !important; /* turn off bootstrap */
 }
+
+.dropdown-menu li a.ui-link{
+    color:blue !important;
+}

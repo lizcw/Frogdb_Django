@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_tables2',
+
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -130,16 +131,3 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frogs/static/media')
 LOGIN_REDIRECT_URL ='/frogs/home/'
 LOGIN_URL ='/frogs/'
-
-# Optional, but recommended
-
-ADAPTOR_INPLACEEDIT = {}
-if 'inplaceeditform_extra_fields' in INSTALLED_APPS:
-    ADAPTOR_INPLACEEDIT['tiny'] = 'inplaceeditform_extra_fields.fields.AdaptorTinyMCEField'
-    # You can add the other adaptors of inplaceeditform_extra_fields
-    # https://pypi.python.org/pypi/django-inplaceedit-extra-fields#installation
-if 'bootstrap3_datetime' in INSTALLED_APPS:
-    ADAPTOR_INPLACEEDIT['date'] = 'inplaceeditform_bootstrap.fields.AdaptorDateBootStrapField'
-    ADAPTOR_INPLACEEDIT['datetime'] = 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField'
-
-INPLACEEDIT_EDIT_TOOLTIP_TEXT = 'Please doubleclick to edit'

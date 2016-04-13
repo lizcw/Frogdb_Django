@@ -86,6 +86,8 @@
                         </li>
                         <li><a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
                         </li>
+                        <li><a href="{% url 'frogs:experiment_disposal' expt.id %}">Disposal</a>
+                        </li>
                         <li><a href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>
                         </li>
                     </ul>

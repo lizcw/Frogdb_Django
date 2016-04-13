@@ -90,6 +90,31 @@ class FrogDisposalForm(ModelForm):
         }
 
 
+# class BatchFrogDisposalForm(ModelForm):
+#     #frogs = Frog.objects.filter(disposed=False)
+#     #frogids = forms.CheckboxSelectMultiple(choices=frogs)
+#     class Meta:
+#         model = Frog
+#         fields = ('frogid',
+#                   'disposed',
+#                   'autoclave_date',
+#                   'autoclave_run',
+#                   'incineration_date'
+#                   )
+#         widgets = {
+#             'autoclave_date': DateInput(format=('%Y-%m-%d'),
+#                                       attrs={'class': 'myDateClass',
+#                                              'type': 'date',
+#                                              'placeholder': 'Select a date'}
+#                                       ),
+#             'incineration_date': DateInput(format=('%Y-%m-%d'),
+#                                         attrs={'class': 'myDateClass',
+#                                                'type': 'date',
+#                                                'placeholder': 'Select a date'}
+#                                         ),
+#         }
+
+
 class FrogAttachmentForm(ModelForm):
     imgfile = forms.ImageField()
 
@@ -178,3 +203,27 @@ class ExperimentForm(ModelForm):
                              'placeholder': 'Select a date'}
                     )
             }
+
+# class BatchExptDisposalForm(ModelForm):
+#     #expts = Experiment.objects.filter(expt_disposed=False)
+#     #exptids = forms.SelectMultiple(choices=expts)
+#     class Meta:
+#         model = Experiment
+#         waste_type = forms.SelectMultiple()
+#         fields = ('id',
+#                   'expt_disposed',
+#                   'disposal_sentby',
+#                   'disposal_date',
+#                   'waste_type',
+#                   'waste_content',
+#                   'waste_qty',
+#                   'autoclave_indicator',
+#                   'autoclave_complete')
+#         widgets = {
+#             'disposal_date': DateInput(format=('%Y-%m-%d'),
+#                     attrs={'class': 'myDateClass',
+#                            'type': 'date',
+#                            'placeholder': 'Select a date'}
+#                                 ),
+#
+#         }

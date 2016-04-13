@@ -11,7 +11,7 @@ class ExperimentTable(tables.Table):
     class Meta:
         model = Experiment
         attrs = {"class": "ui-responsive table table-hover"}
-        fields = ['transfer_date','frogid','species','received','expt_location','transferred','used','expt_from','expt_to','expt_disposed','id']
+        fields = ['transfer_date','frogid','species','expt_location','received','transferred','used','expt_from','expt_to','expt_disposed','id']
 
 
 class DisposalTable(tables.Table):
@@ -21,7 +21,7 @@ class DisposalTable(tables.Table):
     class Meta:
         model = Experiment
         attrs = {"class": "ui-responsive table table-hover"}
-        fields = ['expt_location','disposal_date','qen','frogid','waste_type','waste_content','waste_qty','autoclave_indicator','autoclave_complete','disposal_sentby','id']
+        fields = ['expt_location','qen','frogid','waste_type','waste_content','waste_qty','autoclave_indicator','autoclave_complete','disposal_date','disposal_sentby','id']
 
 
 class TransferTable(tables.Table):
@@ -68,7 +68,3 @@ class OperationTable(tables.Table):
 
         order_by_field = '-next_operation'
         sortable = True
-
-    def define_table(roles):
-        klass = type('DynamicTable', (OperationTable,), attrs)
-        return klass
