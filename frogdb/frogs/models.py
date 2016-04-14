@@ -31,8 +31,8 @@ class Qap(models.Model):
 class Permit(models.Model):
     aqis = models.CharField(_("AQIS"), max_length=20)
     qen = models.CharField(_("QEN"), max_length=20, unique=True)
-    females = models.IntegerField(_("Females"), default=0)
-    males = models.IntegerField(_("Males"), default=0)
+    females = models.PositiveSmallIntegerField(_("Females"), default=0)
+    males = models.PositiveSmallIntegerField(_("Males"), default=0)
     arrival_date = models.DateField(_("Arrival date"))
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
     supplier = models.CharField(_("Supplier"), max_length=30, choices=SUPPLIER_LIST)
@@ -52,7 +52,7 @@ class Permit(models.Model):
 class Frog(models.Model):
 
     frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
-    tankid = models.IntegerField(_("Tank ID"), default=0)
+    tankid = models.PositiveSmallIntegerField(_("Tank ID"), default=0)
     gender = models.CharField(_("Gender"), max_length=10, default="female", choices=GENDERS)
     species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
     current_location = models.CharField(_("Current Location"), max_length=80, choices=LOCATION_LIST)
@@ -65,7 +65,7 @@ class Frog(models.Model):
     death_initials = models.CharField(_("Initials"), max_length=10, null=True, blank=True)
     disposed = models.BooleanField(_("Disposed"), default=False)
     autoclave_date = models.DateField("Autoclave Date", null=True, blank=True)
-    autoclave_run = models.IntegerField(_("Autoclave Run"), default=0, null=True, blank=True)
+    autoclave_run = models.PositiveIntegerField(_("Autoclave Run"), default=0, null=True, blank=True)
     incineration_date = models.DateField(_("Incineration Date"), null=True, blank=True)
 
     def __str__(self):
@@ -115,7 +115,7 @@ class Frog(models.Model):
 class FrogAttachment(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
     imgfile = models.ImageField(verbose_name="Image")
-    imagetype = models.CharField(_("Type"), max_length=10, choices=IMAGETYPES)
+    imagetype = models.CharField(_("Dorsal/Ventral"), max_length=10, choices=IMAGETYPES)
     description = models.CharField(_("Description"), max_length=200, null=True, blank=True)
 
     def __str__(self):
@@ -137,10 +137,10 @@ class FrogAttachment(models.Model):
 
 class Operation(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
-    opnum = models.IntegerField(_("Operation Number"), default=1)
+    opnum = models.PositiveSmallIntegerField(_("Operation Number"), default=1)
     opdate = models.DateField("Operation Date")
     anesthetic = models.CharField(_("Anesthetic"), max_length=30)
-    volume = models.SmallIntegerField("Volume (ml)")
+    volume = models.PositiveSmallIntegerField("Volume (ml)")
     comments = models.TextField("Comments")
     initials = models.CharField(_("Operated by"), max_length=10)
 
@@ -178,7 +178,7 @@ class TransferApproval(models.Model):
 class Transfer(models.Model):
     transferapproval = models.ForeignKey(TransferApproval, verbose_name="Transfer from/to")
     operationid = models.ForeignKey(Operation, verbose_name="Operation", on_delete=models.CASCADE)
-    volume = models.SmallIntegerField("Volume carried (ml)")
+    volume = models.PositiveSmallIntegerField("Volume carried (ml)")
     transfer_date = models.DateField("Transfer date")
     transporter = models.CharField(_("Transporter Name or Initials"), max_length=120)
     method = models.CharField(_("Method"), max_length=120)
@@ -201,9 +201,9 @@ class Transfer(models.Model):
 
 class Experiment(models.Model):
     transferid = models.ForeignKey(Transfer, on_delete=models.CASCADE, verbose_name="Oocyte source")
-    received = models.SmallIntegerField("Oocytes received (ml)")
-    transferred = models.SmallIntegerField("Oocytes transferred (ml)")
-    used = models.SmallIntegerField("Oocytes used (ml)")
+    received = models.PositiveSmallIntegerField("Oocytes received (ml)")
+    transferred = models.PositiveSmallIntegerField("Oocytes transferred (ml)")
+    used = models.PositiveSmallIntegerField("Oocytes used (ml)")
     expt_from = models.DateField("Experiments from")
     expt_to = models.DateField("Experiments to")
     expt_location = models.ForeignKey(Qap, verbose_name="Experiment Location", related_name="expt_location")
@@ -212,7 +212,7 @@ class Experiment(models.Model):
     disposal_date = models.DateField("Disposal date", blank=True,null=True)
     waste_type = models.CharField(_("Type of waste"), max_length=30, choices=WASTETYPES, blank=True,null=True)
     waste_content = models.CharField(_("Waste content"), max_length=30, blank=True,null=True)
-    waste_qty = models.SmallIntegerField(_("Waste quantity"), blank=True, null=True)
+    waste_qty = models.PositiveSmallIntegerField(_("Waste quantity"), blank=True, null=True)
     autoclave_indicator = models.BooleanField("Autoclave indicator", default=False)
     autoclave_complete = models.BooleanField("Autoclave complete", default=False)
 

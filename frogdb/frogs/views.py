@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
@@ -9,7 +10,7 @@ from django.template import Context, Template
 from django_tables2 import RequestConfig
 
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm
     #, BatchExptDisposalForm
 from .tables  import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable
 
@@ -112,7 +113,12 @@ class FrogList(generic.ListView):
     context_object_name = 'frogs'
 
     def get_queryset(self):
-        table = FrogTable(Frog.objects.order_by('-frogid'))
+        if (self.kwargs.get('shipmentid')):
+            sid = self.kwargs.get('shipmentid')
+            shipment = Permit.objects.get(pk=sid)
+            table =FrogTable(Frog.objects.filter(qen=shipment).order_by('-frogid'))
+        else:
+            table = FrogTable(Frog.objects.order_by('-frogid'))
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
@@ -174,6 +180,78 @@ class FrogAttachment(generic.CreateView):
         print('DEBUG: FROGID=', fid)
         frog = Frog.objects.get(pk=fid)
         return {'frogid': frog}
+
+class FrogBulkCreate(generic.FormView):
+    model = Frog
+    form_class = BulkFrogForm
+    template_name = "frogs/create.html"
+    success_url = reverse_lazy("frogs:frog_list")
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        #Frog.objects.bulk_create(bulk_list)
+        #Get shipment: number female/male
+        fid = self.kwargs.get('shipmentid')
+        shipment = Permit.objects.get(pk=fid)
+        females = shipment.females
+        males = shipment.males
+        prefix = form.cleaned_data['prefix']
+        startid = int(form.cleaned_data['startid'])
+        qen = form.cleaned_data['qen']
+        tankid = int(form.cleaned_data['tankid'])
+        species = form.cleaned_data['species']
+        location = form.cleaned_data['current_location']
+        aec = form.cleaned_data['aec']
+        bulk_list=[]
+        #Check initial prefix unique
+        firstfrogid = "%s%d" % (prefix, startid)
+        print('DEBUG: BulkFrog: generating records from ', firstfrogid)
+        #Generate Frog objects
+        for i in range(startid,(startid + females + males)):
+            gender = 'female'
+            if (i > (startid + females)):
+                gender = 'male'
+            frogid = "%s%d" % (prefix, i)
+            frog = Frog()
+            frog.frogid=frogid
+            frog.qen=qen
+            frog.tankid=tankid
+            frog.species=species
+            frog.gender=gender
+            frog.current_location=location
+            frog.condition= ''
+            frog.remarks='auto-generated'
+            frog.aec=aec
+            print('DEBUG:Frog=',frog.frogid)
+            bulk_list.append(frog)
+
+        try:
+            Frog.objects.bulk_create(bulk_list)
+            print('DEBUG: BulkFrog: frogs generated=', len(bulk_list))
+            return super(FrogBulkCreate, self).form_valid(form)
+        except IntegrityError:
+            return super(FrogBulkCreate, self).form_invalid(form)
+
+    def get_initial(self):
+        fid = self.kwargs.get('shipmentid')
+        shipment = Permit.objects.get(pk=fid)
+        print('DEBUG: Shipment qen:', shipment.qen)
+        return {'qen': shipment, 'species': shipment.species}
+
+
+
+class FrogBulkDelete(generic.DeleteView):
+    model = Frog
+    template = 'frogs/bulkfrog_confirm_delete.html'
+    success_url = reverse_lazy("frogs:frog_list")
+
+    def get_queryset(self):
+        print('DEBUG: Delete frogs from Shipment')
+        return Frog.objects.filter(qen=self.kwargs.get('shipmentid'))
+
+
+
 
 ########## OPERATIONS ############################################
 class OperationSummary(generic.ListView):

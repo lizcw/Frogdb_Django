@@ -16,6 +16,7 @@ class LoginForm(AuthenticationForm):
 class PermitForm(ModelForm):
     class Meta:
         model = Permit
+
         fields = ('aqis',
                   'qen',
                   'arrival_date',
@@ -49,6 +50,21 @@ class FrogForm(ModelForm):
                   'aec',
                   )
 
+class BulkFrogForm(ModelForm):
+    prefix = forms.CharField(max_length=20, label="Prefix")
+    startid = forms.IntegerField(label="Start ID", min_value=1, max_value=1000)
+    class Meta:
+        model = Frog
+
+        fields = (
+                  'prefix',
+                  'startid',
+                  'qen',
+                  'tankid',
+                  'species',
+                  'current_location',
+                  'aec',
+                  )
 
 class FrogDeathForm(ModelForm):
     class Meta:

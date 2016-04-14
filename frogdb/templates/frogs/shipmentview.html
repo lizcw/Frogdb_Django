@@ -54,7 +54,11 @@
                         </li>
                         <li><a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
                         </li>
-                        <li><a href="#">View Frogs</a>
+                        <li><a href="{% url 'frogs:bulkfrog_create' shipment.id %}">Generate Frog records</a>
+                        </li>
+                        <li><a href="{% url 'frogs:bulkfrog_delete' shipment.id %}">Delete Frog records</a>
+                        </li>
+                        <li><a href="{% url 'frogs:frog_list_byshipment' shipment.id %}">View Frogs</a>
                         </li>
                     </ul>
                 </td>
