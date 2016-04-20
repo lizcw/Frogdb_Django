@@ -1,24 +1,16 @@
 import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
-SPECIES_LIST = ( ('x.borealis', 'X.borealis'), ('x.laevis', 'X.laevis'))
-LOCATION_LIST= ( ('stored_aibn', 'Stored at AIBN Animal House'),
-                 ('disposed_aibn', 'Disposed of at AIBN Animal House'),
-                 ('disposed_oh', 'Disposed of at Otto Hirschfeld Animal House'))
-DEATHTYPES = (('culled', 'Culled'), ('found', "Found dead"), ('alive', 'Not dead'))
-#QAP_LIST = (('AIBN','Q1629 (QC1)'), ('QBI', 'Q1881 (QC1)'), ('IMB L2', 'Q1695 (QC2)'))
-WASTETYPES = (('solid', 'Solid'), ('liquid','Liquid'), ('solid_liquid','Solid/Liquid'))
-SUPPLIER_LIST=(('nasco','NASCO'),('xenopus','Xenopus One'), ('uq','UQ'))
-COUNTRY_LIST=(('usa','USA'),('australia','Australia'))
+
+#######################################################################
+##  DB LISTS - Managed in Admin
+#######################################################################
 GENDERS=(('female','Female'),('male','Male'))
-IMAGETYPES=(('dorsal','Dorsal'),('ventral','Ventral'))
-# DB list models
-
-
 class Qap(models.Model):
     qap = models.CharField(_("QAP"), max_length=80, primary_key=True)
     building = models.CharField(_("Building"), max_length=60, null=False)
@@ -26,17 +18,64 @@ class Qap(models.Model):
     def __str__(self):
         return self.building
 
+class Supplier(models.Model):
+    name = models.CharField(_("Name"), max_length=100)
 
-# DB models
+    def __str__(self):
+        return self.name
+
+class Country(models.Model):
+    name = models.CharField(_("Name"), max_length=60)
+    code = models.CharField(_("Code"), max_length=5)
+
+    def __str__(self):
+        return self.name
+
+class Species(models.Model):
+    name = models.CharField(_("Species"), unique=True, max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Imagetype(models.Model):
+    name = models.CharField(_("Image Type"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Wastetype(models.Model):
+    name = models.CharField(_("Waste Type"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Location(models.Model):
+    name = models.CharField(_("Current Location"), max_length=100)
+    brief = models.CharField(_("Abbreviation"), max_length=20)
+
+    def __str__(self):
+        return self.name
+
+class Deathtype(models.Model):
+    name = models.CharField(_("Death Type"), max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+#######################################################################
+##  DB models
+#######################################################################
 class Permit(models.Model):
     aqis = models.CharField(_("AQIS"), max_length=20)
     qen = models.CharField(_("QEN"), max_length=20, unique=True)
     females = models.PositiveSmallIntegerField(_("Females"), default=0)
     males = models.PositiveSmallIntegerField(_("Males"), default=0)
     arrival_date = models.DateField(_("Arrival date"))
-    species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
-    supplier = models.CharField(_("Supplier"), max_length=30, choices=SUPPLIER_LIST)
-    country = models.CharField(_("Country"), max_length=30, choices=COUNTRY_LIST)
+    species = models.ForeignKey(Species, verbose_name="Species")
+    supplier = models.ForeignKey(Supplier, verbose_name="Supplier")
+    country = models.ForeignKey(Country, verbose_name="Country")
+
 
     def __str__(self):
         return self.qen
@@ -54,13 +93,13 @@ class Frog(models.Model):
     frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
     tankid = models.PositiveSmallIntegerField(_("Tank ID"), default=0)
     gender = models.CharField(_("Gender"), max_length=10, default="female", choices=GENDERS)
-    species = models.CharField(_("Species"), max_length=30, choices=SPECIES_LIST)
-    current_location = models.CharField(_("Current Location"), max_length=80, choices=LOCATION_LIST)
+    current_location = models.ForeignKey(Location, verbose_name="Current Location", null=False)
+    species = models.ForeignKey(Species, verbose_name="Species", null=False)
     condition = models.CharField(_("Oocyte Health Condition"), max_length=100, null=True, blank=True)
     remarks = models.TextField(_("General Remarks"),null=True, blank=True)
-    qen = models.ForeignKey(Permit, verbose_name="QEN", on_delete=models.CASCADE)
+    qen = models.ForeignKey(Permit, verbose_name="QEN", on_delete=models.CASCADE, null=False)
     aec = models.CharField(_("AEC"), max_length=80,null=True, blank=True)
-    death = models.CharField(_("Death"), max_length=10, null=True, blank=True, choices=DEATHTYPES)
+    death = models.ForeignKey(Deathtype, verbose_name="Death",null=True, blank=True)
     death_date = models.DateField("Date of Death", null=True, blank=True)
     death_initials = models.CharField(_("Initials"), max_length=10, null=True, blank=True)
     disposed = models.BooleanField(_("Disposed"), default=False)
@@ -99,15 +138,16 @@ class Frog(models.Model):
         return nextop
 
     def dorsalimage(self):
-        return self.get_image('dorsal')
+        return self.get_image('Dorsal')
 
     def ventralimage(self):
-        return self.get_image('ventral')
+        return self.get_image('Ventral')
 
     def get_image(self,type):
         img = None
+        itype = Imagetype.objects.get(name=type)
         if (self.frogattachment_set.count() > 0):
-            imgs = self.frogattachment_set.filter(imagetype=type)
+            imgs = self.frogattachment_set.filter(imagetype=itype)
             if imgs.count() > 0:
                 img = imgs[0]
         return img
@@ -115,7 +155,7 @@ class Frog(models.Model):
 class FrogAttachment(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
     imgfile = models.ImageField(verbose_name="Image")
-    imagetype = models.CharField(_("Dorsal/Ventral"), max_length=10, choices=IMAGETYPES)
+    imagetype = models.ForeignKey(Imagetype, verbose_name="Dorsal/Ventral")
     description = models.CharField(_("Description"), max_length=200, null=True, blank=True)
 
     def __str__(self):
@@ -127,9 +167,10 @@ class FrogAttachment(models.Model):
         frog = Frog.objects.get(pk=self.frogid.pk)
         dorsal = frog.dorsalimage()
         ventral = frog.ventralimage()
-        if dorsal is not None and self.imagetype =='dorsal':
+        print('DEBUG: imagetype=', self.imagetype.name)
+        if dorsal is not None and self.imagetype.name =='Dorsal':
             dorsal.delete()
-        elif ventral is not None and self.imagetype =='ventral':
+        elif ventral is not None and self.imagetype.name =='Ventral':
             ventral.delete()
 
             #raise ValidationError("Can only transfer maximum %d ml" % max)
@@ -180,7 +221,8 @@ class Transfer(models.Model):
     operationid = models.ForeignKey(Operation, verbose_name="Operation", on_delete=models.CASCADE)
     volume = models.PositiveSmallIntegerField("Volume carried (ml)")
     transfer_date = models.DateField("Transfer date")
-    transporter = models.CharField(_("Transporter Name or Initials"), max_length=120)
+    #transporter = models.CharField(_("Transporter Name or Initials"), max_length=120)
+    transporter = models.ForeignKey(User, verbose_name="Transporter Name", related_name="transporter")
     method = models.CharField(_("Method"), max_length=120)
 
     def __str__(self):
@@ -208,9 +250,10 @@ class Experiment(models.Model):
     expt_to = models.DateField("Experiments to")
     expt_location = models.ForeignKey(Qap, verbose_name="Experiment Location", related_name="expt_location")
     expt_disposed = models.BooleanField(_("Disposed"), default=False)
-    disposal_sentby = models.CharField(_("Disposal sent by initials"), max_length=30, blank=True,null=True)
+    disposal_sentby = models.ForeignKey(User, verbose_name="Disposal sent by",blank=True,null=True)
+    #disposal_sentby = models.CharField(_("Disposal sent by initials"), max_length=30, blank=True,null=True)
     disposal_date = models.DateField("Disposal date", blank=True,null=True)
-    waste_type = models.CharField(_("Type of waste"), max_length=30, choices=WASTETYPES, blank=True,null=True)
+    waste_type = models.ForeignKey(Wastetype, verbose_name="Type of waste", blank=True,null=True)
     waste_content = models.CharField(_("Waste content"), max_length=30, blank=True,null=True)
     waste_qty = models.PositiveSmallIntegerField(_("Waste quantity"), blank=True, null=True)
     autoclave_indicator = models.BooleanField("Autoclave indicator", default=False)
@@ -220,52 +263,3 @@ class Experiment(models.Model):
         return self.used
 
 
-class Supplier(models.Model):
-    name = models.CharField(_("Name"), max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class Country(models.Model):
-    name = models.CharField(_("Name"), max_length=60)
-    code = models.CharField(_("Code"), max_length=5)
-
-    def __str__(self):
-        return self.name
-
-
-class Species(models.Model):
-    name = models.CharField(_("Species"), max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class Imagetype(models.Model):
-    name = models.CharField(_("Image Type"), max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class Wastetype(models.Model):
-    name = models.CharField(_("Waste Type"), max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class Location(models.Model):
-    name = models.CharField(_("Current Location"), max_length=100)
-    brief = models.CharField(_("Abbreviation"), max_length=20)
-
-    def __str__(self):
-        return self.name
-
-
-class Deathtype(models.Model):
-    name = models.CharField(_("Death Type"), max_length=100)
-
-    def __str__(self):
-        return self.name

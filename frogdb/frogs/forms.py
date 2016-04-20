@@ -184,7 +184,7 @@ class TransferForm(ModelForm):
 class ExperimentForm(ModelForm):
     class Meta:
         model = Experiment
-        waste_type = forms.SelectMultiple()
+
         fields = ('transferid',
                   'received',
                   'transferred',
@@ -192,14 +192,7 @@ class ExperimentForm(ModelForm):
                   'expt_from',
                   'expt_to',
                   'expt_location',
-                  'expt_disposed',
-                  'disposal_sentby',
-                  'disposal_date',
-                  'waste_type',
-                  'waste_content',
-                  'waste_qty',
-                  'autoclave_indicator',
-                  'autoclave_complete')
+                  )
         widgets = {
             'disposal_date': DateInput(format=('%Y-%m-%d'),
                     attrs={'class': 'myDateClass',
@@ -219,6 +212,26 @@ class ExperimentForm(ModelForm):
                              'placeholder': 'Select a date'}
                     )
             }
+
+# class ExperimentDisposalForm(ModelForm):
+#     class Meta:
+#         model = Experiment
+#         fields = ('id',
+#                   'expt_disposed',
+#                   'disposal_sentby',
+#                   'disposal_date',
+#                   'waste_type',
+#                   'waste_content',
+#                   'waste_qty',
+#                   'autoclave_indicator',
+#                   'autoclave_complete')
+#         widgets = {
+#             'disposal_date': DateInput(format=('%Y-%m-%d'),
+#                                        attrs={'class': 'myDateClass',
+#                                               'type': 'date',
+#                                               'placeholder': 'Select a date'}
+#                                        )
+#         }
 
 # class BatchExptDisposalForm(ModelForm):
 #     #expts = Experiment.objects.filter(expt_disposed=False)

@@ -12,7 +12,7 @@
                 </tr>
                 <tr>
                     <th>Species</th>
-                    <td>{{expt.transferid.operationid.frogid.get_species_display|force_escape}}</td>
+                    <td>{{expt.transferid.operationid.frogid.species|force_escape}}</td>
                 </tr>
                 <tr>
                     <th>Oocytes volume received (ml)</th>
@@ -52,7 +52,7 @@
                 </tr>
                 <tr>
                     <th>Waste type</th>
-                    <td>{{expt.get_waste_type_display}}</td>
+                    <td>{{expt.waste_type}}</td>
                 </tr>
                 <tr>
                     <th>Waste content</th>
@@ -86,8 +86,7 @@
                         </li>
                         <li><a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
                         </li>
-                        <li><a href="{% url 'frogs:experiment_disposal' expt.id %}">Disposal</a>
-                        </li>
+
                         <li><a href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>
                         </li>
                     </ul>

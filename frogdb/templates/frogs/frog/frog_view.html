@@ -23,7 +23,7 @@
                     </tr>
                     <tr>
                         <th>Species</th>
-                        <td>{{frog.get_species_display|force_escape}}</td>
+                        <td>{{frog.species|force_escape}}</td>
                     </tr>
                     <tr>
                         <th>Condition</th>
@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <th>Location</th>
-                        <td class="errorlist">{{frog.get_current_location_display|force_escape}}</td>
+                        <td class="errorlist">{{frog.current_location|force_escape}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -147,7 +147,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{frog.get_death_display|force_escape}}</td>
+                    <td>{{frog.death|force_escape}}</td>
                     <td>{{frog.death_date|date:"d-M-Y"}}</td>
                     <td>{{frog.death_initials|force_escape}}</td>
                 </tr>

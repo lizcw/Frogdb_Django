@@ -6,7 +6,6 @@ app_name = 'frogs'
 urlpatterns = [
     ##Using generic views instead
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^home/$', views.HomeView.as_view(), name='home'),
     url(r'^login/$', views.loginfrogdb, name='loginform'),
     url(r'^logout/$', views.logoutfrogdb, name='logout'),
     url(r'^permit/create/$',
@@ -45,8 +44,6 @@ urlpatterns = [
         views.OperationSummary.as_view(), name='operation_summary'),
     url(r'^operation/create/(?P<frogid>\w+)/$',
         views.OperationCreate.as_view(), name="operation_create"),
-    url(r'^operation/(?P<pk>\d+)/$',
-        views.OperationDetail.as_view(), name="operation_detail"),
     url(r'^operation/(?P<pk>\d+)/update/$',
         views.OperationUpdate.as_view(), name="operation_update"),
     url(r'^operation/(?P<pk>\d+)/delete/$',
