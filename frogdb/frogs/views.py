@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
 from django.views import generic
 from django.utils import timezone
@@ -10,8 +10,7 @@ from django.template import Context, Template
 from django_tables2 import RequestConfig
 
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm
-    #, BatchExptDisposalForm
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm
 from .tables  import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable
 
 ## Index page
@@ -37,7 +36,7 @@ class IndexView(generic.ListView):
         return context
 
     def get_queryset(self):
-        """Return the last five published questions."""
+        """Return the all shipments"""
         return Permit.objects.all()
 
 ## Login
@@ -103,10 +102,11 @@ class FrogList(generic.ListView):
     context_object_name = 'frogs'
 
     def get_queryset(self):
+        print('DEBUG:kwargs', self.kwargs)
         if (self.kwargs.get('shipmentid')):
             sid = self.kwargs.get('shipmentid')
             shipment = Permit.objects.get(pk=sid)
-            table =FrogTable(Frog.objects.filter(qen=shipment).order_by('-frogid'))
+            table = FrogTable(Frog.objects.filter(qen=shipment).order_by('-frogid'))
         else:
             table = FrogTable(Frog.objects.order_by('-frogid'))
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
@@ -236,15 +236,89 @@ class FrogBulkCreate(generic.FormView):
         return reverse('frogs:frog_list')
 
 
-#TODO Implement this
-class FrogBulkDelete(generic.DeleteView):
-    model = Frog
-    template = 'frogs/frog/bulkfrog_confirm_delete.html'
-    success_url = reverse_lazy("frogs:frog_list")
+#Delete frogs from a shipment
+class FrogBulkDelete(generic.FormView):
+    template_name = 'frogs/frog/bulkfrog_confirm_delete.html'
+    form_class=BulkFrogDeleteForm
+
+
+    def post(self, request, *args, **kwargs):
+        print('DEBUG: post')
+        froglist = self.get_queryset()
+        #print('DELETING frogs', len(froglist))
+        r = froglist.delete()
+        message = 'Successfully deleted ' + str(r[0]) + ' frogs'
+        print('DELETED: ', message, ' r=', r)
+        return render(request, self.template_name, {'msg': message})
+
+    def get_context_data(self, **kwargs):
+        context = super(FrogBulkDelete, self).get_context_data(**kwargs)
+        print('DEBUG: Get context data=', context)
+       # print('DEBUG: Form=', context['form'])
+        fid = self.kwargs.get('shipmentid')
+        shipment = Permit.objects.get(pk=fid)
+        froglist = self.get_queryset()
+        context.update({
+            'qen': shipment.qen,
+            'species' : shipment.species,
+            'pk': shipment
+        })
+        if (len(froglist) > 0):
+            context['frogs'] = len(froglist)
+        else:
+            context['msg'] = 'There are NO frogs to delete for this shipment (QEN=%s)' % shipment.qen
+        return context
 
     def get_queryset(self):
-        print('DEBUG: Delete frogs from Shipment')
-        return Frog.objects.filter(qen=self.kwargs.get('shipmentid'))
+        fid = self.kwargs.get('shipmentid')
+        print('DEBUG: Get queryset')
+        shipment = Permit.objects.get(pk=fid)
+        return Frog.objects.filter(qen=shipment)
+
+    def get_success_url(self):
+        print('DEBUG: Get success URL')
+        return reverse('frogs:frog_list')
+
+#Save fields
+class FrogBulkDisposal(generic.FormView):
+    template_name = 'frogs/frog/frog_bulkdisposal.html'
+    form_class = BulkFrogDisposalForm
+    model = Frog
+    frogids = []
+   # success_url = 'frogs/frog/frog_bulkdisposal.html'
+
+    def form_valid(self, form):
+        if self.request.POST.getlist('selectfrog'):
+            print('DEBUG: FIRST FORM')
+        else:
+            print('DEBUG: form_valid', self.request.POST)
+            print('BulkFrog: updating records=', len(self.frogids))
+            # Generate Frog objects
+            for pk in self.frogids:
+                print('Updating frog:', pk)
+                frog = Frog.objects.get(pk=pk)
+                frog.disposed = form.cleaned_data['disposed']
+                frog.autoclave_date = form.cleaned_data['autoclave_date']
+                frog.autoclave_run = form.cleaned_data['autoclave_run']
+                frog.incineration_date = form.cleaned_data['incineration_date']
+                print('Updated:Frog=', frog.frogid)
+                frog.update()
+
+        return super(FrogBulkDisposal, self).form_valid(form)
+
+    def get_initial(self):
+        self.frogids = self.request.POST.getlist('selectfrog')
+        print('DEBUG: Get initial=', self.frogids)
+        return {'frogids': self.frogids}
+
+    def get_queryset(self):
+        print('DEBUG: Get queryset=', self.frogids)
+
+        return Frog.objects.in_bulk(self.frogids)
+
+    def get_success_url(self):
+        print('DEBUG: Get success URL')
+        return reverse('frogs:frog_list')
 
 
 ########## OPERATIONS ############################################
@@ -411,6 +485,25 @@ class ExperimentUpdate(generic.UpdateView):
 class ExperimentDelete(generic.DeleteView):
     model = Experiment
     success_url = reverse_lazy("frogs:experiment_list")
+
+class ExperimentDisposal(generic.UpdateView):
+    model = Experiment
+    form_class = ExperimentDisposalForm
+    context_object_name = 'experiment'
+    template_name = 'frogs/experiment/experiment_create.html'
+
+    def get_success_url(self):
+        return reverse('frogs:experiment_detail', args=[self.object.id])
+
+
+class ExperimentAutoclave(generic.UpdateView):
+    model = Experiment
+    form_class = ExperimentAutoclaveForm
+    context_object_name = 'experiment'
+    template_name = 'frogs/experiment/experiment_create.html'
+
+    def get_success_url(self):
+        return reverse('frogs:experiment_detail', args=[self.object.id])
 
 class DisposalList(generic.ListView):
     template_name = 'frogs/experiment/disposal_list.html'

@@ -37,6 +37,7 @@ class PermitForm(ModelForm):
 
 
 class FrogForm(ModelForm):
+
     class Meta:
         model = Frog
         fields = ('frogid',
@@ -65,6 +66,14 @@ class BulkFrogForm(ModelForm):
                   'current_location',
                   'aec',
                   )
+
+
+class BulkFrogDeleteForm(ModelForm):
+
+    class Meta:
+        model = Permit
+        fields = ( 'qen',
+                   'species')
 
 class FrogDeathForm(ModelForm):
     class Meta:
@@ -106,29 +115,27 @@ class FrogDisposalForm(ModelForm):
         }
 
 
-# class BatchFrogDisposalForm(ModelForm):
-#     #frogs = Frog.objects.filter(disposed=False)
-#     #frogids = forms.CheckboxSelectMultiple(choices=frogs)
-#     class Meta:
-#         model = Frog
-#         fields = ('frogid',
-#                   'disposed',
-#                   'autoclave_date',
-#                   'autoclave_run',
-#                   'incineration_date'
-#                   )
-#         widgets = {
-#             'autoclave_date': DateInput(format=('%Y-%m-%d'),
-#                                       attrs={'class': 'myDateClass',
-#                                              'type': 'date',
-#                                              'placeholder': 'Select a date'}
-#                                       ),
-#             'incineration_date': DateInput(format=('%Y-%m-%d'),
-#                                         attrs={'class': 'myDateClass',
-#                                                'type': 'date',
-#                                                'placeholder': 'Select a date'}
-#                                         ),
-#         }
+class BulkFrogDisposalForm(ModelForm):
+     class Meta:
+         model = Frog
+         fields = (
+                   'disposed',
+                   'autoclave_date',
+                   'autoclave_run',
+                   'incineration_date'
+                   )
+         widgets = {
+             'autoclave_date': DateInput(format=('%Y-%m-%d'),
+                                       attrs={'class': 'myDateClass',
+                                              'type': 'date',
+                                              'placeholder': 'Select a date'}
+                                       ),
+             'incineration_date': DateInput(format=('%Y-%m-%d'),
+                                         attrs={'class': 'myDateClass',
+                                                'type': 'date',
+                                                'placeholder': 'Select a date'}
+                                         ),
+         }
 
 
 class FrogAttachmentForm(ModelForm):
@@ -139,7 +146,7 @@ class FrogAttachmentForm(ModelForm):
         fields = ('frogid',
                   'imagetype',
                   'imgfile',
-                  'description',
+                  'description'
                   )
         widgets = {
             'imgfile': forms.FileInput()
@@ -172,7 +179,7 @@ class TransferForm(ModelForm):
                   'transfer_date',
                   'transporter',
                   'method',
-                  'transferapproval',)
+                  'transferapproval')
         widgets = {
             'transfer_date': DateInput(format=('%Y-%m-%d'),
                     attrs={'class': 'myDateClass',
@@ -191,7 +198,7 @@ class ExperimentForm(ModelForm):
                   'used',
                   'expt_from',
                   'expt_to',
-                  'expt_location',
+                  'expt_location'
                   )
         widgets = {
             'disposal_date': DateInput(format=('%Y-%m-%d'),
@@ -211,27 +218,35 @@ class ExperimentForm(ModelForm):
                              'type': 'date',
                              'placeholder': 'Select a date'}
                     )
-            }
+        }
 
-# class ExperimentDisposalForm(ModelForm):
-#     class Meta:
-#         model = Experiment
-#         fields = ('id',
-#                   'expt_disposed',
-#                   'disposal_sentby',
-#                   'disposal_date',
-#                   'waste_type',
-#                   'waste_content',
-#                   'waste_qty',
-#                   'autoclave_indicator',
-#                   'autoclave_complete')
-#         widgets = {
-#             'disposal_date': DateInput(format=('%Y-%m-%d'),
-#                                        attrs={'class': 'myDateClass',
-#                                               'type': 'date',
-#                                               'placeholder': 'Select a date'}
-#                                        )
-#         }
+class ExperimentDisposalForm(ModelForm):
+     class Meta:
+         model = Experiment
+         fields = ('id',
+                   'expt_disposed',
+                   'disposal_sentby',
+                   'disposal_date',
+                   'waste_type',
+                   'waste_content',
+                   'waste_qty')
+         widgets = {
+             'disposal_date': DateInput(format=('%Y-%m-%d'),
+                                        attrs={'class': 'myDateClass',
+                                               'type': 'date',
+                                               'placeholder': 'Select a date'}
+                                        )
+         }
+
+
+class ExperimentAutoclaveForm(ModelForm):
+     class Meta:
+         model = Experiment
+         fields = ('id',
+                   'autoclave_indicator',
+                   'autoclave_complete')
+
+
 
 # class BatchExptDisposalForm(ModelForm):
 #     #expts = Experiment.objects.filter(expt_disposed=False)

@@ -9,8 +9,8 @@
             <form id="frog-edit" method="POST" role="form" class="post-form ui-responsive">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="save btn btn-default">Save</button>
-                <button type="button" class="btn" onclick="javascript:history.back();return false;">Cancel</button>
+                <input type="submit" class="btn btn-success" value="Generate"/>
+                <input type="button" class="btn" onclick="javascript:history.back();return false;" value="Cancel"/>
             </form>
         </div>
     </div>

@@ -26,7 +26,11 @@ footer p{
     padding-right:10px;
     }
 input[type=checkbox] {
-    margin: 0 !important; /* turn off bootstrap */
+    margin: -5px -20px; /* turn off bootstrap */
+
+}
+th.selectfrog{
+    vertical-align:middle !important;
 }
 
 .dropdown-menu li a.ui-link{

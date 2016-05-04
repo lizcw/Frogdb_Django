@@ -14,77 +14,110 @@
                     <th>Species</th>
                     <td>{{expt.transferid.operationid.frogid.species|force_escape}}</td>
                 </tr>
-                <tr>
-                    <th>Oocytes volume received (ml)</th>
-                    <td>{{expt.received|force_escape}}</td>
-                </tr>
-                <tr>
-                    <th>Oocytes volume transferred (ml)</th>
-                    <td>{{expt.transferred|force_escape}}</td>
-                </tr>
-                <tr>
-                    <th>Oocytes volume used (ml)</th>
-                    <td>{{expt.used|force_escape}}</td>
-                </tr>
-                <tr>
-                    <th>Experiment From</th>
-                    <td>{{expt.expt_from|date:"d-M-Y"}}</td>
-                </tr>
-                <tr>
-                    <th>Experiment To</th>
-                    <td>{{expt.expt_to|date:"d-M-Y"}}</td>
-                </tr>
-                <tr>
-                    <th>Experiment Location</th>
-                    <td>{{expt.expt_location}}</td>
-                </tr>
-                <tr>
-                    <th>Disposed of</th>
-                    <td>{{expt.expt_disposed}}</td>
-                </tr>
-                <tr>
-                    <th>Disposal sent by</th>
-                    <td>{{expt.disposal_sentby}}</td>
-                </tr>
-                 <tr>
-                    <th>Disposal date</th>
-                    <td>{{expt.disposal_date|date:"d-M-Y"}}</td>
-                </tr>
-                <tr>
-                    <th>Waste type</th>
-                    <td>{{expt.waste_type}}</td>
-                </tr>
-                <tr>
-                    <th>Waste content</th>
-                    <td>{{expt.waste_content}}</td>
-                </tr>
-                <tr>
-                    <th>Waste quantity</th>
-                    <td>{{expt.waste_qty}}</td>
-                </tr>
-                <tr>
-                    <th>Autoclave indicator</th>
-                    <td>{{expt.autoclave_indicator}}</td>
-                </tr>
-                <tr>
-                    <th>Autoclave complete</th>
-                    <td>{{expt.autoclave_complete}}</td>
-                </tr>
-
+                </tbody>
+            </table>
+        </div>
+        <div data-role="collapsible" class="well">
+            <h2>Experiments</h2>
+            <table id="expt-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                    <tr>
+                        <th>Experiment From</th>
+                        <th>Experiment To</th>
+                        <th>Experiment Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{expt.expt_from|date:"d-M-Y"}}</td>
+                        <td>{{expt.expt_to|date:"d-M-Y"}}</td>
+                        <td>{{expt.expt_location}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-role="collapsible" class="well">
+            <h2>Oocytes transfer</h2>
+            <table id="ooctye-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                    <tr>
+                        <th>Volume received (ml)</th>
+                        <th>Volume transferred (ml)</th>
+                        <th>Volume used (ml)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{expt.received|force_escape}}</td>
+                        <td>{{expt.transferred|force_escape}}</td>
+                        <td>{{expt.used|force_escape}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
+        <div data-role="collapsible" class="well">
+            <h2>Disposal</h2>
+            <table id="disposal-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                    <tr>
+                        <th>Disposed of</th>
+                        <th>Disposal sent by</th>
+                        <th>Disposal date</th>
+                        <th>Waste type</th>
+                        <th>Waste content</th>
+                        <th>Waste quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{expt.expt_disposed}}</td>
+                        <td>{{expt.disposal_sentby}}</td>
+                        <td>{{expt.disposal_date|date:"d-M-Y"}}</td>
+                        <td>{{expt.waste_type}}</td>
+                        <td>{{expt.waste_content}}</td>
+                        <td>{{expt.waste_qty}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div data-role="collapsible" class="well">
+            <h2>Autoclave</h2>
+            <table id="autoclave-table" data-role="table" class="ui-responsive table table-hover">
+                <thead>
+                    <tr>
+                        <th>Autoclave indicator</th>
+                        <th>Autoclave complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{expt.autoclave_indicator}}</td>
+                        <td>{{expt.autoclave_complete}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
     <div class="col-md-4 rightpanel">
         <table id="sidemenu" class="ui-responsive table">
             <tr>
                 <td>
                     <ul data-role="listview" data-inset="true" style="min-width:210px;">
                         <li data-role="list-divider">Choose an action</li>
-                        <li><a href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
+                        <li>
+                            <a href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
                         </li>
-                        <li><a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
+                        <li>
+                            <a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
+                        </li>
+                         <li>
+                            <a href="{% url 'frogs:experiment_disposal' expt.id %}">Disposal</a>
+                        </li>
+                         <li>
+                            <a href="{% url 'frogs:experiment_autoclave' expt.id %}">Autoclave</a>
                         </li>
 
                         <li><a href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>

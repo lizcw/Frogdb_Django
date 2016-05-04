@@ -1,66 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/frogdb/frogs/forms.py" line="106" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/frogdb/frogs/forms.py" line="115" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de582c11-cc4d-4893-8211-b3a36e230641" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/frogs/migrations/0001_initial.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/base1.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/base_front.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/experiment_list_bak.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/froglist.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogstable.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogupload.html.1" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogupload.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogupview.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogview.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/home.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/index.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/layout.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/list.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/login.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/login_example.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/navbar.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/operationsummary.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/paginate.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/profile.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/profilelinks.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/shipmentlist.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/shipmentlist_bak.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/sidenav.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfer_list.bak.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfercreate.html" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_bulkdisposal.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/forms.py" afterPath="$PROJECT_DIR$/frogdb/frogs/forms.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/models.py" afterPath="$PROJECT_DIR$/frogdb/frogs/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css" afterPath="$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/tables.py" afterPath="$PROJECT_DIR$/frogdb/frogs/tables.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/urls.py" afterPath="$PROJECT_DIR$/frogdb/frogs/urls.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/frogs/views.py" afterPath="$PROJECT_DIR$/frogdb/frogs/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/navlinks.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/navlinks.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/bulkfrog_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/create.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/disposal_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/disposal_list.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/experiment_create.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/experiment_detail.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/experiment_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_list.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_confirm_delete.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogcreate.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogdeath.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_death.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogdisposal.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_disposal.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogupload.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_upload.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frogview.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/operation_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/operation/operation_confirm_delete.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/operation_summary.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/operation/operation_summary.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/operationcreate.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/operation/operation_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/permit_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/permit_confirm_delete.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/permitcreate.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/shipment_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_list.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/shipmentview.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfer_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_confirm_delete.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfer_create.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_create.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfer_detail.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_detail.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/transfer_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_list.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html" afterPath="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html" />
     </list>
     <ignored path="Frogdb_Django.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,11 +40,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.45588234">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/frogdb/frogs/views.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="595">
-                  <caret line="405" column="41" selection-start-line="405" selection-start-column="41" selection-end-line="405" selection-end-column="41" />
+                <state relative-caret-position="133">
+                  <caret line="282" column="39" selection-start-line="282" selection-start-column="23" selection-end-line="282" selection-end-column="39" />
                   <folding>
                     <element signature="e#0#64#0" expanded="true" />
                   </folding>
@@ -95,61 +52,71 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="0003_auto_20160420_1549.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/frogs/migrations/0003_auto_20160420_1549.py">
+          <file leaf-file-name="bulkfrog_create.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state relative-caret-position="323">
+                  <caret line="17" column="2" selection-start-line="17" selection-start-column="2" selection-end-line="17" selection-end-column="2" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="0002_auto_20160420_1522.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/frogs/migrations/0002_auto_20160420_1522.py">
+          <file leaf-file-name="frog_disposal.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_disposal.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="238">
-                  <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+                  <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="frog_create.html" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_create.html">
+          <file leaf-file-name="frog_bulkdisposal.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_bulkdisposal.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="221">
+                  <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="544">
+                  <caret line="32" column="25" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="25" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="frog_list.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="187">
+                  <caret line="10" column="24" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="frog_death.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_death.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="153">
-                  <caret line="9" column="35" selection-start-line="9" selection-start-column="35" selection-end-line="9" selection-end-column="35" />
+                  <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="32" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="experiment_create.html" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_create.html">
+          <file leaf-file-name="shipment_view.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="102">
-                  <caret line="6" column="39" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="transfer_detail.html" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_detail.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="238">
-                  <caret line="14" column="61" selection-start-line="14" selection-start-column="54" selection-end-line="14" selection-end-column="61" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="experiment_detail.html" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="765">
-                  <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+                <state relative-caret-position="703">
+                  <caret line="54" column="80" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="80" />
                   <folding />
                 </state>
               </provider>
@@ -165,21 +132,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="tables.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/frogdb/frogs/tables.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="527">
-                  <caret line="23" column="172" selection-start-line="23" selection-start-column="172" selection-end-line="23" selection-end-column="172" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/frogdb/frogs/urls.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="950">
-                  <caret line="75" column="60" selection-start-line="75" selection-start-column="60" selection-end-line="75" selection-end-column="60" />
+                <state relative-caret-position="530">
+                  <caret line="36" column="42" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
                   <folding>
                     <element signature="e#0#32#0" expanded="true" />
                   </folding>
@@ -194,8 +151,8 @@
           <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/frogdb/frogs/models.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="714">
-                  <caret line="248" column="35" selection-start-line="248" selection-start-column="35" selection-end-line="248" selection-end-column="35" />
+                <state relative-caret-position="576">
+                  <caret line="121" column="40" selection-start-line="121" selection-start-column="40" selection-end-line="121" selection-end-column="40" />
                   <folding>
                     <element signature="e#0#15#0" expanded="true" />
                   </folding>
@@ -203,11 +160,31 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="frog_view.html" pinned="false" current-in-tab="true">
+          <file leaf-file-name="bulkfrog_confirm_delete.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="306">
+                  <caret line="16" column="19" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="frog_view.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="397">
-                  <caret line="149" column="36" selection-start-line="149" selection-start-column="36" selection-end-line="149" selection-end-column="36" />
+                <state relative-caret-position="244">
+                  <caret line="36" column="36" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="testpyxnat.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../XNAT/PycharmProjects/xnat_scripts/testpyxnat.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -216,29 +193,9 @@
           <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/frogdb/frogdb/settings.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1037">
+                <state relative-caret-position="1054">
                   <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
-                  <folding>
-                    <marker date="1461117738440" expanded="true" signature="0:305" placeholder="&quot;&quot;&quot;Django settings for frogdb project....&quot;&quot;&quot;" />
-                    <marker date="1461117738440" expanded="true" signature="463:665" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="878:1148" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="1173:1640" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="1686:2191" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="1692:2188" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="1864:2181" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="1900:2169" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2241:2315" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2330:2549" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2347:2547" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2553:2653" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2683:3077" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2689:2786" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2794:2881" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2889:2977" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="2985:3074" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="3081:3156" placeholder="..." />
-                    <marker date="1461117738440" expanded="true" signature="3267:3367" placeholder="..." />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -253,14 +210,24 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="forms.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/frogdb/frogs/forms.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="933">
-                  <caret line="221" column="36" selection-start-line="221" selection-start-column="36" selection-end-line="221" selection-end-column="36" />
+                <state relative-caret-position="1191">
+                  <caret line="120" column="19" selection-start-line="120" selection-start-column="19" selection-end-line="120" selection-end-column="19" />
                   <folding>
                     <element signature="e#24#80#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="tables.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/frogdb/frogs/tables.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="425">
+                  <caret line="40" column="67" selection-start-line="40" selection-start-column="67" selection-end-line="40" selection-end-column="67" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -287,11 +254,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/base_front.html" />
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/shipmentlist.html" />
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/operationsummary.html" />
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/permitcreate.html" />
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/transfercreate.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/operationcreate.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frogcreate.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog_confirm_delete.html" />
@@ -314,12 +276,10 @@
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/shipment_list.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog_list.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frogview.html" />
-        <option value="$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/experiment_detail.html" />
         <option value="$PROJECT_DIR$/frogdb/frogs/utils.py" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/disposal_list.html" />
         <option value="$PROJECT_DIR$/frogdb/frogs/filters.py" />
-        <option value="$PROJECT_DIR$/frogdb/frogs/tables.py" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/operation_summary.html" />
         <option value="$PROJECT_DIR$/frogdb/frogdb/urls.py" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/create.html" />
@@ -329,23 +289,30 @@
         <option value="$PROJECT_DIR$/frogdb/frogs/admin.py" />
         <option value="$PROJECT_DIR$/frogdb/frogs/migrations/0001_initial.py" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/navlinks.html" />
-        <option value="$PROJECT_DIR$/frogdb/frogs/urls.py" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_create.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/transfer/transfer_detail.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/expt/experiment_detail.html" />
         <option value="$PROJECT_DIR$/frogdb/frogs/models.py" />
-        <option value="$PROJECT_DIR$/frogdb/frogs/views.py" />
-        <option value="$PROJECT_DIR$/frogdb/frogs/forms.py" />
-        <option value="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html" />
         <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html" />
+        <option value="$PROJECT_DIR$/frogdb/frogs/urls.py" />
+        <option value="$PROJECT_DIR$/frogdb/frogs/forms.py" />
+        <option value="$PROJECT_DIR$/frogdb/frogs/tables.py" />
+        <option value="$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_bulkdisposal.html" />
+        <option value="$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html" />
+        <option value="$PROJECT_DIR$/frogdb/frogs/views.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="514" />
-    <option name="y" value="34" />
+    <option name="x" value="691" />
+    <option name="y" value="148" />
     <option name="width" value="1880" />
-    <option name="height" value="1288" />
+    <option name="height" value="1276" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -372,6 +339,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -632,7 +601,63 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="migrations" />
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Frogdb_Django" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Frogdb_Django" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogdb" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Frogdb_Django" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Frogdb_Django" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogdb" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frogs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -656,14 +681,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../XNAT/PycharmProjects/xnat_scripts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../XNAT/PycharmProjects/xnat_scripts/testpyxnat.py" />
     <property name="SearchEverywhereHistoryKey" value="tfr_date&#9;null&#9;null" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="310" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
@@ -683,19 +706,19 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs" />
-      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs" />
-      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs\static\frogs\css" />
-      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs\templates\frogs" />
-      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\polls" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\frog" />
       <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\expt" />
       <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\transfer" />
       <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\shipment" />
       <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\operation" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs\frog" />
+      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\templates\frogs" />
+      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs" />
+      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs\static\frogs\css" />
+      <recent name="D:\Projects\FrogDB\Frogdb_Django\frogdb\frogs\templates\frogs" />
     </key>
   </component>
   <component name="RunManager" selected="Python.urls">
@@ -928,27 +951,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="514" y="34" width="1880" height="1288" extended-state="0" />
-    <editor active="false" />
+    <frame x="691" y="148" width="1880" height="1276" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18132465" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991612" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.111405835" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16915888" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11229001" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991612" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.07102804" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991612" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.111405835" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991612" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1002,27 +1025,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/frogdb/polls/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/frogs/filters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="47" selection-start-line="9" selection-start-column="47" selection-end-line="9" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/frogs/reports.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="19" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/frogs/utils.py" />
     <entry file="file://$PROJECT_DIR$/frogdb/frogs/apps.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1032,20 +1034,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/frogs/templates/frogs/index1.html" />
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frogview.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/transfer_list.bak.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frogview.jade" />
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/transfer_list.bak.html" />
     <entry file="file://$PROJECT_DIR$/frogdb/polls/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -1085,35 +1075,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/frogdb/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1037">
+        <state relative-caret-position="1054">
           <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
-          <folding>
-            <marker date="1461117738440" expanded="true" signature="0:305" placeholder="&quot;&quot;&quot;Django settings for frogdb project....&quot;&quot;&quot;" />
-            <marker date="1461117738440" expanded="true" signature="463:665" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="878:1148" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="1173:1640" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="1686:2191" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="1692:2188" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="1864:2181" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="1900:2169" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2241:2315" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2330:2549" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2347:2547" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2553:2653" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2683:3077" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2689:2786" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2794:2881" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2889:2977" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="2985:3074" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="3081:3156" placeholder="..." />
-            <marker date="1461117738440" expanded="true" signature="3267:3367" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1129,9 +1098,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="18" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="18" />
-          <folding>
-            <element signature="e#72#111#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1139,9 +1105,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#32#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1149,23 +1112,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_list.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1173,31 +1119,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_death.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_disposal.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1205,7 +1126,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1213,7 +1133,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1221,7 +1140,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="24" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1229,7 +1147,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1237,7 +1154,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="1" column="62" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="62" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1245,23 +1161,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="14" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="14" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1269,7 +1168,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1277,7 +1175,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1285,7 +1182,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1293,15 +1189,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="14" column="37" selection-start-line="14" selection-start-column="37" selection-end-line="14" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="35" selection-start-line="9" selection-start-column="35" selection-end-line="9" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1317,7 +1204,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="4" column="103" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="103" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1337,6 +1223,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../XNAT/PycharmProjects/xnat_scripts/testpyxnat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/frogs/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="121" column="40" selection-start-line="121" selection-start-column="40" selection-end-line="121" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_create.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="35" selection-start-line="9" selection-start-column="35" selection-end-line="9" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_confirm_delete.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="16" column="19" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="244">
+          <caret line="36" column="36" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="120" column="29" selection-start-line="120" selection-start-column="29" selection-end-line="120" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_create.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -1345,33 +1281,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/frogs/models.py">
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_list.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="248" column="35" selection-start-line="248" selection-start-column="35" selection-end-line="248" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="204">
+          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/frogs/views.py">
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/shipment/shipment_view.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="405" column="41" selection-start-line="405" selection-start-column="41" selection-end-line="405" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/frogs/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="950">
-          <caret line="75" column="60" selection-start-line="75" selection-start-column="60" selection-end-line="75" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="703">
+          <caret line="54" column="80" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="80" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1385,35 +1307,87 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/frogs/tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="23" column="172" selection-start-line="23" selection-start-column="172" selection-end-line="23" selection-end-column="172" />
+        <state relative-caret-position="425">
+          <caret line="40" column="67" selection-start-line="40" selection-start-column="67" selection-end-line="40" selection-end-column="67" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/experiment/experiment_detail.html">
+    <entry file="file://$PROJECT_DIR$/frogdb/frogs/static/frogs/css/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state relative-caret-position="544">
+          <caret line="32" column="25" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/bulkfrog_create.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="2" selection-start-line="17" selection-start-column="2" selection-end-line="17" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_disposal.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_death.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="10" column="24" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/frogdb/frogs/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="933">
-          <caret line="221" column="36" selection-start-line="221" selection-start-column="36" selection-end-line="221" selection-end-column="36" />
+        <state relative-caret-position="1191">
+          <caret line="120" column="19" selection-start-line="120" selection-start-column="19" selection-end-line="120" selection-end-column="19" />
           <folding>
             <element signature="e#24#80#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_view.html">
+    <entry file="file://$PROJECT_DIR$/frogdb/templates/frogs/frog/frog_bulkdisposal.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="149" column="36" selection-start-line="149" selection-start-column="36" selection-end-line="149" selection-end-column="36" />
+        <state relative-caret-position="221">
+          <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/frogs/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="36" column="42" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frogdb/frogs/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="282" column="39" selection-start-line="282" selection-start-column="23" selection-end-line="282" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#64#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

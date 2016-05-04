@@ -7,9 +7,15 @@
     <div class="row col-md-6">
     <div class="well">
     <form role="form" method="post">{% csrf_token %}
-        <p>Are you sure you want to delete "{{ object }}"?</p>
-        <input type="submit" class="btn btn-success" value="Confirm" />
-        <button type="button" class="btn btn-default" onclick="javascript:history.back();return false;">Cancel</button>
+        {% if msg  %}
+           <p class="info"> {{ msg|force_escape }}</p>
+            <a class="btn btn-default" href="{% url 'frogs:permit_list' %}">Return to Shipment List</a>
+        {% else %}
+            <p>Are you sure you want to delete {{frogs|force_escape}} <b>{{species|force_escape}}</b> frogs from Shipment QEN <b>{{qen|force_escape}}</b>?</p>
+            <input type="submit" class="btn btn-success" value="Confirm" />
+            <input type="button" class="btn btn-default" onclick="javascript:history.back();return false;" value="Cancel" />
+        {% endif %}
+
     </form>
     </div></div></div>
 {% endblock %}

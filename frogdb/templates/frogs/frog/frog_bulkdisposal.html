@@ -1,0 +1,13 @@
+{% extends "frogs/base.html" %}{% block title %}Frog - bulk disposal{% endblock %}{% block content %}
+<div class="container">
+    <div class="page-header"><h2>Disposal details for Frogs</h2></div>
+    <div class="row col-md-6">
+        <div class="well">
+            <form method="POST" class="post-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="save btn btn-default">Save</button>
+            </form>
+        </div>
+    </div>
+</div>{% endblock %}
