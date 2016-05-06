@@ -1,16 +1,36 @@
 {% extends "frogs/base.html" %}
 {% block title %}Frogs{% endblock %}
-{% block content %}{% load django_tables2 %}
-<div class="container">
-<div class="page-header"><h2>Frogs</h2></div>
-<p><a href="{% url 'frogs:frog_create' %}" class="btn btn-info">Create New Frog</a>
-</p>
-{% if frogs %}
-    <form action="{% url 'frogs:frog_bulkdisposal' %}" method="post" id="bulkdisposalform">
-        <input type="submit" class="btn btn-info" value="Dispose Frogs"/>
-        {% csrf_token %}
-    {% render_table frogs %}
-    </form>
-{% endif %}
+{% load django_tables2 %}
+{% block sidebar %}
+<div class="sidebar">
+    <div class="row col-md-2">
+        <div class="well">
+            <h4>Search Frogs</h4>
+            <form method='GET'>
+                {{ filter.form }}
+                <br/>
+                <input type='submit' class="btn btn-info" value='Search'/>
+                <a href='{{ request.path }}' class="btn btn-default">Clear</a>
+
+                <div class="small">|&nbsp;
+                Displaying {{ filter.qs|length }} of {{ filter.queryset|length }} items.
+                &nbsp;|</div>
+
+            </form>
+        </div>
     </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row col-md-12">
+    <div class="page-header"><h2>Frogs</h2></div>
+    <p><a href="{% url 'frogs:frog_create' %}" class="btn btn-info">Create New Frog</a>
+        {% if table %}
+        <a href="{% url 'frogs:bulkfrog_disposal' %}" class="btn btn-success">Dispose Frogs</a></p>
+    {% render_table table %}
+    {% else %}
+    </p>
+    {% endif %}
+</div></div>
 {% endblock %}

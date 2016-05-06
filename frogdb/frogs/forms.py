@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
-from django.forms import ModelForm, DateInput, ImageField
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
+from django.forms import Form, ModelForm, DateInput, ImageField
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment,Qap, Notes
 
 
 class LoginForm(AuthenticationForm):
@@ -14,6 +14,12 @@ class LoginForm(AuthenticationForm):
 
 
 class PermitForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Permit
 
@@ -37,6 +43,12 @@ class PermitForm(ModelForm):
 
 
 class FrogForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
 
     class Meta:
         model = Frog
@@ -54,6 +66,14 @@ class FrogForm(ModelForm):
 class BulkFrogForm(ModelForm):
     prefix = forms.CharField(max_length=20, label="Prefix")
     startid = forms.IntegerField(label="Start ID", min_value=1, max_value=1000)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
     class Meta:
         model = Frog
 
@@ -69,6 +89,12 @@ class BulkFrogForm(ModelForm):
 
 
 class BulkFrogDeleteForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
 
     class Meta:
         model = Permit
@@ -76,6 +102,12 @@ class BulkFrogDeleteForm(ModelForm):
                    'species')
 
 class FrogDeathForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Frog
         fields = ('frogid',
@@ -93,6 +125,12 @@ class FrogDeathForm(ModelForm):
 
 
 class FrogDisposalForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Frog
         fields = ('frogid',
@@ -116,14 +154,26 @@ class FrogDisposalForm(ModelForm):
 
 
 class BulkFrogDisposalForm(ModelForm):
+     qs = Frog.objects.filter(disposed=False).filter(death__isnull=False).exclude(death__name__contains='Alive').order_by('frogid')
+     frogs = forms.ModelMultipleChoiceField(label='', queryset=qs, widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-control'}))
+
+     def __init__(self, *args, **kwargs):
+         super().__init__(*args, **kwargs)
+         for field in iter(self.fields):
+             self.fields[field].widget.attrs.update({
+                 'class': 'form-control'
+             })
+
      class Meta:
          model = Frog
          fields = (
+                   'frogs',
                    'disposed',
                    'autoclave_date',
                    'autoclave_run',
                    'incineration_date'
                    )
+
          widgets = {
              'autoclave_date': DateInput(format=('%Y-%m-%d'),
                                        attrs={'class': 'myDateClass',
@@ -141,6 +191,13 @@ class BulkFrogDisposalForm(ModelForm):
 class FrogAttachmentForm(ModelForm):
     imgfile = forms.ImageField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
     class Meta:
         model = FrogAttachment
         fields = ('frogid',
@@ -154,6 +211,12 @@ class FrogAttachmentForm(ModelForm):
 
 
 class OperationForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Operation
         fields = ('frogid',
@@ -172,6 +235,12 @@ class OperationForm(ModelForm):
         }
 
 class TransferForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Transfer
         fields = ('operationid',
@@ -189,6 +258,12 @@ class TransferForm(ModelForm):
         }
 
 class ExperimentForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
     class Meta:
         model = Experiment
 
@@ -221,7 +296,14 @@ class ExperimentForm(ModelForm):
         }
 
 class ExperimentDisposalForm(ModelForm):
-     class Meta:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
          model = Experiment
          fields = ('id',
                    'expt_disposed',
@@ -240,34 +322,71 @@ class ExperimentDisposalForm(ModelForm):
 
 
 class ExperimentAutoclaveForm(ModelForm):
-     class Meta:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
          model = Experiment
          fields = ('id',
                    'autoclave_indicator',
                    'autoclave_complete')
 
 
+class BulkExptDisposalForm(ModelForm):
+    qs = Experiment.objects.filter(expt_disposed=False)
+    expts = forms.ModelMultipleChoiceField(label='Select Waste',
+             queryset=qs, widget=forms.CheckboxSelectMultiple())
 
-# class BatchExptDisposalForm(ModelForm):
-#     #expts = Experiment.objects.filter(expt_disposed=False)
-#     #exptids = forms.SelectMultiple(choices=expts)
-#     class Meta:
-#         model = Experiment
-#         waste_type = forms.SelectMultiple()
-#         fields = ('id',
-#                   'expt_disposed',
-#                   'disposal_sentby',
-#                   'disposal_date',
-#                   'waste_type',
-#                   'waste_content',
-#                   'waste_qty',
-#                   'autoclave_indicator',
-#                   'autoclave_complete')
-#         widgets = {
-#             'disposal_date': DateInput(format=('%Y-%m-%d'),
-#                     attrs={'class': 'myDateClass',
-#                            'type': 'date',
-#                            'placeholder': 'Select a date'}
-#                                 ),
-#
-#         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+         self.fields[field].widget.attrs.update({
+             'class': 'form-control'
+         })
+
+    class Meta:
+        model = Experiment
+        fields = ('expts',
+                  'expt_disposed',
+                  'disposal_sentby',
+                  'disposal_date',
+                  'waste_type',
+                  'waste_content',
+                  'waste_qty',
+                  'autoclave_indicator',
+                  'autoclave_complete')
+
+        widgets = {
+            'disposal_date': DateInput(format=('%Y-%m-%d'),
+                   attrs={'class': 'myDateClass',
+                          'type': 'date',
+                          'placeholder': 'Select a date'}
+                   ),
+
+        }
+
+class NotesForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+    class Meta:
+        model = Notes
+
+        fields = ('note_date',
+                  'notes',
+                  'initials',
+                 )
+        widgets = {
+            'note_date': DateInput(format=('%Y-%m-%d'),
+                                      attrs={'class': 'myDateClass',
+                                             'type':'date',
+                                             'placeholder': 'Select a date'}
+                                      ),
+         }

@@ -102,29 +102,15 @@
     </div>
 
     <div class="col-md-4 rightpanel">
-        <table id="sidemenu" class="ui-responsive table">
-            <tr>
-                <td>
-                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
-                        <li data-role="list-divider">Choose an action</li>
-                        <li>
-                            <a href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
-                        </li>
-                         <li>
-                            <a href="{% url 'frogs:experiment_disposal' expt.id %}">Disposal</a>
-                        </li>
-                         <li>
-                            <a href="{% url 'frogs:experiment_autoclave' expt.id %}">Autoclave</a>
-                        </li>
-
-                        <li><a href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
+        <div class="container">
+            <h4>Choose an action</h4>
+            <div class="ui-responsive btn-group-vertical">
+                <a class="btn btn-default" href="{% url 'frogs:experiment_update' expt.id %}">Edit</a>
+                <a class="btn btn-default" href="{% url 'frogs:experiment_delete' expt.id %}">Delete</a>
+                <a class="btn btn-default" href="{% url 'frogs:experiment_disposal' expt.id %}">Disposal</a>
+                <a class="btn btn-default" href="{% url 'frogs:experiment_autoclave' expt.id %}">Autoclave</a>
+                <a class="btn btn-default" href="{% url 'frogs:frog_detail' expt.transferid.operationid.frogid.id %}">View Frog</a>
+             </div>
+        </div>
     </div>
 </div>{% endblock %}

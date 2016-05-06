@@ -10,9 +10,14 @@
                 <fieldset data-role="controlgroup">
                     <legend>Select Frogs for disposal:</legend>
 
-                    {{ form.as_p }}
-                </fieldset>
+                {% for x,y in form.fields.frogs.choices %}
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="{{ x }}">{{ y }}</label>
+                    </div>
 
+                {% endfor %}
+             </fieldset>
+                {{ form.as_table }}
 
                 <button type="submit" class="save btn btn-default">Save</button>
             </form>

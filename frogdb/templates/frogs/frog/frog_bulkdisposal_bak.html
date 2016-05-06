@@ -6,13 +6,17 @@
         {% if form.fields.frogs.choices|length > 0 %}
             <form method="POST" class="post-form">
                 {% csrf_token %}
-
                 <fieldset data-role="controlgroup">
-                    <legend>Select Frogs for disposal:</legend>
-
-                    {{ form.as_p }}
-                </fieldset>
-
+                    <legend>Vertical:</legend>
+        <input type="checkbox" name="checkbox-v-2a" id="checkbox-v-2a">
+        <label for="checkbox-v-2a">One</label>
+                <label for="id_frogselect">Select Frogs for disposal:</label>
+                <select id="id_frogselect" name="frogselect" multiple="multiple">
+                {% for x,y in form.fields.frogs.choices %}
+                    <option value="{{ x }}">{{ y }}</option>
+                {% endfor %}
+                </select>
+                {{ form.as_table }}
 
                 <button type="submit" class="save btn btn-default">Save</button>
             </form>

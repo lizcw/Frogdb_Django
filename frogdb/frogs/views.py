@@ -9,9 +9,10 @@ from django.utils import timezone
 from django.template import Context, Template
 from django_tables2 import RequestConfig
 
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm
-from .tables  import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm
+from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable
+from .filters import FrogFilter, PermitFilter
 
 ## Index page
 class IndexView(generic.ListView):
@@ -78,6 +79,10 @@ class PermitDetail(generic.DetailView):
     context_object_name = 'shipment'
     template_name = 'frogs/shipment/shipment_view.html'
 
+class PermitFilterView(FilteredSingleTableView):
+    model = Permit
+    table_class = PermitTable
+    filter_class = PermitFilter
 
 class PermitCreate(generic.CreateView):
     model = Permit
@@ -111,6 +116,13 @@ class FrogList(generic.ListView):
             table = FrogTable(Frog.objects.order_by('-frogid'))
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
+
+class FrogFilterView(FilteredSingleTableView):
+    template_name = 'frogs/frog/frog_list.html'
+    model = Frog
+    table_class = FrogTable
+    filter_class = FrogFilter
+
 
 class FrogDetail(generic.DetailView):
     model = Frog
@@ -279,42 +291,30 @@ class FrogBulkDelete(generic.FormView):
         print('DEBUG: Get success URL')
         return reverse('frogs:frog_list')
 
-#Save fields
+# Bulk entry for disposal of frogs
 class FrogBulkDisposal(generic.FormView):
     template_name = 'frogs/frog/frog_bulkdisposal.html'
     form_class = BulkFrogDisposalForm
     model = Frog
-    frogids = []
    # success_url = 'frogs/frog/frog_bulkdisposal.html'
 
     def form_valid(self, form):
-        if self.request.POST.getlist('selectfrog'):
-            print('DEBUG: FIRST FORM')
-        else:
-            print('DEBUG: form_valid', self.request.POST)
-            print('BulkFrog: updating records=', len(self.frogids))
-            # Generate Frog objects
-            for pk in self.frogids:
-                print('Updating frog:', pk)
-                frog = Frog.objects.get(pk=pk)
-                frog.disposed = form.cleaned_data['disposed']
-                frog.autoclave_date = form.cleaned_data['autoclave_date']
-                frog.autoclave_run = form.cleaned_data['autoclave_run']
-                frog.incineration_date = form.cleaned_data['incineration_date']
-                print('Updated:Frog=', frog.frogid)
-                frog.update()
+        print('DEBUG: form_valid', self.request.POST)
+        bulkfrogs = form.cleaned_data['frogs']
+        print('BulkFrog: updating records=', len(bulkfrogs))
+        # Generate Frog objects
+        for pk in bulkfrogs:
+            print('Updating frog:', pk)
+            frog = pk #Frog.objects.get(pk=pk)
+            frog.disposed = form.cleaned_data['disposed']
+            frog.autoclave_date = form.cleaned_data['autoclave_date']
+            frog.autoclave_run = form.cleaned_data['autoclave_run']
+            frog.incineration_date = form.cleaned_data['incineration_date']
+            print('Updated:Frog=', frog.frogid)
+            frog.save()
 
         return super(FrogBulkDisposal, self).form_valid(form)
 
-    def get_initial(self):
-        self.frogids = self.request.POST.getlist('selectfrog')
-        print('DEBUG: Get initial=', self.frogids)
-        return {'frogids': self.frogids}
-
-    def get_queryset(self):
-        print('DEBUG: Get queryset=', self.frogids)
-
-        return Frog.objects.in_bulk(self.frogids)
 
     def get_success_url(self):
         print('DEBUG: Get success URL')
@@ -322,29 +322,28 @@ class FrogBulkDisposal(generic.FormView):
 
 
 ########## OPERATIONS ############################################
-class OperationSummary(generic.ListView):
+
+# Filtered listing
+def operation_summary(request):
+
     template_name = 'frogs/operation/operation_summary.html'
-    context_object_name = 'summaries'
+    ops = Operation.objects.all().values_list('frogid')
+    qs = Frog.objects.filter(gender='female')\
+        .filter(death_date__isnull=True)\
+        .filter(id__in=ops).order_by('-frogid')
+    config = RequestConfig(request, paginate={"per_page": 20})
+    table = OperationTable(qs, prefix='1-')
+    table1 = OperationTable(qs.filter(species__name='X.borealis'), prefix='2-')
+    table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
+    config.configure(table)
+    config.configure(table1)
+    config.configure(table2)
 
-
-    def get_queryset(self):
-        #Get Operations first
-        ops = Operation.objects.all().values_list('frogid')
-        self.species = self.kwargs.get('species')
-        print('DEBUG:OPS BY SPECIES=', self.species)
-        #Get queryset
-        qs = Frog.objects.all()
-        qs = qs.filter(id__in=ops).order_by('-frogid')
-        if (self.species is not None and self.species != 'all'):
-            qs = qs.filter(species=self.species.lower())
-            print('DEBUG:BY species=', qs.count())
-        table = OperationTable(qs)
-        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
-        return table
-
-    def get_success_url(self):
-        return reverse('frogs:operation_summary', args=[self.species])
-
+    return render(request, template_name, {
+        'summaries': table,
+        'summaries_borealis': table1,
+        'summaries_laevis': table2
+    })
 
 
 ## 1. Set frogid then 2. Increment opnum
@@ -418,7 +417,7 @@ class TransferCreate(generic.CreateView):
     def get_initial(self):
         opid = self.kwargs.get('operationid')
         op = Operation.objects.get(pk=opid)
-        return {'operationid': op}
+        return {'operationid': op, 'volume': op.volume}
 
     def get_success_url(self):
         return reverse('frogs:transfer_detail', args=[self.object.id])
@@ -438,18 +437,48 @@ class TransferDelete(generic.DeleteView):
 
 ########## EXPERIMENTS ############################################
 class ExperimentList(generic.ListView):
-    template_name = 'frogs/experiment/experiment_list.html'
+    template_name = 'frogs/experiment/experiment_list_transfer.html'
     context_object_name = 'expt_list'
 
-
     def get_queryset(self):
-        table = None
+        mylist = Experiment.objects.order_by('-transferid')
         if (self.kwargs.get('transferid')):
-            table = ExperimentTable(Experiment.objects.filter(transferid=self.kwargs.get('transferid')))
-        else:
-            table = ExperimentTable(Experiment.objects.order_by('-transferid'))
+            mylist = mylist.filter(transferid=self.kwargs.get('transferid'))
+
+        table = ExperimentTable(mylist)
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
+
+    def get_context_data(self, **kwargs):
+        context = super(ExperimentList, self).get_context_data(**kwargs)
+        print('DEBUG:GET INITIAL')
+        tid = self.kwargs.get('transferid')
+        transfer = Transfer.objects.get(pk=tid)
+        context['frogid']= transfer.operationid.frogid
+        context['transfer_date']= transfer.transfer_date
+        context['transfer_from_to']= transfer.transferapproval
+        return context
+
+# Filtered listing
+def experiment_listing(request):
+    print('DEBUG:expt listing=', request)
+    template_name = 'frogs/experiment/experiment_list.html'
+    qs = Experiment.objects.order_by('-transferid')
+    config = RequestConfig(request, paginate={"per_page": 20})
+    table = ExperimentTable(qs, prefix='1-')
+    table1 = ExperimentTable(qs.filter(expt_location__building='QBI'), prefix='2-')
+    table2 = ExperimentTable(qs.filter(expt_location__building='IMB'), prefix='3-')
+    config.configure(table)
+    config.configure(table1)
+    config.configure(table2)
+
+    return render(request, template_name, {
+        'expt_list' : table,
+        'qbi_table': table1,
+        'imb_table': table2
+    })
+
+
 
 class ExperimentDetail(generic.DetailView):
     model = Experiment
@@ -510,20 +539,86 @@ class DisposalList(generic.ListView):
     context_object_name = 'expt_list'
 
     def get_queryset(self):
-        table = DisposalTable(Experiment.objects.filter(expt_disposed=False).order_by('-expt_to'))
+        table = DisposalTable(Experiment.objects.order_by('disposal_date'))
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
-# class BatchExptDisposal(generic.FormView):
-#     model = Experiment
-#     form_class = BatchExptDisposalForm
-#     template_name="frogs/batchdisposal_create.html"
-#
-#     def form_valid(self, form):
-#         form.instance.created_by = self.request.user
-#         return super(BatchExptDisposal, self).form_valid(form)
-#
-#     def get_queryset(self):
-#         qs = Experiment.objects.filter(disposed=False)
-#         qs = qs.select_for_update()
-#         return qs
+class BulkDisposal(generic.FormView):
+    template_name = 'frogs/experiment/bulkdisposal.html'
+    form_class = BulkExptDisposalForm
+    model = Experiment
+
+    def form_valid(self, form):
+        print('DEBUG: form_valid', self.request.POST)
+        bulklist = form.cleaned_data['expts']
+        print('bulklist: updating records=', len(bulklist))
+        # Generate Frog objects
+        for pk in bulklist:
+            print('Updating expt:', pk)
+            expt = pk  # Frog.objects.get(pk=pk)
+            expt.expt_disposed = form.cleaned_data['expt_disposed']
+            expt.disposal_sentby = form.cleaned_data['disposal_sentby']
+            expt.disposal_date = form.cleaned_data['disposal_date']
+            expt.waste_type = form.cleaned_data['waste_type']
+            expt.waste_content = form.cleaned_data['waste_content']
+            expt.waste_qty = form.cleaned_data['waste_qty']
+            expt.autoclave_indicator = form.cleaned_data['autoclave_indicator']
+            expt.autoclave_complete = form.cleaned_data['autoclave_complete']
+            print('Updated:Expt=', expt.id)
+            expt.save()
+
+        return super(BulkDisposal, self).form_valid(form)
+
+    def get_queryset(self):
+        mylist = Experiment.objects.order_by('-disposal_date')
+        print('DEBUG: get queryset')
+        if (self.kwargs.get('location')):
+            location = self.kwargs.get('location')
+            print('DEBUG: location=', location)
+            if (location != 'all'):
+                mylist = mylist.filter(expt_location__name=location)
+
+        table = ExperimentTable(mylist)
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
+        return table
+
+    def get_success_url(self):
+        print('DEBUG: Get success URL')
+        return reverse('frogs:experiment_list_location')
+
+# FROG NOTES
+class NotesList(generic.ListView):
+    template_name = 'frogs/notes/notes_list.html'
+    context_object_name = 'notes_list'
+
+    def get_queryset(self):
+        table = NotesTable(Notes.objects.order_by('-note_date'))
+        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
+        return table
+
+class NotesDetail(generic.DetailView):
+    model = Notes
+    context_object_name = 'notes'
+    template_name = 'frogs/notes/notes_view.html'
+
+# class NotesFilterView(FilteredSingleTableView):
+#     model = Notes
+#     table_class = NotesTable
+#     filter_class = NotesFilter
+
+class NotesCreate(generic.CreateView):
+    model = Notes
+    template_name = 'frogs/notes/notes_create.html'
+    form_class = NotesForm
+    success_url = reverse_lazy('frogs:notes_list')
+
+class NotesUpdate(generic.UpdateView):
+    model = Notes
+    form_class = NotesForm
+    template_name = 'frogs/notes/notes_create.html'
+    success_url = reverse_lazy('frogs:notes_list')
+
+class NotesDelete(generic.DeleteView):
+    model = Notes
+    success_url = reverse_lazy("frogs:notes_list")
+    template_name = 'frogs/notes/notes_confirm_delete.html'

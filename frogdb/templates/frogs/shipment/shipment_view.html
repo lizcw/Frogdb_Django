@@ -15,6 +15,10 @@
                     <td>{{shipment.qen|force_escape}}</td>
                 </tr>
                 <tr>
+                    <th>Total Frogs imported</th>
+                    <td>{{shipment.get_totalfrogs|force_escape}}</td>
+                </tr>
+                <tr>
                     <th>Females</th>
                     <td>{{shipment.females|force_escape}}</td>
                 </tr>
@@ -38,6 +42,7 @@
                     <th>Country</th>
                     <td>{{shipment.country|force_escape}}</td>
                 </tr>
+
                 </tbody>
             </table>
         </div>
@@ -45,24 +50,19 @@
 
 
     <div class="col-md-4">
-        <table id="sidemenu" class="ui-responsive table">
-            <tr>
-                <td>
-                    <ul data-role="listview" data-inset="true" style="min-width:210px;">
-                        <li data-role="list-divider">Choose an action</li>
-                        <li><a href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
-                        </li>
-                        <li><a href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
-                        </li>
-                        <li><a href="{% url 'frogs:bulkfrog_create' shipment.id %}">Generate Frog records</a>
-                        </li>
-                        <li><a href="{% url 'frogs:bulkfrog_delete' shipment.id %}">Delete Frog records</a>
-                        </li>
-                        <li><a href="{% url 'frogs:frog_list_byshipment' shipment.id %}">View Frogs</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
+        <div class="container">
+            <h4>Choose an action</h4>
+            <div class="ui-responsive btn-group-vertical">
+                <a class="btn btn-default" href="{% url 'frogs:permit_update' shipment.id %}">Edit</a>
+                <a class="btn btn-default" href="{% url 'frogs:permit_delete' shipment.id %}">Delete</a>
+
+                <a class="btn btn-default" href="{% url 'frogs:bulkfrog_create' shipment.id %}">Generate Frog records <span class="badge">{{shipment.frog_set.count}}</span></a>
+
+                {% if shipment.frog_set.count > 0 %}
+                <a class="btn btn-default" href="{% url 'frogs:bulkfrog_delete' shipment.id %}">Delete Frog records</a>
+                <a class="btn btn-default" href="{% url 'frogs:frog_list_byshipment' shipment.id %}">View Frogs</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</div>{% endblock %}
+    {% endblock %}

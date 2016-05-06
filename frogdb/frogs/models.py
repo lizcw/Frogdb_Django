@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 #######################################################################
 ##  DB LISTS - Managed in Admin
 #######################################################################
-GENDERS=(('female','Female'),('male','Male'))
+GENDERS=(('female','Female'),('male','Male'), ('unknown', 'Unknown'))
 class Qap(models.Model):
     qap = models.CharField(_("QAP"), max_length=80, primary_key=True)
     building = models.CharField(_("Building"), max_length=60, null=False)
@@ -87,12 +87,14 @@ class Permit(models.Model):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.arrival_date <= now
 
+    def get_totalfrogs(self):
+        return (self.females + self.males)
 
 class Frog(models.Model):
 
     frogid = models.CharField(_("Frog ID"), max_length=30, unique=True)
     tankid = models.PositiveSmallIntegerField(_("Tank ID"), default=0)
-    gender = models.CharField(_("Gender"), max_length=10, default="female", choices=GENDERS)
+    gender = models.CharField(_("Gender"), max_length=10, choices=GENDERS)
     current_location = models.ForeignKey(Location, verbose_name="Current Location", null=False)
     species = models.ForeignKey(Species, verbose_name="Species", null=False)
     condition = models.CharField(_("Oocyte Health Condition"), max_length=100, null=True, blank=True)
@@ -251,7 +253,6 @@ class Experiment(models.Model):
     expt_location = models.ForeignKey(Qap, verbose_name="Experiment Location", related_name="expt_location")
     expt_disposed = models.BooleanField(_("Disposed"), default=False)
     disposal_sentby = models.ForeignKey(User, verbose_name="Disposal sent by",blank=True,null=True)
-    #disposal_sentby = models.CharField(_("Disposal sent by initials"), max_length=30, blank=True,null=True)
     disposal_date = models.DateField("Disposal date", blank=True,null=True)
     waste_type = models.ForeignKey(Wastetype, verbose_name="Type of waste", blank=True,null=True)
     waste_content = models.CharField(_("Waste content"), max_length=30, blank=True,null=True)
@@ -260,6 +261,14 @@ class Experiment(models.Model):
     autoclave_complete = models.BooleanField("Autoclave complete", default=False)
 
     def __str__(self):
-        return self.used
+        verbose = "Frog %s [op %d] expt %s (%d of %d ml)" % (
+        self.transferid.operationid.frogid, self.transferid.operationid.opnum, self.expt_to, self.used, self.received)
+        return verbose
 
+class Notes(models.Model):
+    note_date = models.DateField("Notes date")
+    notes = models.CharField(_("Notes"), max_length=500, blank=True, null=True)
+    initials = models.CharField(_("Initials"), max_length=10, blank=True, null=True)
 
+    def __str__(self):
+        return self.notes

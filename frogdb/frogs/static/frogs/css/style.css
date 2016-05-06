@@ -25,14 +25,48 @@ footer p{
     padding-top:10px;
     padding-right:10px;
     }
-input[type=checkbox] {
-    margin: -5px -20px; /* turn off bootstrap */
 
+.navbar-nav a {
+    color:#DFF0D8 !important;
 }
-th.selectfrog{
-    vertical-align:middle !important;
+.navbar-nav a:hover {
+    color:#5cb85c !important;
 }
 
 .dropdown-menu li a.ui-link{
     color:blue !important;
+}
+
+/* Form layout */
+label, input, select {
+    min-width:200px;
+    min-height:25px;
+}
+
+.list-group-item{
+    min-width:200px;
+    }
+.helptext{
+    display:none;
+}
+#id_current_location{
+ max-width:200px;
+ }
+.sidebar{
+    margin-left: 30px;
+}
+
+ul#id_expts li{
+    list-style-type:none;
+}
+ul#id_expts label{
+    width:auto;
+}
+ul#id_expts input[type=checkbox]{
+    vertical-align:middle;
+    display:inherit;
+    height:auto;
+    width:auto;
+    float:left;
+    margin:5px;
 }

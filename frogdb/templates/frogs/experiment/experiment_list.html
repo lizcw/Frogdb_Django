@@ -2,8 +2,39 @@
 {% block title %}Experiments{% endblock %}
 {% block content %}{% load render_table from django_tables2 %}
 <div class="container">
-<div class="page-header"><h2>Experiments</h2></div>
-    {% render_table expt_list %}
+    <div class="page-header"><h2>Ooctye Tracking Records (Experiments)</h2></div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="{% url 'frogs:experiment_list' %}#all_expts">All</a></li>
+        <li><a data-toggle="tab" href="{% url 'frogs:experiment_list_location'  %}#qbi_expts">QBI</a></li>
+        <li><a data-toggle="tab" href="{% url 'frogs:experiment_list_location' %}#imb_expts">IMB</a></li>
+    </ul>
+    <div class="tab-content">
+    <div id="all_expts" class="tab-pane fade in active">
+        {% if expt_list %}
+        <a href="{% url 'frogs:expt_bulkdisposal' 'all' %}" class="btn btn-success">Dispose Oocytes</a>
 
+        {% render_table expt_list %}
+        {% else %}
+        <div class="alert alert-success"><p>No experiments in database</p></div>
+        {% endif %}
     </div>
+    <div id="qbi_expts" class="tab-pane fade">
+        {% if qbi_table %}
+        <a href="{% url 'frogs:expt_bulkdisposal' 'qbi' %}" class="btn btn-success">Dispose Oocytes</a>
+
+        {% render_table qbi_table %}
+        {% else %}
+        <div class="alert alert-success"><p>No experiments in database</p></div>
+        {% endif %}
+    </div>
+    <div id="imb_expts" class="tab-pane fade">
+        {% if imb_table %}
+        <a href="{% url 'frogs:expt_bulkdisposal' 'imb' %}" class="btn btn-success">Dispose Oocytes</a>
+
+        {% render_table imb_table %}
+        {% else %}
+        <div class="alert alert-success"><p>No experiments in database</p></div>
+        {% endif %}
+    </div></div>
+</div>
 {% endblock %}
