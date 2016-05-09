@@ -2,7 +2,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.forms import Form, ModelForm, DateInput, ImageField
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment,Qap, Notes
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment,Qap, Notes, SiteConfiguration
 
 
 class LoginForm(AuthenticationForm):
@@ -390,3 +390,13 @@ class NotesForm(ModelForm):
                                              'placeholder': 'Select a date'}
                                       ),
          }
+
+
+class SiteConfigurationForm(forms.ModelForm):
+    class Meta:
+        model = SiteConfiguration
+        fields = ('site_name','report_location','report_contact_details', 'report_general_notes','maintenance_mode')
+        widgets = {
+            'report_contact_details': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+            'report_general_notes': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+        }

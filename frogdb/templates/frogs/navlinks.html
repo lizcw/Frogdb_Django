@@ -6,3 +6,10 @@
 <li><a href="{% url 'frogs:experiment_list_location' %}">Experiments</a></li>
 <li><a href="{% url 'frogs:disposal_list' %}">Disposals</a></li>
 <li><a href="{% url 'frogs:notes_list' %}">Notes</a></li>
+<li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url 'frogs:froglog_report' 'X.borealis' %}">X.borealis</a></li>
+        <li><a href="{% url 'frogs:froglog_report' 'X.laevis' %}">X.laevis</a></li>
+      </ul>
+</li>

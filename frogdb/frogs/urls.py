@@ -96,5 +96,7 @@ urlpatterns = [
         views.NotesDelete.as_view(), name="notes_delete"),
     url(r'^notes/list/$',
         views.NotesList.as_view(), name='notes_list'),
+    url(r'^reports/froglog/(?P<species>[a-zA-Z\.]*)/$',
+        views.ReportTableView.as_view(), name="froglog_report"),
     url(r'report/$', reports.some_view, name="test_report"),
     ]

@@ -9,9 +9,9 @@ from django.utils import timezone
 from django.template import Context, Template
 from django_tables2 import RequestConfig
 
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm
-from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable
+from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
 from .filters import FrogFilter, PermitFilter
 
 ## Index page
@@ -99,6 +99,35 @@ class PermitUpdate(generic.UpdateView):
 class PermitDelete(generic.DeleteView):
     model = Permit
     success_url = reverse_lazy("frogs:permit_list")
+
+# Frog Log Quarantine Report
+class ReportTableView(generic.TemplateView):
+    template_name = 'frogs/shipment/report_froglog.html'
+
+    def get_queryset(self, **kwargs):
+        species = self.kwargs.get('species')
+        print('DEBUG: Species=', species)
+        if (species == None):
+            qs = Permit.objects.all()
+        else:
+            qs = Permit.objects.filter(species__name=species)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportTableView, self).get_context_data(**kwargs)
+        table = PermitReportTable(self.get_queryset())
+        RequestConfig(self.request).configure(table)
+        notes_table = NotesTable(Notes.objects.all().order_by('-note_date'))
+        RequestConfig(self.request).configure(notes_table)
+
+        context['species'] = self.kwargs.get('species')
+        context['frognotes_table'] = notes_table
+        context['table'] = table
+        context['locations'] = Location.objects.all()
+        context['genders'] =['female','male']
+        context['frogs_table']= Frog.objects.all()
+        return context
 
 
 ########## FROGS ############################################

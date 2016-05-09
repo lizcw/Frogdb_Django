@@ -76,6 +76,29 @@ class PermitTable(tables.Table):
         order_by_field = 'arrival_date'
         sortable = True
 
+## Used in Frog Log Report
+class SummingColumn(tables.Column):
+    def render_footer(self, bound_column, table):
+        return sum(bound_column.accessor.resolve(row) for row in table.data)
+
+class PermitReportTable(tables.Table):
+    aqis = tables.LinkColumn('frogs:permit_detail', accessor=A('aqis'),  args=[A('pk')], verbose_name='AQIS Permit #' )
+    qen = tables.Column(footer="Total:")
+    females = SummingColumn()
+    males = SummingColumn()
+    frogs_disposed = SummingColumn()
+    frogs_remaining_female = SummingColumn()
+    frogs_remaining_male = SummingColumn()
+
+
+    class Meta:
+        model = Permit
+        attrs = {"class": "ui-responsive table table-hover"}
+        fields = ['aqis','qen','arrival_date','females','males','frogs_disposed', 'frogs_remaining_female','frogs_remaining_male']
+
+        order_by_field = 'arrival_date'
+        sortable = True
+
 class OperationTable(tables.Table):
     frogid = tables.LinkColumn('frogs:frog_detail', accessor=A('frogid'), args=[A('pk')],verbose_name='Frog ID')
     num_operations = tables.Column(verbose_name="Num Ops", accessor=A('num_operations'), orderable=False)
@@ -105,7 +128,7 @@ class OperationTable(tables.Table):
 
 
 class NotesTable(tables.Table):
-    id = tables.LinkColumn('frogs:notes_detail', text='View', args=[A('pk')], verbose_name='' )
+    note_date = tables.LinkColumn('frogs:notes_detail', accessor=A('note_date'), args=[A('pk')], verbose_name='Date' )
     class Meta:
         model = Notes
         attrs = {"class": "ui-responsive table table-hover"}

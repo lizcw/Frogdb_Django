@@ -6,6 +6,22 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
+from solo.models import SingletonModel
+#######################################################################
+##  SITE CONFIG - Managed in Admin
+#######################################################################
+class SiteConfiguration(SingletonModel):
+    site_name = models.CharField(max_length=255, default='Site Name')
+    report_location = models.CharField(max_length=1000, default='Location')
+    report_contact_details = models.CharField(max_length=2000, default='Contact Details')
+    report_general_notes = models.CharField(max_length=5000, default='General Notes')
+    maintenance_mode = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return u"Site Configuration"
+
+    class Meta:
+        verbose_name = "Site Configuration"
 
 #######################################################################
 ##  DB LISTS - Managed in Admin
@@ -89,6 +105,25 @@ class Permit(models.Model):
 
     def get_totalfrogs(self):
         return (self.females + self.males)
+
+    def frogs_disposed(self):
+        qs = Frog.objects.filter(qen=self).filter(disposed=True)
+        print('DEBUG: frogs_disposed=', qs.count())
+        return qs.count()
+
+    def get_frogs_remaining(self, gender=None):
+        if (gender == None):
+            qs = Frog.objects.filter(qen=self).filter(disposed=False)
+        else:
+            qs = Frog.objects.filter(qen=self).filter(disposed=False).filter(gender=gender)
+        return qs.count()
+
+    def frogs_remaining_female(self):
+        return self.get_frogs_remaining('female')
+
+    def frogs_remaining_male(self):
+        return self.get_frogs_remaining('male')
+
 
 class Frog(models.Model):
 
@@ -200,6 +235,43 @@ class Operation(models.Model):
     def maxops(self):
         return int(6)
 
+    def get_number_expts(self):
+        total = 0
+        if (self.transfer_set.count() > 0):
+            print('DEBUG: get_number_expts: transfers=', self.transfer_set.count())
+            for t in self.transfer_set.all():
+                if t.experiment_set.count() > 0:
+                    print('DEBUG: get_number_expts: expt=', t.experiment_set.count())
+                    total += t.experiment_set.count()
+
+        return total
+
+    def get_expts_disposaldate_range(self):
+        exptfrom = exptto = None #datetime.date.today()
+        rtn = " - "
+        if (self.transfer_set.count() > 0):
+            for t in self.transfer_set.all():
+                for e in t.experiment_set.all():
+                    if (exptfrom == None):
+                        exptfrom = e.expt_from
+                        exptto = e.expt_to
+                    else:
+                        if e.expt_from < exptfrom:
+                            exptfrom = e.expt_from
+                        if e.expt_to > exptto:
+                            exptto = e.expt_to
+
+            rtn = str(exptfrom) + " to " + str(exptto)
+        return rtn
+
+    def get_expts_number_disposals(self):
+        total = 0
+        if (self.transfer_set.count() > 0):
+            for t in self.transfer_set.all():
+                for e in t.experiment_set.all():
+                    if e.expt_disposed:
+                        total += 1
+        return total
 
 class TransferApproval(models.Model):
     tfr_from = models.ForeignKey(Qap, verbose_name="Transfer from", related_name="tfr_from")
