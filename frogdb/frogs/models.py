@@ -1,4 +1,4 @@
-import datetime
+from datetime import date, datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -16,6 +16,8 @@ class SiteConfiguration(SingletonModel):
     report_contact_details = models.CharField(max_length=2000, default='Contact Details')
     report_general_notes = models.CharField(max_length=5000, default='General Notes')
     maintenance_mode = models.BooleanField(default=False)
+    max_ops = models.SmallIntegerField(_("Max operations"), default=6)
+    op_interval= models.SmallIntegerField(_("Operation interval (mths)"), default=6)
 
     def __unicode__(self):
         return u"Site Configuration"
@@ -91,6 +93,7 @@ class Permit(models.Model):
     species = models.ForeignKey(Species, verbose_name="Species")
     supplier = models.ForeignKey(Supplier, verbose_name="Supplier")
     country = models.ForeignKey(Country, verbose_name="Country")
+    color = models.CharField(_("Colour"), max_length=20, unique=True, null=True, blank=True)
 
 
     def __str__(self):
@@ -100,8 +103,8 @@ class Permit(models.Model):
         return reverse('permit_detail', args=[str(self.pk)])
 
     def arrived_recently(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.arrival_date <= now
+        delta = date.today() - datetime.strptime(self.arrival_date, "%Y-%m-%d").date()
+        return delta.days >=0 and delta.days <= 30
 
     def get_totalfrogs(self):
         return (self.females + self.males)
@@ -151,8 +154,11 @@ class Frog(models.Model):
         return reverse('frog_detail', args=[str(self.pk)])
 
     def died_recently(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.death_date <= now
+        if self.death_date:
+            delta = date.today() - datetime.strptime(self.death_date, "%Y-%m-%d").date()
+            return delta.days >= 0 and delta.days <= 30
+        else:
+            return False
 
     # derived fields
     def get_operations(self):
@@ -170,8 +176,8 @@ class Frog(models.Model):
 
     def next_operation(self):
         lastop = self.last_operation()
-        #add 6 months
-        nextop = lastop + datetime.timedelta(6 * 365 / 12)
+        operation_interval = SiteConfiguration.op_interval
+        nextop = lastop + datetime.timedelta(operation_interval * 365 / 12)
         return nextop
 
     def dorsalimage(self):
@@ -189,6 +195,24 @@ class Frog(models.Model):
                 img = imgs[0]
         return img
 
+    #Validation
+    def clean(self):
+        print("DEBUG: Validating death_date:", self.death_date)
+        deathdate = self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
+        delta = date.today() - self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
+        print("DEBUG: Validating death_date:deltadays=", delta.days)
+        print("DEBUG: Validating death_date:arrival=", self.qen.arrival_date)
+        print("DEBUG: Validating death_date:lastop=", self.last_operation())
+        if delta.days < 0:
+            raise ValidationError("Date of death selected is in the future")
+        if deathdate < self.qen.arrival_date:
+            raise ValidationError("Date of death is before arrival")
+        if self.last_operation() != None and deathdate < self.last_operation():
+            raise ValidationError("Date of death is before last operation")
+
+
+
+
 class FrogAttachment(models.Model):
     frogid = models.ForeignKey(Frog, on_delete=models.CASCADE)
     imgfile = models.ImageField(verbose_name="Image")
@@ -204,13 +228,11 @@ class FrogAttachment(models.Model):
         frog = Frog.objects.get(pk=self.frogid.pk)
         dorsal = frog.dorsalimage()
         ventral = frog.ventralimage()
-        print('DEBUG: imagetype=', self.imagetype.name)
         if dorsal is not None and self.imagetype.name =='Dorsal':
             dorsal.delete()
         elif ventral is not None and self.imagetype.name =='Ventral':
             ventral.delete()
 
-            #raise ValidationError("Can only transfer maximum %d ml" % max)
 
 
 class Operation(models.Model):
@@ -226,14 +248,22 @@ class Operation(models.Model):
         opref = "Frog %s Operation %d" % (self.frogid, self.opnum)
         return opref
 
-    def clean(self):
-        max = self.maxops()
+    def clean_opnum(self):
+        max = SiteConfiguration.max_ops
         if self.opnum > max:
             raise ValidationError("Can only create %d operations per frog" % max)
+        nums = []
+        for n in self.frogid.operation_set:
+            nums.append(n.opnum)
+        if self.opnum in nums:
+            raise ValidationError("An operation %d already exists for this frog" % self.opnum)
 
-    #max ops per frog - ?configurable
-    def maxops(self):
-        return int(6)
+    def clean_opdate(self):
+        if (self.opdate < self.frogid.qen.arrival_date):
+            raise ValidationError("This operation is earlier than the shipment arrival date")
+        delta = self.opdate - self.frogid.last_operation()
+        if delta < (SiteConfiguration.op_interval * 30):
+            raise ValidationError("This operation is only %d days since the last operation (require an interval of %d months)" % delta, SiteConfiguration.op_interval)
 
     def get_number_expts(self):
         total = 0

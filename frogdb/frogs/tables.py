@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from django_tables2.utils import A
+from django.utils.html import format_html
 from datetime import date
 from .models import Transfer,Experiment,Frog,Permit, Notes
 
@@ -66,8 +67,11 @@ class FilteredSingleTableView(tables.SingleTableView):
         return context
 
 
+
 class PermitTable(tables.Table):
     id = tables.LinkColumn('frogs:permit_detail', text='View', args=[A('pk')], verbose_name='' )
+
+
     class Meta:
         model = Permit
         attrs = {"class": "ui-responsive table table-hover"}
@@ -75,6 +79,7 @@ class PermitTable(tables.Table):
 
         order_by_field = 'arrival_date'
         sortable = True
+
 
 ## Used in Frog Log Report
 class SummingColumn(tables.Column):
@@ -109,7 +114,7 @@ class OperationTable(tables.Table):
         delta = value - date.today()
 
         if delta.days == 0:
-            return "Today!"
+            return "<span style='color:green'>Today!</span>"
         elif delta.days < 1:
             return "%s %s ago!" % (abs(delta.days),
                                    ("day" if abs(delta.days) == 1 else "days"))

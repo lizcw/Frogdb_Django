@@ -2,11 +2,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
 from django.views import generic
-from django.utils import timezone
-from django.template import Context, Template
 from django_tables2 import RequestConfig
 
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
@@ -129,20 +126,38 @@ class ReportTableView(generic.TemplateView):
         context['frogs_table']= Frog.objects.all()
         return context
 
+    # def pdfview(self, request):
+    #     resp = HttpResponse(content_type='application/pdf')
+    #     context = self.get_context_data()
+    #     result = generate_pdf(self.template_name, file_object=resp, context=context)
+    #     return result
+
+
 
 ########## FROGS ############################################
 class FrogList(generic.ListView):
-    template_name = 'frogs/frog/frog_list.html'
-    context_object_name = 'frogs'
+    template_name = 'frogs/frog/frog_minilist.html'
+    context_object_name = 'table'
 
-    def get_queryset(self):
-        print('DEBUG:kwargs', self.kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(FrogList, self).get_context_data(**kwargs)
+        list_title="Frogs List"
         if (self.kwargs.get('shipmentid')):
             sid = self.kwargs.get('shipmentid')
             shipment = Permit.objects.get(pk=sid)
-            table = FrogTable(Frog.objects.filter(qen=shipment).order_by('-frogid'))
-        else:
-            table = FrogTable(Frog.objects.order_by('-frogid'))
+            list_title = "Frogs for QEN %s" % shipment.qen
+        context['list_title'] = list_title
+        return context
+
+    def get_queryset(self):
+        print('DEBUG:kwargs', self.kwargs)
+        qs = Frog.objects.all()
+        if (self.kwargs.get('shipmentid')):
+            sid = self.kwargs.get('shipmentid')
+            shipment = Permit.objects.get(pk=sid)
+            qs = qs.filter(qen=shipment)
+            print('DEBUG:frogs per shipment=', qs.count())
+        table = FrogTable(qs)
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
@@ -223,11 +238,12 @@ class FrogBulkCreate(generic.FormView):
     form_class = BulkFrogForm
     template_name = "frogs/frog/bulkfrog_create.html"
     success_url = reverse_lazy("frogs:frog_list")
+    fid = None
 
     def form_valid(self, form):
         #Get shipment: number female/male
-        fid = self.kwargs.get('shipmentid')
-        shipment = Permit.objects.get(pk=fid)
+        self.fid = self.kwargs.get('shipmentid')
+        shipment = Permit.objects.get(pk=self.fid)
         females = shipment.females
         males = shipment.males
         prefix = form.cleaned_data['prefix']
@@ -274,7 +290,7 @@ class FrogBulkCreate(generic.FormView):
         return {'qen': shipment, 'species': shipment.species}
 
     def get_success_url(self):
-        return reverse('frogs:frog_list')
+        return reverse('frogs:frog_list_byshipment',kwargs={'shipmentid': self.fid})
 
 
 #Delete frogs from a shipment

@@ -1,10 +1,10 @@
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 
-def some_view(request):
+def test_view(request):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="test.pdf"'
 
     # Create the PDF object, using the response object as its "file."
     p = canvas.Canvas(response)
@@ -17,3 +17,5 @@ def some_view(request):
     p.showPage()
     p.save()
     return response
+
+

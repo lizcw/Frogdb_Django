@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^frog/list/$',
         views.FrogList.as_view(), name='frog_list'),
     url(r'^frog/filteredlist/$',
-        views.FrogFilterView.as_view(), name='frog_list_filter', ),
+        views.FrogFilterView.as_view(), name='frog_list_filter' ),
     url(r'^frog/list/(?P<shipmentid>\w+)/$',
         views.FrogList.as_view(), name='frog_list_byshipment'),
     url(r'^frog/create/$',
@@ -98,5 +98,5 @@ urlpatterns = [
         views.NotesList.as_view(), name='notes_list'),
     url(r'^reports/froglog/(?P<species>[a-zA-Z\.]*)/$',
         views.ReportTableView.as_view(), name="froglog_report"),
-    url(r'report/$', reports.some_view, name="test_report"),
+    url(r'reports/test/$', reports.test_view, name="test_report"),
     ]

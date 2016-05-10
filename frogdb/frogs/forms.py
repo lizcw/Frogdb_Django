@@ -2,6 +2,8 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.forms import Form, ModelForm, DateInput, ImageField
+from suit_ckeditor.widgets import CKEditorWidget
+from suit.widgets import HTML5Input
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment,Qap, Notes, SiteConfiguration
 
 
@@ -30,14 +32,17 @@ class PermitForm(ModelForm):
                   'females',
                   'males',
                   'supplier',
-                  'country')
+                  'country',
+                  'color')
         widgets = {
             'arrival_date': DateInput(format=('%Y-%m-%d'),
                                       attrs={'class': 'myDateClass',
                                              'type':'date',
                                              'placeholder': 'Select a date'}
                                       ),
-         }
+            'color': HTML5Input(input_type='color'),
+        }
+
 
 
 
@@ -110,6 +115,7 @@ class FrogDeathForm(ModelForm):
             })
     class Meta:
         model = Frog
+
         fields = ('frogid',
                   'death',
                   'death_date',
@@ -397,6 +403,6 @@ class SiteConfigurationForm(forms.ModelForm):
         model = SiteConfiguration
         fields = ('site_name','report_location','report_contact_details', 'report_general_notes','maintenance_mode')
         widgets = {
-            'report_contact_details': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
-            'report_general_notes': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+            'report_contact_details': CKEditorWidget(editor_options={'startupFocus': True}),
+            'report_general_notes': CKEditorWidget(editor_options={'startupFocus': True}),
         }

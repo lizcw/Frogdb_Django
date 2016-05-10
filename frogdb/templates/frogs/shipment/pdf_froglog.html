@@ -1,7 +1,18 @@
 {% extends "frogs/base.html" %}
+{% block extra_style %}
+<style type="text/css">
+@font-face { font-family: Lato; src: url(fonts/Lato-Reg.ttf); }
+body {
+font-family: "Lato", "Helvetica", "sans-serif";
+color: #333333;
+}
+</style>
+{% endblock %}
+
 {% block title %}Frog Log{% endblock %}
 {% block content %}{% load render_table from django_tables2 %}
 <div class="container">
+
     <div class="page-header">
         <p class="report-header">Quarantine Sample Register<br/>Declared pest species - Log<br/>University of Queensland</p>
         <h2 class="report-title">{{ species }}</h2></div>

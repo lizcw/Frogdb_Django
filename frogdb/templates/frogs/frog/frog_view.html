@@ -71,7 +71,9 @@
             <div class="ui-responsive btn-group-vertical">
                 <a class="btn btn-default" href="{% url 'frogs:frog_update' frog.id %}">Edit</a>
                 <a class="btn btn-default" href="{% url 'frogs:frog_upload' frog.id %}">Images</a>
+                {% if frog.gender == 'female' and frog.operation_set.count < site_config.max_ops %}
                 <a class="btn btn-default" href="{% url 'frogs:operation_create' frog.id %}">Operation</a>
+                {% endif %}
                 <a class="btn btn-default" href="{% url 'frogs:frog_death' frog.id %}">Death</a>
                 <a class="btn btn-default" href="{% url 'frogs:frog_disposal' frog.id %}">Disposal</a>
             </div>
@@ -80,6 +82,7 @@
     </div>
 
     <div class="row col-md-8">
+        {% if frog.gender == 'female' %}
         <div data-role="collapsible" class="well">
             <h3>Operations <span class="badge">{{frog.operation_set.count}}</span></h3>
             <table id="ops-table" data-role="table" class="ui-responsive table table-hover">
@@ -104,15 +107,16 @@
                     <td>{{operation.comments|force_escape}}</td>
                     <td>{{operation.initials|force_escape}}</td>
                     <td>
-                        <ul class="nav nav-pills nav-stacked">
-                            <li><a href="{% url 'frogs:transfer_list_byop' operation.id %}">View
-                        <span class="badge">{{operation.transfer_set.count}}</span></a></li>
-                        <li><a href="{% url 'frogs:transfer_create' operation.id %}">New</a></li></ul>
+                        <ul class="nav nav-pills">
+                            <li><a href="{% url 'frogs:transfer_list_byop' operation.id %}" title="View Transfers">
+                                <span class="badge">{{operation.transfer_set.count}}</span></a>
+                                <a href="{% url 'frogs:transfer_create' operation.id %}" title="New Transfer">
+                                    <i class="glyphicon glyphicon-plus-sign"></i></a></li></ul>
                     </td>
                     <td>
                         <ul class="nav nav-pills nav-stacked">
-                        <li><a href="{% url 'frogs:operation_update' operation.id %}">Edit</a></li>
-                        <li><a href="{% url 'frogs:operation_delete' operation.id %}">Delete</a></li>
+                        <li><a href="{% url 'frogs:operation_update' operation.id %}" title="Edit Operation"><i class="glyphicon glyphicon-pencil"></i></a>
+                            <a href="{% url 'frogs:operation_delete' operation.id %}" title="Delete Operation"><i class="glyphicon glyphicon-remove"></i></a></li>
                         </ul>
                     </td>
                 </tr>
@@ -121,6 +125,7 @@
                 </tbody>
             </table>
         </div>
+        {% endif %}
         <div data-role="collapsible" class="well">
             <h3>Death Details</h3>
             <table id="death-table" data-role="table" class="ui-responsive table table-hover">
