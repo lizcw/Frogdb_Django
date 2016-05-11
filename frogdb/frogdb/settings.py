@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_tables2',
     'django_filters',
+    'lockout',
 
 ]
 
 MIDDLEWARE_CLASSES = [
+    'lockout.middleware.LockoutMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -136,3 +138,7 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frogs/static/media')
 LOGIN_REDIRECT_URL ='/frogs/home/'
 LOGIN_URL ='/frogs/'
+
+#Lockout params
+LOCKOUT_MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 600

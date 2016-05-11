@@ -6,6 +6,8 @@ from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
 from django.views import generic
 from django_tables2 import RequestConfig
 
+from lockout.exceptions import LockedOut
+from lockout.utils import reset_attempts
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
@@ -46,19 +48,24 @@ def logoutfrogdb(request):
 def loginfrogdb(request):
     username = request.POST['username']
     password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    print('DEBUG: user=', user)
-    message = None
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            # Redirect to a success page.
+    try:
+        user = authenticate(username=username, password=password)
+
+        message = None
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                reset_attempts(request)
+                # Redirect to a success page.
+            else:
+                # Return a 'disabled account' error message
+                message = 'Your account has been disabled. Please contact admin.'
         else:
-            # Return a 'disabled account' error message
-            message = 'Your account has been disabled. Please contact admin.'
-    else:
-        # Return an 'invalid login' error message.
-        message = 'Login credentials are invalid. Please try again'
+            # Return an 'invalid login' error message.
+            message = 'Login credentials are invalid. Please try again'
+    except LockedOut:
+        message='Your account has been locked out because of too many failed login attempts.'
+
     return render(request, "frogs/index.html", {'errors': message, 'user': user})
 
 #### PERMITS/SHIPMENTS
