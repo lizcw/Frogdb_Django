@@ -53,9 +53,15 @@
             <a id="logoutbtn" class="btn btn-success" href="{% url 'frogs:logout' %}">Logout</a></p>
           </div>
         {% else %}
-          {% if errors %}
-            <p class="col-sm-4 alert alert-danger">Your username and password didn't match. Please try again or contact administrator.</p>
-          {% endif %}
+          {% if form.non_field_errors %}
+            <p class="col-sm-4 alert alert-danger">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+          </p>
+
+            {% endif %}
+
 		  <form class="navbar-form navbar-right" role="form" method="post" action="{% url 'frogs:loginform' %}">
               {% csrf_token %}
               <span><i class="glyphicon glyphicon-user"></i></span><div class="form-group">

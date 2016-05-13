@@ -44,12 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_tables2',
     'django_filters',
-    'lockout',
-
+    'axes',
+    'captcha',
 ]
 
 MIDDLEWARE_CLASSES = [
-    'lockout.middleware.LockoutMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +57,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.FailedLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'frogdb.urls'
@@ -136,9 +136,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frogs/static/media')
-LOGIN_REDIRECT_URL ='/frogs/home/'
-LOGIN_URL ='/frogs/'
+LOGIN_REDIRECT_URL ='/frogs'
+LOGIN_URL ='/frogs'
 
 #Lockout params
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 600
+AXES_LOGIN_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1 #hours
+AXES_LOCKOUT_URL ='/frogs/locked'

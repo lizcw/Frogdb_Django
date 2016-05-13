@@ -1,13 +1,15 @@
 from django.conf.urls import url
 from django.contrib.auth.views import login
+from axes.decorators import watch_login
 from . import views, reports
 
 app_name = 'frogs'
 urlpatterns = [
     ##Using generic views instead
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^login/$', views.loginfrogdb, name='loginform'),
-    url(r'^logout/$', views.logoutfrogdb, name='logout'),
+    url(r'^login/$', watch_login(views.LoginView.as_view()), name='loginform'),
+    url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
+#    url(r'^locked/$', locked_out, name='locked_out'),
     url(r'^permit/create/$',
         views.PermitCreate.as_view(), name="permit_create"),
     url(r'^permit/(?P<pk>\d+)/$',

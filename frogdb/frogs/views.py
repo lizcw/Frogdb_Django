@@ -1,13 +1,24 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, resolve_url
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
 from django.views import generic
 from django_tables2 import RequestConfig
-
-from lockout.exceptions import LockedOut
-from lockout.utils import reset_attempts
+from django.utils.http import is_safe_url
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import FormView, RedirectView
+from django.conf import settings
+try:
+    import urlparse
+except ImportError:
+    from urllib import parse as urlparse # python3 support
+from captcha.fields import CaptchaField
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
@@ -40,6 +51,103 @@ class IndexView(generic.ListView):
         return Permit.objects.all()
 
 ## Login
+class LoginView(FormView):
+    """
+    Provides the ability to login as a user with a username and password
+    """
+    template_name = 'frogs/index.html'
+    success_url = '/frogs'
+    form_class = AuthenticationForm
+    redirect_field_name = REDIRECT_FIELD_NAME
+
+    @method_decorator(sensitive_post_parameters('password'))
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        # Sets a test cookie to make sure the user has cookies enabled
+        request.session.set_test_cookie()
+
+        return super(LoginView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user = form.get_user()
+        if user is not None:
+            if user.is_active:
+                auth_login(self.request, user)
+            else:
+                # Return a 'disabled account' error message
+                form.add_error = 'Your account has been disabled. Please contact admin.'
+
+        else:
+            # Return an 'invalid login' error message.
+            form.add_error = 'Login credentials are invalid. Please try again'
+
+        # If the test cookie worked, go ahead and
+        # delete it since its no longer needed
+        self.check_and_delete_test_cookie()
+        return super(LoginView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        """
+        The user has provided invalid credentials (this was checked in AuthenticationForm.is_valid()). So now we
+        set the test cookie again and re-render the form with errors.
+        """
+        self.set_test_cookie()
+        return super(LoginView, self).form_invalid(form)
+
+    def set_test_cookie(self):
+        self.request.session.set_test_cookie()
+
+    def check_and_delete_test_cookie(self):
+        if self.request.session.test_cookie_worked():
+            self.request.session.delete_test_cookie()
+            return True
+        return False
+
+    def get_success_url(self):
+        if self.success_url:
+            redirect_to = self.success_url
+        else:
+            redirect_to = self.request.POST.get(
+                self.redirect_field_name,
+                self.request.GET.get(self.redirect_field_name, ''))
+
+        netloc = urlparse.urlparse(redirect_to)[1]
+        if not redirect_to:
+            redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+        # Security check -- don't allow redirection to a different host.
+        elif netloc and netloc != self.request.get_host():
+            redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+        return redirect_to
+        #return reverse(redirect_to)
+
+
+class LogoutView(RedirectView):
+    """
+    Provides users the ability to logout
+    """
+    successurl = '/frogs'
+
+    def get(self, request, *args, **kwargs):
+        auth_logout(request)
+        return super(LogoutView, self).get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse(self.successurl)
+
+# def locked_out(request):
+#     if request.POST:
+#         form = AxesCaptchaForm(request.POST)
+#         if form.is_valid():
+#             ip = get_ip_address_from_request(request)
+#             reset(ip=ip)
+#             return HttpResponseRedirect(reverse_lazy('signin'))
+#     else:
+#         form = AxesCaptchaForm()
+#
+#     return render_to_response('locked_out.html', dict(form=form), context_instance=RequestContext(request))
+
+
 def logoutfrogdb(request):
     logout(request)
     return redirect('/frogs')
@@ -55,16 +163,13 @@ def loginfrogdb(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                reset_attempts(request)
-                # Redirect to a success page.
+                 # Redirect to a success page.
             else:
                 # Return a 'disabled account' error message
                 message = 'Your account has been disabled. Please contact admin.'
-        else:
-            # Return an 'invalid login' error message.
-            message = 'Login credentials are invalid. Please try again'
-    except LockedOut:
-        message='Your account has been locked out because of too many failed login attempts.'
+    except:
+        # Return an 'invalid login' error message.
+        message = 'Login credentials are invalid. Please try again'
 
     return render(request, "frogs/index.html", {'errors': message, 'user': user})
 
