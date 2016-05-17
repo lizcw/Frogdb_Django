@@ -1,29 +1,36 @@
-from django.shortcuts import get_object_or_404, render, redirect, resolve_url
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import get_object_or_404, render, redirect, resolve_url, render_to_response
 from django.db import IntegrityError
-from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse, clear_url_caches
+from django.http import HttpResponseRedirect
 from django.views import generic
 from django_tables2 import RequestConfig
 from django.utils.http import is_safe_url
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
-from django.utils.decorators import method_decorator
+from django.contrib.auth import REDIRECT_FIELD_NAME, login, logout, authenticate
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView
 from django.conf import settings
+from ipware.ip import get_ip
+from axes.utils import reset
+from django.template import RequestContext
 try:
     import urlparse
 except ImportError:
     from urllib import parse as urlparse # python3 support
-from captcha.fields import CaptchaField
+
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
 from .filters import FrogFilter, PermitFilter
+###AUTHORIZATION CLASS ##########################################################################
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+
+#################################################################################################
 ## Index page
 class IndexView(generic.ListView):
     template_name ='frogs/index.html'
@@ -73,7 +80,7 @@ class LoginView(FormView):
         user = form.get_user()
         if user is not None:
             if user.is_active:
-                auth_login(self.request, user)
+                login(self.request, user)
             else:
                 # Return a 'disabled account' error message
                 form.add_error = 'Your account has been disabled. Please contact admin.'
@@ -126,92 +133,102 @@ class LogoutView(RedirectView):
     """
     Provides users the ability to logout
     """
+    #template_name = 'frogs/index.html'
     successurl = '/frogs'
 
     def get(self, request, *args, **kwargs):
-        auth_logout(request)
-        return super(LogoutView, self).get(request, *args, **kwargs)
+        logout(request)
+        return redirect(self.successurl)
 
-    def get_success_url(self):
-        return reverse(self.successurl)
+def locked_out(request):
+    if request.POST:
+        form = AxesCaptchaForm(request.POST)
+        print('DEBUG: REQUEST=', request)
+        if form.is_valid():
+            print('DEBUG: FORM=', form)
+            ip = get_ip(request)
+            if ip is not None:
+                print("we have an IP address=", ip)
+                reset(ip=ip)
 
-# def locked_out(request):
-#     if request.POST:
-#         form = AxesCaptchaForm(request.POST)
-#         if form.is_valid():
-#             ip = get_ip_address_from_request(request)
-#             reset(ip=ip)
-#             return HttpResponseRedirect(reverse_lazy('signin'))
-#     else:
-#         form = AxesCaptchaForm()
+            return HttpResponseRedirect(reverse_lazy('frogs:index'))
+    else:
+        form = AxesCaptchaForm()
+
+    return render_to_response('frogs/locked.html', dict(form=form), context_instance=RequestContext(request))
+
+
+# def logoutfrogdb(request):
+#     logout(request)
+#     return redirect('/frogs')
+#     # Redirect to a success page.
 #
-#     return render_to_response('locked_out.html', dict(form=form), context_instance=RequestContext(request))
-
-
-def logoutfrogdb(request):
-    logout(request)
-    return redirect('/frogs')
-    # Redirect to a success page.
-
-def loginfrogdb(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    try:
-        user = authenticate(username=username, password=password)
-
-        message = None
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                 # Redirect to a success page.
-            else:
-                # Return a 'disabled account' error message
-                message = 'Your account has been disabled. Please contact admin.'
-    except:
-        # Return an 'invalid login' error message.
-        message = 'Login credentials are invalid. Please try again'
-
-    return render(request, "frogs/index.html", {'errors': message, 'user': user})
-
+# def loginfrogdb(request):
+#     username = request.POST['username']
+#     password = request.POST['password']
+#     try:
+#         user = authenticate(username=username, password=password)
+#
+#         message = None
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                  # Redirect to a success page.
+#             else:
+#                 # Return a 'disabled account' error message
+#                 message = 'Your account has been disabled. Please contact admin.'
+#     except:
+#         # Return an 'invalid login' error message.
+#         message = 'Login credentials are invalid. Please try again'
+#
+#     return render(request, "frogs/index.html", {'errors': message, 'user': user})
+###########################################################################################
 #### PERMITS/SHIPMENTS
-class PermitList(generic.ListView):
+
+class PermitList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/shipment/shipment_list.html'
     context_object_name = 'shipment_list'
+    raise_exception = True
 
     def get_queryset(self):
         table = PermitTable(Permit.objects.order_by('-arrival_date'))
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         return table
 
-class PermitDetail(generic.DetailView):
+class PermitDetail(LoginRequiredMixin, generic.DetailView):
     model = Permit
     context_object_name = 'shipment'
     template_name = 'frogs/shipment/shipment_view.html'
+    raise_exception = True
 
 class PermitFilterView(FilteredSingleTableView):
     model = Permit
     table_class = PermitTable
     filter_class = PermitFilter
 
-class PermitCreate(generic.CreateView):
+class PermitCreate(LoginRequiredMixin, generic.CreateView):
     model = Permit
     template_name = 'frogs/shipment/shipment_create.html'
     form_class = PermitForm
+    raise_exception = True
     success_url = reverse_lazy('frogs:permit_list')
 
-class PermitUpdate(generic.UpdateView):
+class PermitUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Permit
     form_class = PermitForm
     template_name = 'frogs/shipment/shipment_create.html'
     success_url = reverse_lazy('frogs:permit_list')
+    raise_exception = True
 
-class PermitDelete(generic.DeleteView):
+class PermitDelete(LoginRequiredMixin, generic.DeleteView):
     model = Permit
     success_url = reverse_lazy("frogs:permit_list")
+    raise_exception = True
 
 # Frog Log Quarantine Report
-class ReportTableView(generic.TemplateView):
+class ReportTableView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'frogs/shipment/report_froglog.html'
+    raise_exception = True
 
     def get_queryset(self, **kwargs):
         species = self.kwargs.get('species')
@@ -247,9 +264,10 @@ class ReportTableView(generic.TemplateView):
 
 
 ########## FROGS ############################################
-class FrogList(generic.ListView):
+class FrogList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/frog/frog_minilist.html'
     context_object_name = 'table'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(FrogList, self).get_context_data(**kwargs)
@@ -278,17 +296,20 @@ class FrogFilterView(FilteredSingleTableView):
     model = Frog
     table_class = FrogTable
     filter_class = FrogFilter
+    raise_exception = True
 
 
-class FrogDetail(generic.DetailView):
+class FrogDetail(LoginRequiredMixin, generic.DetailView):
     model = Frog
     context_object_name = 'frog'
     template_name = 'frogs/frog/frog_view.html'
+    raise_exception = True
 
-class FrogCreate(generic.CreateView):
+class FrogCreate(LoginRequiredMixin, generic.CreateView):
     model = Frog
     template_name = 'frogs/frog/frog_create.html'
     form_class = FrogForm
+    raise_exception = True
 
     def form_valid(self, form):
         try:
@@ -300,41 +321,46 @@ class FrogCreate(generic.CreateView):
     def get_success_url(self):
         return reverse('frogs:frog_detail', args=[self.object.id])
 
-class FrogUpdate(generic.UpdateView):
+class FrogUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Frog
     form_class = FrogForm
     template_name = 'frogs/frog/frog_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:frog_detail', args=[self.object.id])
 
-class FrogDelete(generic.DeleteView):
+class FrogDelete(LoginRequiredMixin, generic.DeleteView):
     model = Frog
     success_url = reverse_lazy("frogs:frog_list")
+    raise_exception = True
 
-class FrogDeath(generic.UpdateView):
+class FrogDeath(LoginRequiredMixin, generic.UpdateView):
     model = Frog
     form_class = FrogDeathForm
     context_object_name = 'frog'
     template_name = 'frogs/frog/frog_death.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:frog_detail', args=[self.object.id])
 
-class FrogDisposal(generic.UpdateView):
+class FrogDisposal(LoginRequiredMixin, generic.UpdateView):
     model = Frog
     form_class = FrogDisposalForm
     context_object_name = 'frog'
     template_name = 'frogs/frog/frog_disposal.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:frog_detail', args=[self.object.id])
 
-class FrogAttachment(generic.CreateView):
+class FrogAttachment(LoginRequiredMixin, generic.CreateView):
     model = FrogAttachment
     form_class = FrogAttachmentForm
     context_object_name = 'frog'
     template_name = 'frogs/frog/frog_upload.html'
+    raise_exception = True
 
 
     def get_success_url(self):
@@ -345,12 +371,13 @@ class FrogAttachment(generic.CreateView):
         frog = Frog.objects.get(pk=fid)
         return {'frogid': frog}
 
-class FrogBulkCreate(generic.FormView):
+class FrogBulkCreate(LoginRequiredMixin, generic.FormView):
     model = Frog
     form_class = BulkFrogForm
     template_name = "frogs/frog/bulkfrog_create.html"
     success_url = reverse_lazy("frogs:frog_list")
     fid = None
+    raise_exception = True
 
     def form_valid(self, form):
         #Get shipment: number female/male
@@ -406,9 +433,10 @@ class FrogBulkCreate(generic.FormView):
 
 
 #Delete frogs from a shipment
-class FrogBulkDelete(generic.FormView):
+class FrogBulkDelete(LoginRequiredMixin, generic.FormView):
     template_name = 'frogs/frog/bulkfrog_confirm_delete.html'
     form_class=BulkFrogDeleteForm
+    raise_exception = True
 
 
     def post(self, request, *args, **kwargs):
@@ -449,14 +477,13 @@ class FrogBulkDelete(generic.FormView):
         return reverse('frogs:frog_list')
 
 # Bulk entry for disposal of frogs
-class FrogBulkDisposal(generic.FormView):
+class FrogBulkDisposal(LoginRequiredMixin, generic.FormView):
     template_name = 'frogs/frog/frog_bulkdisposal.html'
     form_class = BulkFrogDisposalForm
     model = Frog
-   # success_url = 'frogs/frog/frog_bulkdisposal.html'
+    raise_exception = True
 
     def form_valid(self, form):
-        print('DEBUG: form_valid', self.request.POST)
         bulkfrogs = form.cleaned_data['frogs']
         print('BulkFrog: updating records=', len(bulkfrogs))
         # Generate Frog objects
@@ -474,7 +501,6 @@ class FrogBulkDisposal(generic.FormView):
 
 
     def get_success_url(self):
-        print('DEBUG: Get success URL')
         return reverse('frogs:frog_list')
 
 
@@ -505,10 +531,11 @@ def operation_summary(request):
 
 ## 1. Set frogid then 2. Increment opnum
 ## Limits: 6 operations and 6 mths apart - in Model
-class OperationCreate(generic.CreateView):
+class OperationCreate(LoginRequiredMixin, generic.CreateView):
     model = Operation
     template_name = 'frogs/operation/operation_create.html'
     form_class = OperationForm
+    raise_exception = True
 
     def get_success_url(self):
         frog = Frog.objects.filter(frogid=self.object.frogid)
@@ -525,10 +552,11 @@ class OperationCreate(generic.CreateView):
         return {'frogid': frog, 'opnum': opnum}
 
 
-class OperationUpdate(generic.UpdateView):
+class OperationUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Operation
     form_class = OperationForm
     template_name = 'frogs/operation/operation_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         frogid = self.object.frogid
@@ -537,18 +565,20 @@ class OperationUpdate(generic.UpdateView):
         return reverse('frogs:frog_detail', args=[fid])
 
 
-class OperationDelete(generic.DeleteView):
+class OperationDelete(LoginRequiredMixin, generic.DeleteView):
     model = Operation
     template_name = 'frogs/operation/operation_confirm_delete.html'
+    raise_exception = True
 
     def get_success_url(self):
         frog = Frog.objects.filter(frogid=self.object.frogid)
         return reverse('frogs:frog_detail', args=[frog[0].id])
 
 ########## TRANSFERS ############################################
-class TransferList(generic.ListView):
+class TransferList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/transfer/transfer_list.html'
     context_object_name = 'transfer_list'
+    raise_exception = True
 
     def get_queryset(self):
         if (self.kwargs.get('operationid')):
@@ -558,18 +588,20 @@ class TransferList(generic.ListView):
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
-class TransferDetail(generic.DetailView):
+class TransferDetail(LoginRequiredMixin, generic.DetailView):
     model = Transfer
     template_name = 'frogs/transfer/transfer_detail.html'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(TransferDetail, self).get_context_data(**kwargs)
         return context
 
-class TransferCreate(generic.CreateView):
+class TransferCreate(LoginRequiredMixin, generic.CreateView):
     model = Transfer
     template_name = 'frogs/transfer/transfer_create.html'
     form_class = TransferForm
+    raise_exception = True
 
     def get_initial(self):
         opid = self.kwargs.get('operationid')
@@ -579,23 +611,26 @@ class TransferCreate(generic.CreateView):
     def get_success_url(self):
         return reverse('frogs:transfer_detail', args=[self.object.id])
 
-class TransferUpdate(generic.UpdateView):
+class TransferUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Transfer
     form_class = TransferForm
     template_name = 'frogs/transfer/transfer_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:transfer_detail', args=[self.object.id])
 
-class TransferDelete(generic.DeleteView):
+class TransferDelete(LoginRequiredMixin, generic.DeleteView):
     model = Transfer
     template_name = 'frogs/transfer/transfer_confirm_delete.html'
     success_url = reverse_lazy("frogs:transfer_list")
+    raise_exception = True
 
 ########## EXPERIMENTS ############################################
-class ExperimentList(generic.ListView):
+class ExperimentList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/experiment/experiment_list_transfer.html'
     context_object_name = 'expt_list'
+    raise_exception = True
 
     def get_queryset(self):
         mylist = Experiment.objects.order_by('-transferid')
@@ -637,19 +672,21 @@ def experiment_listing(request):
 
 
 
-class ExperimentDetail(generic.DetailView):
+class ExperimentDetail(LoginRequiredMixin, generic.DetailView):
     model = Experiment
     context_object_name = 'expt'
     template_name = 'frogs/experiment/experiment_detail.html'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(ExperimentDetail, self).get_context_data(**kwargs)
         return context
 
-class ExperimentCreate(generic.CreateView):
+class ExperimentCreate(LoginRequiredMixin, generic.CreateView):
     model = Experiment
     template_name = 'frogs/experiment/experiment_create.html'
     form_class = ExperimentForm
+    raise_exception = True
 
     def get_initial(self):
         opid = self.kwargs.get('transferid')
@@ -660,50 +697,56 @@ class ExperimentCreate(generic.CreateView):
     def get_success_url(self):
         return reverse('frogs:experiment_detail', args=[self.object.id])
 
-class ExperimentUpdate(generic.UpdateView):
+class ExperimentUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Experiment
     form_class = ExperimentForm
     template_name = 'frogs/experiment/experiment_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:experiment_detail', args=[self.object.id])
 
-class ExperimentDelete(generic.DeleteView):
+class ExperimentDelete(LoginRequiredMixin, generic.DeleteView):
     model = Experiment
     success_url = reverse_lazy("frogs:experiment_list")
+    raise_exception = True
 
-class ExperimentDisposal(generic.UpdateView):
+class ExperimentDisposal(LoginRequiredMixin, generic.UpdateView):
     model = Experiment
     form_class = ExperimentDisposalForm
     context_object_name = 'experiment'
     template_name = 'frogs/experiment/experiment_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:experiment_detail', args=[self.object.id])
 
 
-class ExperimentAutoclave(generic.UpdateView):
+class ExperimentAutoclave(LoginRequiredMixin, generic.UpdateView):
     model = Experiment
     form_class = ExperimentAutoclaveForm
     context_object_name = 'experiment'
     template_name = 'frogs/experiment/experiment_create.html'
+    raise_exception = True
 
     def get_success_url(self):
         return reverse('frogs:experiment_detail', args=[self.object.id])
 
-class DisposalList(generic.ListView):
+class DisposalList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/experiment/disposal_list.html'
     context_object_name = 'expt_list'
+    raise_exception = True
 
     def get_queryset(self):
         table = DisposalTable(Experiment.objects.order_by('disposal_date'))
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
-class BulkDisposal(generic.FormView):
+class BulkDisposal(LoginRequiredMixin, generic.FormView):
     template_name = 'frogs/experiment/bulkdisposal.html'
     form_class = BulkExptDisposalForm
     model = Experiment
+    raise_exception = True
 
     def form_valid(self, form):
         print('DEBUG: form_valid', self.request.POST)
@@ -744,38 +787,43 @@ class BulkDisposal(generic.FormView):
         return reverse('frogs:experiment_list_location')
 
 # FROG NOTES
-class NotesList(generic.ListView):
+class NotesList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/notes/notes_list.html'
     context_object_name = 'notes_list'
+    raise_exception = True
 
     def get_queryset(self):
         table = NotesTable(Notes.objects.order_by('-note_date'))
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         return table
 
-class NotesDetail(generic.DetailView):
+class NotesDetail(LoginRequiredMixin, generic.DetailView):
     model = Notes
     context_object_name = 'notes'
     template_name = 'frogs/notes/notes_view.html'
+    raise_exception = True
 
 # class NotesFilterView(FilteredSingleTableView):
 #     model = Notes
 #     table_class = NotesTable
 #     filter_class = NotesFilter
 
-class NotesCreate(generic.CreateView):
+class NotesCreate(LoginRequiredMixin, generic.CreateView):
     model = Notes
     template_name = 'frogs/notes/notes_create.html'
     form_class = NotesForm
     success_url = reverse_lazy('frogs:notes_list')
+    raise_exception = True
 
-class NotesUpdate(generic.UpdateView):
+class NotesUpdate(LoginRequiredMixin, generic.UpdateView):
     model = Notes
     form_class = NotesForm
     template_name = 'frogs/notes/notes_create.html'
     success_url = reverse_lazy('frogs:notes_list')
+    raise_exception = True
 
-class NotesDelete(generic.DeleteView):
+class NotesDelete(LoginRequiredMixin, generic.DeleteView):
     model = Notes
     success_url = reverse_lazy("frogs:notes_list")
     template_name = 'frogs/notes/notes_confirm_delete.html'
+    raise_exception = True

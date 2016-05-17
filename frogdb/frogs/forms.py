@@ -4,6 +4,7 @@ from django import forms
 from django.forms import Form, ModelForm, DateInput, ImageField
 from suit_ckeditor.widgets import CKEditorWidget
 from suit.widgets import HTML5Input
+from captcha.fields import CaptchaField
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment,Qap, Notes, SiteConfiguration
 
 
@@ -13,6 +14,10 @@ class LoginForm(AuthenticationForm):
         widgets = {'username': forms.TextInput(attrs={'class': 'form-control', 'name': 'username'}),
                    'password': forms.PasswordInput(attrs={'class': 'form-control', 'name': 'password'})
                    }
+
+
+class AxesCaptchaForm(Form):
+    captcha = CaptchaField()
 
 
 class PermitForm(ModelForm):

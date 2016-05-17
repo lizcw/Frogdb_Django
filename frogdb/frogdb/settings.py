@@ -25,7 +25,7 @@ SECRET_KEY = 'md^dz3_%^e1zxycka2#_9cq=o170h9bhvk^f-8x(%a$8+_lhce'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1',]
 
 
 # Application definition
@@ -132,14 +132,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'frogs/static')
 STATIC_URL = '/static/'
 MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frogs/static/media')
-LOGIN_REDIRECT_URL ='/frogs'
-LOGIN_URL ='/frogs'
+LOGIN_REDIRECT_URL ='/'
+LOGIN_URL ='/'
 
 #Lockout params
-AXES_LOGIN_FAILURE_LIMIT = 5
+AXES_LOGIN_FAILURE_LIMIT = 2
 AXES_COOLOFF_TIME = 1 #hours
 AXES_LOCKOUT_URL ='/frogs/locked'
