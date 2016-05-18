@@ -23,7 +23,7 @@ except ImportError:
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
-from .filters import FrogFilter, PermitFilter
+from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter
 ###AUTHORIZATION CLASS ##########################################################################
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -291,7 +291,7 @@ class FrogList(LoginRequiredMixin, generic.ListView):
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
-class FrogFilterView(FilteredSingleTableView):
+class FrogFilterView(LoginRequiredMixin, FilteredSingleTableView):
     template_name = 'frogs/frog/frog_list.html'
     model = Frog
     table_class = FrogTable
@@ -588,6 +588,14 @@ class TransferList(LoginRequiredMixin, generic.ListView):
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
 
+class TransferFilterView(LoginRequiredMixin, FilteredSingleTableView):
+    template_name = 'frogs/transfer/transfer_list.html'
+    context_object_name = 'table'
+    model = Transfer
+    table_class = TransferTable
+    filter_class = TransferFilter
+    raise_exception = True
+
 class TransferDetail(LoginRequiredMixin, generic.DetailView):
     model = Transfer
     template_name = 'frogs/transfer/transfer_detail.html'
@@ -650,6 +658,15 @@ class ExperimentList(LoginRequiredMixin, generic.ListView):
         context['transfer_date']= transfer.transfer_date
         context['transfer_from_to']= transfer.transferapproval
         return context
+
+class ExperimentFilterView(LoginRequiredMixin, FilteredSingleTableView):
+    template_name = 'frogs/experiment/experiment_list.html'
+    context_object_name = 'table'
+    model = Experiment
+    table_class = ExperimentTable
+    filter_class = ExperimentFilter
+    raise_exception = True
+
 
 # Filtered listing
 def experiment_listing(request):

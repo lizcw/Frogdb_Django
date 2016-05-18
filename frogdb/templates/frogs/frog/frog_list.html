@@ -3,9 +3,9 @@
 {% load django_tables2 %}
 {% block sidebar %}
 <div class="sidebar">
-    <div class="row col-md-2">
-        <div class="well">
-            <h4>Search Frogs</h4>
+   <div class="well">
+    <button data-toggle="collapse" data-target="#searchform"><h4>Search for Frogs</h4></button>
+       <div id="searchform" class="collapse">
             <form method='GET'>
                 {{ filter.form }}
                 <br/>
@@ -17,8 +17,9 @@
                 &nbsp;|</div>
 
             </form>
-        </div>
+       </div>
     </div>
+
 </div>
 {% endblock %}
 {% block content %}

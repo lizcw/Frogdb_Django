@@ -36,6 +36,7 @@ class TransferTable(tables.Table):
     species = tables.Column(verbose_name='Species', accessor=A('operationid.frogid.species'))
     qen = tables.Column(verbose_name='QEN', accessor=A('operationid.frogid.qen'))
     sop = tables.Column(verbose_name='Transfer Approval', accessor=A('transferapproval.sop'))
+    transfer_date = tables.DateColumn(verbose_name="Transfer Date", format='d-M-Y', accessor=A('transfer_date'), orderable=False)
 
     class Meta:
         model = Transfer
@@ -108,20 +109,22 @@ class OperationTable(tables.Table):
     frogid = tables.LinkColumn('frogs:frog_detail', accessor=A('frogid'), args=[A('pk')],verbose_name='Frog ID')
     num_operations = tables.Column(verbose_name="Num Ops", accessor=A('num_operations'), orderable=False)
     last_operation = tables.DateColumn(verbose_name="Last Op", format='d-M-Y', accessor=A('last_operation'), orderable=False)
-    next_operation = tables.DateColumn(verbose_name="Next Op not before", format='d-M-Y', accessor=A('next_operation'), orderable=False)
+   # next_operation = tables.DateColumn(verbose_name="Next Op not before", format='d-M-Y', accessor=A('next_operation'), orderable=False)
+    next_operation = tables.Column(verbose_name="Next Op from", accessor=A('next_operation'), orderable=False)
 
-    def render_next_operation(self,value):
+    def render_next_operation(self, value):
+        print('DEBUG: next_op=', value)
         delta = value - date.today()
 
         if delta.days == 0:
-            return "<span style='color:green'>Today!</span>"
+            return format_html('<span style="color:green">Today</span>')
         elif delta.days < 1:
-            return "%s %s ago!" % (abs(delta.days),
-                                   ("day" if abs(delta.days) == 1 else "days"))
+            return format_html('<span style="color:blue">%s %s ago</span>' % (abs(delta.days),
+                                   ("day" if abs(delta.days) == 1 else "days")))
         elif delta.days == 1:
-            return "Tomorrow"
+            return format_html('<span style="color:red">Tomorrow</span>')
         elif delta.days > 1:
-            return "In %s days" % delta.days
+            return format_html('<span style="color:red">In %s days</span>' % delta.days)
 
     class Meta:
         model = Frog

@@ -38,11 +38,13 @@ footer p{
 }
 
 /* Form layout */
-label, input, select {
+/*label, input, select {
     min-width:200px;
     min-height:25px;
 }
-
+*/
+.form-control input {
+}
 .list-group-item{
     min-width:200px;
     }
@@ -69,6 +71,7 @@ ul#id_expts input[type=checkbox]{
     width:auto;
     float:left;
     margin:5px;
+    min-width:20px;
 }
 ul.errorlist{
     color: #a94442;

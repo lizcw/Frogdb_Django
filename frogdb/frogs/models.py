@@ -1,11 +1,11 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-
+#from .models import SiteConfiguration
 from solo.models import SingletonModel
 #######################################################################
 ##  SITE CONFIG - Managed in Admin
@@ -170,15 +170,24 @@ class Frog(models.Model):
         if (totalops > 0):
             lastop = self.operation_set.order_by('opnum')[totalops - 1]
             return lastop.opdate
+        else:
+            return lastop
 
     def num_operations(self):
          return self.operation_set.count()
 
     def next_operation(self):
+        config = SiteConfiguration.objects.get()
+        operation_interval = config.op_interval
+        if operation_interval is None:
+            operation_interval = 180 #hardcoded default in days
         lastop = self.last_operation()
-        operation_interval = SiteConfiguration.op_interval
-        nextop = lastop + datetime.timedelta(operation_interval * 365 / 12)
-        return nextop
+        d = timedelta(days=operation_interval)
+        if lastop is not None:
+            nextop = lastop + d
+            return nextop
+        else:
+            return None
 
     def dorsalimage(self):
         return self.get_image('Dorsal')
@@ -197,18 +206,19 @@ class Frog(models.Model):
 
     #Validation
     def clean(self):
-        print("DEBUG: Validating death_date:", self.death_date)
-        deathdate = self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
-        delta = date.today() - self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
-        print("DEBUG: Validating death_date:deltadays=", delta.days)
-        print("DEBUG: Validating death_date:arrival=", self.qen.arrival_date)
-        print("DEBUG: Validating death_date:lastop=", self.last_operation())
-        if delta.days < 0:
-            raise ValidationError("Date of death selected is in the future")
-        if deathdate < self.qen.arrival_date:
-            raise ValidationError("Date of death is before arrival")
-        if self.last_operation() != None and deathdate < self.last_operation():
-            raise ValidationError("Date of death is before last operation")
+        if self.death_date is not None:
+            print("DEBUG: Validating death_date:", self.death_date)
+            deathdate = self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
+            delta = date.today() - self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
+            print("DEBUG: Validating death_date:deltadays=", delta.days)
+            print("DEBUG: Validating death_date:arrival=", self.qen.arrival_date)
+            print("DEBUG: Validating death_date:lastop=", self.last_operation())
+            if delta.days < 0:
+                raise ValidationError("Date of death selected is in the future")
+            if deathdate < self.qen.arrival_date:
+                raise ValidationError("Date of death is before arrival")
+            if self.last_operation() != None and deathdate < self.last_operation():
+                raise ValidationError("Date of death is before last operation")
 
 
 
@@ -249,7 +259,8 @@ class Operation(models.Model):
         return opref
 
     def clean_opnum(self):
-        max = SiteConfiguration.max_ops
+        config = SiteConfiguration.objects.get()
+        max = config.max_ops
         if self.opnum > max:
             raise ValidationError("Can only create %d operations per frog" % max)
         nums = []
@@ -259,11 +270,13 @@ class Operation(models.Model):
             raise ValidationError("An operation %d already exists for this frog" % self.opnum)
 
     def clean_opdate(self):
+        config = SiteConfiguration.objects.get()
+        operation_interval = config.op_interval
         if (self.opdate < self.frogid.qen.arrival_date):
             raise ValidationError("This operation is earlier than the shipment arrival date")
         delta = self.opdate - self.frogid.last_operation()
-        if delta < (SiteConfiguration.op_interval * 30):
-            raise ValidationError("This operation is only %d days since the last operation (require an interval of %d months)" % delta, SiteConfiguration.op_interval)
+        if delta < (operation_interval):
+            raise ValidationError("This operation is only %d days since the last operation (require an interval of %d days)" % delta, SiteConfiguration.op_interval)
 
     def get_number_expts(self):
         total = 0

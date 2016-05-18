@@ -34,14 +34,16 @@
 
 
             {% for frog in frogs_table %}
-                {% if frog.gender == gender and frog.current_location == loc %}
+                {% if frog.gender == gender and frog.current_location == loc and frog.species.name == species %}
                 <tbody><tr style="background-color: {{frog.qen.color }}">
                     <td>{{frog.frogid}}</td>
                     <td>{{frog.qen}}</td>
                     <td>{{frog.aec}}</td>
                     <td>{{frog.disposed}}</td>
-                    <td>{% for op in frog.operation_set.all %}
-                        <table class="table"><thead><tr>
+                    <td>
+                        <table class="table-condensed">
+                            {% if frog.operation_set.count > 0 %}
+                            <thead><tr>
                             <th>No</th>
                             <th>Initials</th>
                             <th>Date</th>
@@ -49,17 +51,21 @@
                             <th>Disposal dates</th>
                             <th>Autoclaved</th>
                         </tr></thead>
-                        <tbody><tr>
+                            {% endif %}
+                        <tbody>
+                        {% for op in frog.operation_set.all %}
+                        <tr>
                             <td>{{ op.opnum }}</td>
                             <td>{{ op.initials }}</td>
                             <td>{{ op.opdate }}</td>
                             <td>{{ op.get_number_expts }}</td>
                             <td>{{ op.get_expts_disposaldate_range }}</td>
                             <td>{{ op.get_expts_number_disposals }}</td>
-                        </tr></tbody></table>
+                        </tr>
                         {% empty %}
                         <p>No operations performed</p>
                         {% endfor %}
+                        </tbody></table>
                     </td>
                 </tr></tbody>
                 {% endif %}
