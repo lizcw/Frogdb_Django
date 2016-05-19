@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^frog/bulkdisposal/$',
         views.FrogBulkDisposal.as_view(), name="bulkfrog_disposal"),
     url(r'^operation/summary/$',
-        views.operation_summary, name='operation_summary'),
+        views.OperationFilterView.as_view(), name='operation_summary'),
     url(r'^operation/create/(?P<frogid>\w+)/$',
         views.OperationCreate.as_view(), name="operation_create"),
     url(r'^operation/(?P<pk>\d+)/update/$',

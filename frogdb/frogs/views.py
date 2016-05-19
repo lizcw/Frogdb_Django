@@ -23,7 +23,7 @@ except ImportError:
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
-from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter
+from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter, OperationFilter
 ###AUTHORIZATION CLASS ##########################################################################
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -507,27 +507,32 @@ class FrogBulkDisposal(LoginRequiredMixin, generic.FormView):
 ########## OPERATIONS ############################################
 
 # Filtered listing
-def operation_summary(request):
 
+class OperationFilterView(LoginRequiredMixin, FilteredSingleTableView):
     template_name = 'frogs/operation/operation_summary.html'
-    ops = Operation.objects.all().values_list('frogid')
-    qs = Frog.objects.filter(gender='female')\
-        .filter(death_date__isnull=True)\
-        .filter(id__in=ops).order_by('-frogid')
-    config = RequestConfig(request, paginate={"per_page": 20})
-    table = OperationTable(qs, prefix='1-')
-    table1 = OperationTable(qs.filter(species__name='X.borealis'), prefix='2-')
-    table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
-    config.configure(table)
-    config.configure(table1)
-    config.configure(table2)
+    model = Frog
+    table_class = OperationTable
+    filter_class = OperationFilter
+    raise_exception = True
 
-    return render(request, template_name, {
-        'summaries': table,
-        'summaries_borealis': table1,
-        'summaries_laevis': table2
-    })
+    def get_context_data(self, **kwargs):
+        context = super(OperationFilterView, self).get_context_data(**kwargs)
+        ops = Operation.objects.all().values_list('frogid')
+        qs = Frog.objects.filter(gender='female') \
+            .filter(death_date__isnull=True) \
+            .filter(id__in=ops).order_by('-frogid')
+        table = OperationTable(qs, prefix='1-')
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
+        stats_table1 = OperationTable(qs.filter(species__name='X.borealis'), prefix='2-')
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table1)
+        stats_table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
+        RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table2)
 
+        context['species'] = self.kwargs.get('species')
+        context['summaries'] = table
+        context['summaries_borealis'] = stats_table1
+        context['summaries_laevis'] = stats_table2
+        return context
 
 ## 1. Set frogid then 2. Increment opnum
 ## Limits: 6 operations and 6 mths apart - in Model
