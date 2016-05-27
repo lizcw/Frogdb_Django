@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^permit/list/$',
         views.PermitList.as_view(), name='permit_list'),
     url(r'^frog/list/$',
-        views.FrogList.as_view(), name='frog_list'),
+        views.FrogFilterView.as_view(), name='frog_list'),
     url(r'^frog/filteredlist/$',
         views.FrogFilterView.as_view(), name='frog_list_filter' ),
     url(r'^frog/list/(?P<shipmentid>\w+)/$',

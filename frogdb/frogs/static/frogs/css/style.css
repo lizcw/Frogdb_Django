@@ -33,9 +33,9 @@ footer p{
     color:#5cb85c !important;
 }
 
-.dropdown-menu li a.ui-link{
-    color:blue !important;
-}
+.dropdown-menu{
+    background-color: #5CB85C;
+    }
 
 /* Form layout */
 /*label, input, select {
@@ -58,13 +58,13 @@ footer p{
     margin-left: 30px;
 }
 
-ul#id_expts li{
+ul#id_frogs li, ul#id_expts li{
     list-style-type:none;
 }
-ul#id_expts label{
+ul#id_frogs label, ul#id_expts label{
     width:auto;
 }
-ul#id_expts input[type=checkbox]{
+ul#id_frogs input[type=checkbox], ul#id_expts input[type=checkbox]{
     vertical-align:middle;
     display:inherit;
     height:auto;
@@ -84,3 +84,17 @@ ul.errorlist{
 ul.errorlist li{
     list-display-type:none !important;
     }
+
+/**Report **/
+#report-logo{
+    margin: 0 40px 0 0;
+    float:left;
+}
+.report-header{
+    font-size: 0.9em;
+}
+.report-location{
+    text-align:center;
+    font-weight: bold;
+    font-size:1.1em;
+}

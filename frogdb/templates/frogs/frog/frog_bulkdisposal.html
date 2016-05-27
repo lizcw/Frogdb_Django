@@ -14,13 +14,15 @@
                 </fieldset>
 
 
-                <button type="submit" class="save btn btn-default">Save</button>
+                <button type="submit" class="save btn btn-success">Save</button>
+                <a class="btn btn-default" href="{% url 'frogs:frog_list_filter' %}">Cancel</a>
             </form>
         {% else %}
             <p>No frogs ready for disposal</p>
+            <a class="btn btn-default" href="{% url 'frogs:frog_list_filter' %}">Cancel</a>
         {% endif %}
 
-            <a class="btn btn-default" href="{% url 'frogs:frog_list' %}">Cancel</a>
+
         </div>
     </div>
 </div>{% endblock %}

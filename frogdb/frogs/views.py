@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView
 from django.conf import settings
+from datetime import date
 from ipware.ip import get_ip
 from axes.utils import reset
 from django.template import RequestContext
@@ -19,7 +20,7 @@ try:
     import urlparse
 except ImportError:
     from urllib import parse as urlparse # python3 support
-
+### Local imports ###############################################################################
 from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
@@ -28,6 +29,11 @@ from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter,
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 #################################################################################################
@@ -46,11 +52,25 @@ class IndexView(generic.ListView):
     def get_transfer_count(self):
         return Transfer.objects.count()
 
+    def get_operations_ready_count(self):
+        alive = Frog.objects.filter(death_date__isnull=True).filter(gender='female')
+        #print("DEBUG: Alive=", alive.count())
+        ready = []
+        for f in alive:
+            if (f.num_operations() == 0):
+                ready.append(f)
+            elif (f.num_operations() > 0):
+                delta = f.next_operation() - date.today()
+                if delta.days < 0:
+                    ready.append(f)
+        #print("DEBUG: Ready=", len(ready))
+        return len(ready)
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['shipment_list']= self.get_shipment_count()
         context['frog_list'] = self.get_frog_count()
-        context['transfer_list']= self.get_transfer_count()
+        context['op_list']= self.get_operations_ready_count()
         return context
 
     def get_queryset(self):
@@ -79,15 +99,22 @@ class LoginView(FormView):
     def form_valid(self, form):
         user = form.get_user()
         if user is not None:
+            msg = 'User: %s' % user
             if user.is_active:
                 login(self.request, user)
+                msg = '% has logged in' % msg
+                logger.info(msg)
             else:
                 # Return a 'disabled account' error message
                 form.add_error = 'Your account has been disabled. Please contact admin.'
+                msg = '% has disabled account' % msg
+                logger.warning(msg)
 
         else:
             # Return an 'invalid login' error message.
             form.add_error = 'Login credentials are invalid. Please try again'
+            msg = 'Login failed with invalid credentials'
+            logger.error(msg)
 
         # If the test cookie worked, go ahead and
         # delete it since its no longer needed
@@ -143,12 +170,11 @@ class LogoutView(RedirectView):
 def locked_out(request):
     if request.POST:
         form = AxesCaptchaForm(request.POST)
-        print('DEBUG: REQUEST=', request)
         if form.is_valid():
-            print('DEBUG: FORM=', form)
             ip = get_ip(request)
             if ip is not None:
-                print("we have an IP address=", ip)
+                msg = "User locked out with IP address=%s" % ip
+                logger.warning(msg)
                 reset(ip=ip)
 
             return HttpResponseRedirect(reverse_lazy('frogs:index'))
@@ -158,30 +184,6 @@ def locked_out(request):
     return render_to_response('frogs/locked.html', dict(form=form), context_instance=RequestContext(request))
 
 
-# def logoutfrogdb(request):
-#     logout(request)
-#     return redirect('/frogs')
-#     # Redirect to a success page.
-#
-# def loginfrogdb(request):
-#     username = request.POST['username']
-#     password = request.POST['password']
-#     try:
-#         user = authenticate(username=username, password=password)
-#
-#         message = None
-#         if user is not None:
-#             if user.is_active:
-#                 login(request, user)
-#                  # Redirect to a success page.
-#             else:
-#                 # Return a 'disabled account' error message
-#                 message = 'Your account has been disabled. Please contact admin.'
-#     except:
-#         # Return an 'invalid login' error message.
-#         message = 'Login credentials are invalid. Please try again'
-#
-#     return render(request, "frogs/index.html", {'errors': message, 'user': user})
 ###########################################################################################
 #### PERMITS/SHIPMENTS
 
@@ -232,7 +234,6 @@ class ReportTableView(LoginRequiredMixin, generic.TemplateView):
 
     def get_queryset(self, **kwargs):
         species = self.kwargs.get('species')
-        print('DEBUG: Species=', species)
         if (species == None):
             qs = Permit.objects.all()
         else:
@@ -280,13 +281,13 @@ class FrogList(LoginRequiredMixin, generic.ListView):
         return context
 
     def get_queryset(self):
-        print('DEBUG:kwargs', self.kwargs)
+        #print('DEBUG:kwargs', self.kwargs)
         qs = Frog.objects.all()
         if (self.kwargs.get('shipmentid')):
             sid = self.kwargs.get('shipmentid')
             shipment = Permit.objects.get(pk=sid)
             qs = qs.filter(qen=shipment)
-            print('DEBUG:frogs per shipment=', qs.count())
+            #print('DEBUG:frogs per shipment=', qs.count())
         table = FrogTable(qs)
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
@@ -315,7 +316,9 @@ class FrogCreate(LoginRequiredMixin, generic.CreateView):
         try:
             return super(FrogCreate, self).form_valid(form)
         except IntegrityError as e:
-            form.add_error('frogid', 'Database Error: Unable to create Frog - see Administrator')
+            msg = 'Database Error: Unable to create Frog - see Administrator'
+            form.add_error('frogid',msg)
+            logger.warning(msg)
             return self.form_invalid(form)
 
     def get_success_url(self):
@@ -394,8 +397,9 @@ class FrogBulkCreate(LoginRequiredMixin, generic.FormView):
         aec = form.cleaned_data['aec']
         bulk_list=[]
         #Check initial prefix unique
-        firstfrogid = "%s%d" % (prefix, startid)
-        print('BulkFrog: generating records from QEN=', shipment.qen)
+        #firstfrogid = "%s%d" % (prefix, startid)
+        msg = 'BulkFrog: generating records from QEN=%s' % shipment.qen
+        logger.info(msg)
         #Generate Frog objects
         for i in range(startid,(startid + females + males)):
             gender = 'female'
@@ -412,12 +416,13 @@ class FrogBulkCreate(LoginRequiredMixin, generic.FormView):
             frog.condition= ''
             frog.remarks='auto-generated'
             frog.aec=aec
-            print('Generated:Frog=',frog.frogid)
+            #print('DEBUG: Generated:Frog=',frog.frogid)
             bulk_list.append(frog)
 
         try:
             Frog.objects.bulk_create(bulk_list)
-            print('BulkFrog: frogs generated=', len(bulk_list))
+            msg = 'BulkFrog: frogs generated=%d from QEN=%s' % (len(bulk_list), shipment.qen)
+            logger.info(msg)
             return super(FrogBulkCreate, self).form_valid(form)
         except IntegrityError:
             return super(FrogBulkCreate, self).form_invalid(form)
@@ -440,18 +445,15 @@ class FrogBulkDelete(LoginRequiredMixin, generic.FormView):
 
 
     def post(self, request, *args, **kwargs):
-        print('DEBUG: post')
         froglist = self.get_queryset()
-        #print('DELETING frogs', len(froglist))
         r = froglist.delete()
         message = 'Successfully deleted ' + str(r[0]) + ' frogs'
-        print('DELETED: ', message, ' r=', r)
+        #print('DELETED: ', message, ' r=', r)
+        logger.info(message)
         return render(request, self.template_name, {'msg': message})
 
     def get_context_data(self, **kwargs):
         context = super(FrogBulkDelete, self).get_context_data(**kwargs)
-        print('DEBUG: Get context data=', context)
-       # print('DEBUG: Form=', context['form'])
         fid = self.kwargs.get('shipmentid')
         shipment = Permit.objects.get(pk=fid)
         froglist = self.get_queryset()
@@ -468,12 +470,10 @@ class FrogBulkDelete(LoginRequiredMixin, generic.FormView):
 
     def get_queryset(self):
         fid = self.kwargs.get('shipmentid')
-        print('DEBUG: Get queryset')
         shipment = Permit.objects.get(pk=fid)
         return Frog.objects.filter(qen=shipment)
 
     def get_success_url(self):
-        print('DEBUG: Get success URL')
         return reverse('frogs:frog_list')
 
 # Bulk entry for disposal of frogs
@@ -485,16 +485,17 @@ class FrogBulkDisposal(LoginRequiredMixin, generic.FormView):
 
     def form_valid(self, form):
         bulkfrogs = form.cleaned_data['frogs']
-        print('BulkFrog: updating records=', len(bulkfrogs))
+        msg = 'BulkFrog: updating frog records=%d' % len(bulkfrogs)
+        logger.info(msg)
         # Generate Frog objects
         for pk in bulkfrogs:
-            print('Updating frog:', pk)
+            #print('Updating frog:', pk)
             frog = pk #Frog.objects.get(pk=pk)
             frog.disposed = form.cleaned_data['disposed']
             frog.autoclave_date = form.cleaned_data['autoclave_date']
             frog.autoclave_run = form.cleaned_data['autoclave_run']
             frog.incineration_date = form.cleaned_data['incineration_date']
-            print('Updated:Frog=', frog.frogid)
+            #print('Updated:Frog=', frog.frogid)
             frog.save()
 
         return super(FrogBulkDisposal, self).form_valid(form)
@@ -656,7 +657,7 @@ class ExperimentList(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ExperimentList, self).get_context_data(**kwargs)
-        print('DEBUG:GET INITIAL')
+        #print('DEBUG:GET INITIAL')
         tid = self.kwargs.get('transferid')
         transfer = Transfer.objects.get(pk=tid)
         context['frogid']= transfer.operationid.frogid
@@ -675,7 +676,7 @@ class ExperimentFilterView(LoginRequiredMixin, FilteredSingleTableView):
 
 # Filtered listing
 def experiment_listing(request):
-    print('DEBUG:expt listing=', request)
+    #print('DEBUG:expt listing=', request)
     template_name = 'frogs/experiment/experiment_list.html'
     qs = Experiment.objects.order_by('-transferid')
     config = RequestConfig(request, paginate={"per_page": 20})
@@ -771,12 +772,13 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
     raise_exception = True
 
     def form_valid(self, form):
-        print('DEBUG: form_valid', self.request.POST)
+        #print('DEBUG: form_valid', self.request.POST)
         bulklist = form.cleaned_data['expts']
-        print('bulklist: updating records=', len(bulklist))
+        msg = 'BULKDISPOSAL: updating records=%d' % len(bulklist)
+        logger.info(msg)
         # Generate Frog objects
         for pk in bulklist:
-            print('Updating expt:', pk)
+            #print('Updating expt:', pk)
             expt = pk  # Frog.objects.get(pk=pk)
             expt.expt_disposed = form.cleaned_data['expt_disposed']
             expt.disposal_sentby = form.cleaned_data['disposal_sentby']
@@ -786,17 +788,15 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
             expt.waste_qty = form.cleaned_data['waste_qty']
             expt.autoclave_indicator = form.cleaned_data['autoclave_indicator']
             expt.autoclave_complete = form.cleaned_data['autoclave_complete']
-            print('Updated:Expt=', expt.id)
+            #print('Updated:Expt=', expt.id)
             expt.save()
 
         return super(BulkDisposal, self).form_valid(form)
 
     def get_queryset(self):
         mylist = Experiment.objects.order_by('-disposal_date')
-        print('DEBUG: get queryset')
         if (self.kwargs.get('location')):
             location = self.kwargs.get('location')
-            print('DEBUG: location=', location)
             if (location != 'all'):
                 mylist = mylist.filter(expt_location__name=location)
 
@@ -805,7 +805,6 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
         return table
 
     def get_success_url(self):
-        print('DEBUG: Get success URL')
         return reverse('frogs:experiment_list_location')
 
 # FROG NOTES

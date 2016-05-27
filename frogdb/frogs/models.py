@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from django.db import models
+from django.db.models import Count
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -111,21 +112,18 @@ class Permit(models.Model):
 
     def frogs_disposed(self):
         qs = Frog.objects.filter(qen=self).filter(disposed=True)
-        print('DEBUG: frogs_disposed=', qs.count())
+        #print('DEBUG: frogs_disposed=', qs.count())
         return qs.count()
 
-    def get_frogs_remaining(self, gender=None):
-        if (gender == None):
-            qs = Frog.objects.filter(qen=self).filter(disposed=False)
-        else:
-            qs = Frog.objects.filter(qen=self).filter(disposed=False).filter(gender=gender)
-        return qs.count()
+    def get_frogs_remaining(self):
+        return self.get_totalfrogs() - self.frogs_disposed() - self.get_frogs_transferred('AIBN')
 
-    def frogs_remaining_female(self):
-        return self.get_frogs_remaining('female')
-
-    def frogs_remaining_male(self):
-        return self.get_frogs_remaining('male')
+    def get_frogs_transferred(self, transferfrom='AIBN'):
+        frogs = Frog.objects.filter(qen=self)\
+            .filter(disposed=False)\
+            .filter(operation__transfer__transferapproval__tfr_from__building=transferfrom)
+        #print('DEBUG: transferred frogs=', frogs)
+        return frogs.count()
 
 
 class Frog(models.Model):

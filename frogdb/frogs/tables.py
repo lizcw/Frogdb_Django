@@ -14,6 +14,10 @@ class ExperimentTable(tables.Table):
     frogid = tables.Column(verbose_name='Frog ID', accessor=A('transferid.operationid.frogid.frogid'))
     species = tables.Column(verbose_name = 'Species',
                             accessor = A('transferid.operationid.frogid.species'))
+    received = tables.Column(verbose_name='Received (ml)')
+    transferred = tables.Column(verbose_name='Transferred (ml)')
+    used = tables.Column(verbose_name='Used (ml)')
+
     class Meta:
         model = Experiment
         attrs = {"class": "ui-responsive table table-hover"}
@@ -89,18 +93,17 @@ class SummingColumn(tables.Column):
 
 class PermitReportTable(tables.Table):
     aqis = tables.LinkColumn('frogs:permit_detail', accessor=A('aqis'),  args=[A('pk')], verbose_name='AQIS Permit #' )
-    qen = tables.Column(footer="Total:")
-    females = SummingColumn()
-    males = SummingColumn()
-    frogs_disposed = SummingColumn()
-    frogs_remaining_female = SummingColumn()
-    frogs_remaining_male = SummingColumn()
+    qen = tables.Column(footer="Total Frogs:")
+    get_totalfrogs = SummingColumn(verbose_name="Shipped/Born")
+    frogs_disposed = SummingColumn(verbose_name="Disposed")
+    get_frogs_remaining = SummingColumn(verbose_name="Remaining")
+    get_frogs_transferred = SummingColumn(verbose_name="Transferred")
 
 
     class Meta:
         model = Permit
         attrs = {"class": "ui-responsive table table-hover"}
-        fields = ['aqis','qen','arrival_date','females','males','frogs_disposed', 'frogs_remaining_female','frogs_remaining_male']
+        fields = ['aqis','qen','arrival_date','get_totalfrogs','frogs_disposed', 'get_frogs_transferred','get_frogs_remaining',]
 
         order_by_field = 'arrival_date'
         sortable = True
