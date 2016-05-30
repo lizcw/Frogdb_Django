@@ -228,6 +228,8 @@ class OperationForm(ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+            
+            
     class Meta:
         model = Operation
         fields = ('frogid',
@@ -367,9 +369,7 @@ class BulkExptDisposalForm(ModelForm):
                   'disposal_date',
                   'waste_type',
                   'waste_content',
-                  'waste_qty',
-                  'autoclave_indicator',
-                  'autoclave_complete')
+                  'waste_qty')
 
         widgets = {
             'disposal_date': DateInput(format=('%Y-%m-%d'),
@@ -379,6 +379,50 @@ class BulkExptDisposalForm(ModelForm):
                    ),
 
         }
+        
+class BulkExptAutoclaveForm(ModelForm):
+    qs = Experiment.objects.filter(expt_disposed=True).exclude(autoclave_complete=True)    
+    expts = forms.ModelMultipleChoiceField(label='Select Waste',
+            queryset=qs, widget=forms.CheckboxSelectMultiple())
+    
+
+#==============================================================================
+#     def __init__(self, *args, **kwargs):
+# 
+#         if kwargs.get('instance'):
+#             email = kwargs['instance'].email
+#             kwargs.setdefault('initial', {})['confirm_email'] = email
+# 
+#         return super(ContactForm, self).__init__(*args, **kwargs)
+#     
+#==============================================================================
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print("DEBUG:Form_init:", kwargs)
+        #self.fields['expts'].queryset = self.get_queryset()
+        for field in iter(self.fields):
+         self.fields[field].widget.attrs.update({
+             'class': 'form-control'
+         })
+         
+##TODO: Filter queryset on location - how to pass args to this???    
+    def get_queryset(self):
+        print("DEBUG: Autoclave queryset:", self)
+        mylist = Experiment.objects.order_by('-disposal_date')
+        if (self.kwargs.get('location')):
+            location = self.kwargs.get('location')
+            print("DEBUG: Location=", location)
+            if (location != 'all'):
+                mylist = mylist.filter(expt_location__name=location)
+        return mylist
+        
+    class Meta:
+        model = Experiment
+        fields = ('expts',
+                  'autoclave_indicator',
+                  'autoclave_complete')
+
+        
 
 class NotesForm(ModelForm):
     def __init__(self, *args, **kwargs):

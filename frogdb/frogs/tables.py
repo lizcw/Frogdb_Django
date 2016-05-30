@@ -28,6 +28,8 @@ class DisposalTable(tables.Table):
     id = tables.LinkColumn('frogs:experiment_detail', text='View', args=[A('pk')], verbose_name='')
     frogid = tables.Column(verbose_name='Frog ID', accessor=A('transferid.operationid.frogid.frogid'))
     qen = tables.Column(verbose_name='QEN', accessor=A('transferid.operationid.frogid.qen'))
+    disposal_date = tables.DateColumn(verbose_name="Disposal Date", format='d-M-Y')
+    
     class Meta:
         model = Experiment
         attrs = {"class": "ui-responsive table table-hover"}

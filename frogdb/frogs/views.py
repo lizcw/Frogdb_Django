@@ -7,6 +7,7 @@ from django_tables2 import RequestConfig
 from django.utils.http import is_safe_url
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import REDIRECT_FIELD_NAME, login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
@@ -21,12 +22,12 @@ try:
 except ImportError:
     from urllib import parse as urlparse # python3 support
 ### Local imports ###############################################################################
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Qap, Notes, Location
-from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Notes, Location, Species
+from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm, BulkExptAutoclaveForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
 from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter, OperationFilter
 ###AUTHORIZATION CLASS ##########################################################################
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 # import the logging library
@@ -35,8 +36,7 @@ import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-
-#################################################################################################
+   
 ## Index page
 class IndexView(generic.ListView):
     template_name ='frogs/index.html'
@@ -71,6 +71,7 @@ class IndexView(generic.ListView):
         context['shipment_list']= self.get_shipment_count()
         context['frog_list'] = self.get_frog_count()
         context['op_list']= self.get_operations_ready_count()
+        context['species'] = Species.objects.all()
         return context
 
     def get_queryset(self):
@@ -524,15 +525,23 @@ class OperationFilterView(LoginRequiredMixin, FilteredSingleTableView):
             .filter(id__in=ops).order_by('-frogid')
         table = OperationTable(qs, prefix='1-')
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
-        stats_table1 = OperationTable(qs.filter(species__name='X.borealis'), prefix='2-')
-        RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table1)
-        stats_table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
-        RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table2)
+        frogspecies = Species.objects.all()
+        speciestables={}
+        num = 1
+        for sp in frogspecies:
+            num = num+1
+            pfx = '%d-' % num
+            t1 = OperationTable(qs.filter(species=sp), prefix=pfx)
+            RequestConfig(self.request, paginate={"per_page": 20}).configure(t1)
+            speciestables[sp.name.split('.')[1]] = t1
+       # stats_table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
+       # RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table2)
 
         context['species'] = self.kwargs.get('species')
         context['summaries'] = table
-        context['summaries_borealis'] = stats_table1
-        context['summaries_laevis'] = stats_table2
+        context['summaries_sp'] = speciestables
+        #context['summaries_borealis'] = stats_table1
+        #context['summaries_laevis'] = stats_table2
         return context
 
 ## 1. Set frogid then 2. Increment opnum
@@ -583,16 +592,26 @@ class OperationDelete(LoginRequiredMixin, generic.DeleteView):
 ########## TRANSFERS ############################################
 class TransferList(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/transfer/transfer_list.html'
-    context_object_name = 'transfer_list'
+    context_object_name = 'table'
     raise_exception = True
+    filter_class = TransferFilter
 
     def get_queryset(self):
+        qs = Transfer.objects.order_by('-transfer_date')
+       # print("DEBUG: All Transfers=", qs.count())
         if (self.kwargs.get('operationid')):
-            table = TransferTable(Transfer.objects.filter(operationid=self.kwargs.get('operationid')))
+            qs = qs.filter(operationid=self.kwargs.get('operationid'))
+            table = TransferTable(qs)
+            #print("DEBUG: Op Transfers=", qs.count())
         else:
-            table = TransferTable(Transfer.objects.order_by('-transfer_date'))
+            table = TransferTable(qs)
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
+        
+    def get_context_data(self, **kwargs):
+        context = super(TransferList, self).get_context_data(**kwargs)
+        context['hide_filter']=True
+        return context
 
 class TransferFilterView(LoginRequiredMixin, FilteredSingleTableView):
     template_name = 'frogs/transfer/transfer_list.html'
@@ -673,26 +692,36 @@ class ExperimentFilterView(LoginRequiredMixin, FilteredSingleTableView):
     filter_class = ExperimentFilter
     raise_exception = True
 
-
-# Filtered listing
-def experiment_listing(request):
-    #print('DEBUG:expt listing=', request)
+class ExperimentTracking(LoginRequiredMixin, generic.ListView):
     template_name = 'frogs/experiment/experiment_list.html'
-    qs = Experiment.objects.order_by('-transferid')
-    config = RequestConfig(request, paginate={"per_page": 20})
-    table = ExperimentTable(qs, prefix='1-')
-    table1 = ExperimentTable(qs.filter(expt_location__building='QBI'), prefix='2-')
-    table2 = ExperimentTable(qs.filter(expt_location__building='IMB'), prefix='3-')
-    config.configure(table)
-    config.configure(table1)
-    config.configure(table2)
+    context_object_name = 'expt_list'
+    raise_exception = True
 
-    return render(request, template_name, {
-        'expt_list' : table,
-        'qbi_table': table1,
-        'imb_table': table2
-    })
-
+    def get_queryset(self):
+        table = Experiment.objects.order_by('-transferid')
+        #table = DisposalTable(Experiment.objects.order_by('disposal_date'))
+        #RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
+        return table
+    
+    def get_context_data(self, **kwargs):
+        context = super(ExperimentTracking, self).get_context_data(**kwargs)
+        qs = self.get_queryset()
+        config = RequestConfig(self.request, paginate={"per_page": 20})
+        tablelist ={}
+        num = 1
+        buildings =['All','QBI','IMB'] #Hard coded but could read from config list
+        for bld in sorted(buildings):
+            pfx = '%d-' % num
+            if (bld == 'All'):        
+                table = ExperimentTable(qs, prefix=pfx)
+            else:
+                table = ExperimentTable(qs.filter(expt_location__building=bld), prefix=pfx)
+            config.configure(table)
+            tablelist[bld] = table
+            num = num+1
+        
+        context['tablelist'] =tablelist
+        return context
 
 
 class ExperimentDetail(LoginRequiredMixin, generic.DetailView):
@@ -761,9 +790,30 @@ class DisposalList(LoginRequiredMixin, generic.ListView):
     raise_exception = True
 
     def get_queryset(self):
-        table = DisposalTable(Experiment.objects.order_by('disposal_date'))
-        RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
+        table = Experiment.objects.order_by('disposal_date')
+        #table = DisposalTable(Experiment.objects.order_by('disposal_date'))
+        #RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
         return table
+    
+    def get_context_data(self, **kwargs):
+        context = super(DisposalList, self).get_context_data(**kwargs)
+        qs = self.get_queryset()
+        config = RequestConfig(self.request, paginate={"per_page": 20})
+        tablelist ={}
+        num = 1
+        buildings =['All','QBI','IMB'] #Hard coded but could read from config list
+        for bld in sorted(buildings):
+            pfx = '%d-' % num
+            if (bld == 'All'):        
+                table = DisposalTable(qs, prefix=pfx)
+            else:
+                table = DisposalTable(qs.filter(expt_location__building=bld), prefix=pfx)
+            config.configure(table)
+            tablelist[bld] = table
+            num = num+1
+        
+        context['tablelist'] =tablelist
+        return context
 
 class BulkDisposal(LoginRequiredMixin, generic.FormView):
     template_name = 'frogs/experiment/bulkdisposal.html'
@@ -776,7 +826,7 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
         bulklist = form.cleaned_data['expts']
         msg = 'BULKDISPOSAL: updating records=%d' % len(bulklist)
         logger.info(msg)
-        # Generate Frog objects
+        
         for pk in bulklist:
             #print('Updating expt:', pk)
             expt = pk  # Frog.objects.get(pk=pk)
@@ -786,8 +836,8 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
             expt.waste_type = form.cleaned_data['waste_type']
             expt.waste_content = form.cleaned_data['waste_content']
             expt.waste_qty = form.cleaned_data['waste_qty']
-            expt.autoclave_indicator = form.cleaned_data['autoclave_indicator']
-            expt.autoclave_complete = form.cleaned_data['autoclave_complete']
+            #expt.autoclave_indicator = form.cleaned_data['autoclave_indicator']
+            #expt.autoclave_complete = form.cleaned_data['autoclave_complete']
             #print('Updated:Expt=', expt.id)
             expt.save()
 
@@ -795,7 +845,7 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
 
     def get_queryset(self):
         mylist = Experiment.objects.order_by('-disposal_date')
-        if (self.kwargs.get('location')):
+        if self.kwargs.get('location'):
             location = self.kwargs.get('location')
             if (location != 'all'):
                 mylist = mylist.filter(expt_location__name=location)
@@ -806,6 +856,36 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
 
     def get_success_url(self):
         return reverse('frogs:experiment_list_location')
+        
+class BulkAutoclave(LoginRequiredMixin, generic.FormView):
+    template_name = 'frogs/experiment/bulkautoclave.html'
+    location = 'All'
+    form_class = BulkExptAutoclaveForm
+    model = Experiment
+    raise_exception = True
+
+    def get_initial(self):
+        if self.kwargs.get('location'):
+            self.location = self.kwargs.get('location')
+
+    def form_valid(self, form):
+        bulklist = form.cleaned_data['expts']
+        msg = 'BULKAUTOCLAVE: updating records=%d' % len(bulklist)
+        logger.info(msg)
+        
+        for pk in bulklist:
+            #print('Updating expt:', pk)
+            expt = pk  # Frog.objects.get(pk=pk)
+            expt.autoclave_indicator = form.cleaned_data['autoclave_indicator']
+            expt.autoclave_complete = form.cleaned_data['autoclave_complete']
+            #print('Updated:Expt=', expt.id)
+            expt.save()
+
+        return super(BulkAutoclave, self).form_valid(form)
+    
+
+    def get_success_url(self):
+        return reverse('frogs:disposal_list')
 
 # FROG NOTES
 class NotesList(LoginRequiredMixin, generic.ListView):

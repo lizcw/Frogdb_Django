@@ -6,8 +6,11 @@
     <div class="page-header"><h2>State of Operations as at {% now "d-M-Y" %}</h2></div>
      <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="{% url 'frogs:operation_summary' %}#all">All</a></li>
-        <li><a data-toggle="tab" href="{% url 'frogs:operation_summary' %}#borealis">X.borealis</a></li>
-        <li><a data-toggle="tab" href="{% url 'frogs:operation_summary' %}#laevis">X.laevis</a></li>
+
+    {% for sp, sptable in summaries_sp.items %}
+        <li><a data-toggle="tab" href="{% url 'frogs:operation_summary' %}#{{sp}}">X.{{sp}}</a></li>
+    {% endfor %}
+       
     </ul>
     <div class="tab-content">
     <div id="all" class="tab-pane fade in active">
@@ -17,19 +20,18 @@
             <div class="alert alert-success"><p>No operations in database</p></div>
         {% endif %}
     </div>
-    <div id="borealis" class="tab-pane fade">
-    {% if summaries_borealis %}
-        {% render_table summaries_borealis %}
-    {% else %}
-        <div class="alert alert-success"><p>No X.borealis operations in database</p></div>
-    {% endif %}
+    
+    {% for sp, sptable in summaries_sp.items %}
+        <div id="{{sp}}" class="tab-pane fade">
+        {% if sptable %}
+            {% render_table sptable %}
+        {% else %}
+            <div class="alert alert-success"><p>No X.{{sp}} operations in database</p></div>
+        {% endif %}
     </div>
-    <div id="laevis" class="tab-pane fade">
-    {% if summaries_laevis %}
-        {% render_table summaries_laevis %}
-    {% else %}
-        <div class="alert alert-success"><p>No X.laevis operations in database</p></div>
-    {% endif %}
-    </div>
+
+    {% endfor %}
+
+
         </div>
 </div>{% endblock %}

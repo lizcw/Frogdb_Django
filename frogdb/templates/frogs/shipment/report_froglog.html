@@ -7,12 +7,13 @@
         <span id="report-logo"><img src="{% static "frogs/img/logo.png" %}" align="left"  alt="QBI, The University of Queensland"/></span>
         <p class="report-header">Quarantine Sample Register<br/>Declared pest species - Log<br/>University of Queensland
         </p>
-        <h2 class="report-title">{{ species }}</h2></div>
+        <h2 class="report-title">{{ species }}</h2>
+<div class="report-location">{{ site_config.report_location }}</div></div>
 
     <div class="panel panel-success">
         <div class="panel-heading"><h4 class="panel-title">Contacts</h4></div>
         <div class="panel-body">
-            <div class="report-location">{{ site_config.report_location }}</div>
+            
             {{ site_config.report_contact_details|safe }}</div>
     </div>
     <div class="well">

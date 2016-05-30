@@ -18,7 +18,7 @@ class SiteConfiguration(SingletonModel):
     report_general_notes = models.CharField(max_length=5000, default='General Notes')
     maintenance_mode = models.BooleanField(default=False)
     max_ops = models.SmallIntegerField(_("Max operations"), default=6)
-    op_interval= models.SmallIntegerField(_("Operation interval (mths)"), default=6)
+    op_interval= models.SmallIntegerField(_("Operation interval (days)"), default=180)
 
     def __unicode__(self):
         return u"Site Configuration"
