@@ -205,12 +205,12 @@ class Frog(models.Model):
     #Validation
     def clean(self):
         if self.death_date is not None:
-            print("DEBUG: Validating death_date:", self.death_date)
+            #print("DEBUG: Validating death_date:", self.death_date)
             deathdate = self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
             delta = date.today() - self.death_date #datetime.strptime(self.death_date, "%Y-%m-%d").date()
-            print("DEBUG: Validating death_date:deltadays=", delta.days)
-            print("DEBUG: Validating death_date:arrival=", self.qen.arrival_date)
-            print("DEBUG: Validating death_date:lastop=", self.last_operation())
+            #print("DEBUG: Validating death_date:deltadays=", delta.days)
+            #print("DEBUG: Validating death_date:arrival=", self.qen.arrival_date)
+            #print("DEBUG: Validating death_date:lastop=", self.last_operation())
             if delta.days < 0:
                 raise ValidationError("Date of death selected is in the future")
             if deathdate < self.qen.arrival_date:
@@ -279,10 +279,10 @@ class Operation(models.Model):
     def get_number_expts(self):
         total = 0
         if (self.transfer_set.count() > 0):
-            print('DEBUG: get_number_expts: transfers=', self.transfer_set.count())
+            #print('DEBUG: get_number_expts: transfers=', self.transfer_set.count())
             for t in self.transfer_set.all():
                 if t.experiment_set.count() > 0:
-                    print('DEBUG: get_number_expts: expt=', t.experiment_set.count())
+                    #print('DEBUG: get_number_expts: expt=', t.experiment_set.count())
                     total += t.experiment_set.count()
 
         return total

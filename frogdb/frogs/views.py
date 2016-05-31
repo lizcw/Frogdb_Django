@@ -877,13 +877,13 @@ class BulkAutoclave(LoginRequiredMixin, generic.FormView):
     raise_exception = True
 
     def get_form_kwargs(self, **kwargs):
-        print("DEBUG:getformkwargs:", kwargs)
+        #print("DEBUG:getformkwargs:", kwargs)
         kwargs = super(BulkAutoclave, self).get_form_kwargs(**kwargs)
         kwargs['location'] = self.location
         return kwargs
 
     def get_initial(self):
-        print("DEBUG:getinitial:", self.kwargs)
+        #print("DEBUG:getinitial:", self.kwargs)
         if self.kwargs.get('location'):
             self.location = self.kwargs.get('location')
 

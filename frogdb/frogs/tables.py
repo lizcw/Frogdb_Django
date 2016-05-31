@@ -118,7 +118,7 @@ class OperationTable(tables.Table):
     next_operation = tables.Column(verbose_name="Next Op", accessor=A('next_operation'), orderable=False)
 
     def render_next_operation(self, value):
-        print('DEBUG: next_op=', value)
+        #print('DEBUG: next_op=', value)
         delta = value - date.today()
 
         if delta.days == 0:

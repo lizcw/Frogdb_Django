@@ -65,7 +65,7 @@ class MyPrint:
 
 
 def print_froglog(request):
-    print('DEBUG:Request=', request)
+    #print('DEBUG:Request=', request)
     species = "X.borealis"
     filename = "%s_FrogLog.pdf" % species
     # Create the HttpResponse object with the appropriate PDF headers.
