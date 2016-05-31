@@ -22,7 +22,7 @@ try:
 except ImportError:
     from urllib import parse as urlparse # python3 support
 ### Local imports ###############################################################################
-from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Notes, Location, Species
+from .models import Permit, Frog, Operation, Transfer, Experiment, FrogAttachment, Notes, Location, Species, Deathtype
 from .forms import PermitForm, FrogForm, FrogDeathForm, FrogDisposalForm, OperationForm, TransferForm, ExperimentForm, FrogAttachmentForm, BulkFrogForm, BulkFrogDeleteForm, ExperimentDisposalForm, ExperimentAutoclaveForm, BulkFrogDisposalForm, BulkExptDisposalForm, NotesForm, AxesCaptchaForm, BulkExptAutoclaveForm
 from .tables import ExperimentTable,PermitTable,FrogTable,TransferTable, OperationTable,DisposalTable, FilteredSingleTableView, NotesTable, PermitReportTable
 from .filters import FrogFilter, PermitFilter, TransferFilter, ExperimentFilter, OperationFilter
@@ -396,6 +396,7 @@ class FrogBulkCreate(LoginRequiredMixin, generic.FormView):
         species = form.cleaned_data['species']
         location = form.cleaned_data['current_location']
         aec = form.cleaned_data['aec']
+        deathtype = Deathtype.objects.filter(name='Alive')[0]
         bulk_list=[]
         #Check initial prefix unique
         #firstfrogid = "%s%d" % (prefix, startid)
@@ -416,6 +417,8 @@ class FrogBulkCreate(LoginRequiredMixin, generic.FormView):
             frog.current_location=location
             frog.condition= ''
             frog.remarks='auto-generated'
+            if (deathtype is not None):
+                frog.death=deathtype
             frog.aec=aec
             #print('DEBUG: Generated:Frog=',frog.frogid)
             bulk_list.append(frog)
@@ -534,14 +537,10 @@ class OperationFilterView(LoginRequiredMixin, FilteredSingleTableView):
             t1 = OperationTable(qs.filter(species=sp), prefix=pfx)
             RequestConfig(self.request, paginate={"per_page": 20}).configure(t1)
             speciestables[sp.name.split('.')[1]] = t1
-       # stats_table2 = OperationTable(qs.filter(species__name='X.laevis'), prefix='3-')
-       # RequestConfig(self.request, paginate={"per_page": 20}).configure(stats_table2)
 
         context['species'] = self.kwargs.get('species')
         context['summaries'] = table
         context['summaries_sp'] = speciestables
-        #context['summaries_borealis'] = stats_table1
-        #context['summaries_laevis'] = stats_table2
         return context
 
 ## 1. Set frogid then 2. Increment opnum
@@ -820,6 +819,18 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
     form_class = BulkExptDisposalForm
     model = Experiment
     raise_exception = True
+    location = 'All'
+
+    def get_form_kwargs(self, **kwargs):
+        #print("DEBUG:getformkwargs:", kwargs)
+        kwargs = super(BulkDisposal, self).get_form_kwargs(**kwargs)
+        kwargs['location'] = self.location
+        return kwargs
+
+    def get_initial(self):
+        #print("DEBUG:getinitial:", self.kwargs)
+        if self.kwargs.get('location'):
+            self.location = self.kwargs.get('location')
 
     def form_valid(self, form):
         #print('DEBUG: form_valid', self.request.POST)
@@ -848,7 +859,7 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
         if self.kwargs.get('location'):
             location = self.kwargs.get('location')
             if (location != 'all'):
-                mylist = mylist.filter(expt_location__name=location)
+                mylist = mylist.filter(expt_location__building=location)
 
         table = ExperimentTable(mylist)
         RequestConfig(self.request, paginate={"per_page": 20}).configure(table)
@@ -856,7 +867,8 @@ class BulkDisposal(LoginRequiredMixin, generic.FormView):
 
     def get_success_url(self):
         return reverse('frogs:experiment_list_location')
-        
+
+
 class BulkAutoclave(LoginRequiredMixin, generic.FormView):
     template_name = 'frogs/experiment/bulkautoclave.html'
     location = 'All'
@@ -864,7 +876,14 @@ class BulkAutoclave(LoginRequiredMixin, generic.FormView):
     model = Experiment
     raise_exception = True
 
+    def get_form_kwargs(self, **kwargs):
+        print("DEBUG:getformkwargs:", kwargs)
+        kwargs = super(BulkAutoclave, self).get_form_kwargs(**kwargs)
+        kwargs['location'] = self.location
+        return kwargs
+
     def get_initial(self):
+        print("DEBUG:getinitial:", self.kwargs)
         if self.kwargs.get('location'):
             self.location = self.kwargs.get('location')
 

@@ -3,3 +3,4 @@
 
 frogdb/frogdb/__pycache__/settings.cpython-34.pyc
 *.pyc
+.idea/workspace.xml

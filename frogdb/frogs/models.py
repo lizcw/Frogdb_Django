@@ -314,6 +314,15 @@ class Operation(models.Model):
                         total += 1
         return total
 
+    def get_number_autoclaved(self):
+        total = 0
+        if (self.transfer_set.count() > 0):
+            for t in self.transfer_set.all():
+                for e in t.experiment_set.all():
+                    if e.autoclave_complete:
+                        total += 1
+        return total
+
 class TransferApproval(models.Model):
     tfr_from = models.ForeignKey(Qap, verbose_name="Transfer from", related_name="tfr_from")
     tfr_to = models.ForeignKey(Qap, verbose_name="Transfer to", related_name="tfr_to")

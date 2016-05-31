@@ -71,6 +71,7 @@ class FrogForm(ModelForm):
                   'condition',
                   'remarks',
                   'aec',
+                  'death'
                   )
 
 class BulkFrogForm(ModelForm):
@@ -124,7 +125,8 @@ class FrogDeathForm(ModelForm):
         fields = ('frogid',
                   'death',
                   'death_date',
-                  'death_initials'
+                  'death_initials',
+                  'current_location'
                   )
         widgets = {
             'death_date': DateInput(format=('%Y-%m-%d'),
@@ -148,7 +150,8 @@ class FrogDisposalForm(ModelForm):
                   'disposed',
                   'autoclave_date',
                   'autoclave_run',
-                  'incineration_date'
+                  'incineration_date',
+                  'current_location'
                   )
         widgets = {
             'autoclave_date': DateInput(format=('%Y-%m-%d'),
@@ -182,7 +185,8 @@ class BulkFrogDisposalForm(ModelForm):
                    'disposed',
                    'autoclave_date',
                    'autoclave_run',
-                   'incineration_date'
+                   'incineration_date',
+                   'current_location'
                    )
 
          widgets = {
@@ -355,11 +359,18 @@ class BulkExptDisposalForm(ModelForm):
              queryset=qs, widget=forms.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        location = kwargs.pop('location', None)
+        super(BulkExptDisposalForm, self).__init__(*args, **kwargs)
+        if (location.lower() != 'all'):
+            qs = Experiment.objects.filter(expt_disposed=False).filter(
+                expt_location__building=location.upper())
+            self.fields['expts'].queryset = qs
+            self.fields['expts'].label = 'Select Waste stored at %s' % location.upper()
+        # Adds a bootstrap class
         for field in iter(self.fields):
-         self.fields[field].widget.attrs.update({
-             'class': 'form-control'
-         })
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
 
     class Meta:
         model = Experiment
@@ -381,46 +392,30 @@ class BulkExptDisposalForm(ModelForm):
         }
         
 class BulkExptAutoclaveForm(ModelForm):
-    qs = Experiment.objects.filter(expt_disposed=True).exclude(autoclave_complete=True)    
+    qs = Experiment.objects.filter(expt_disposed=True).exclude(autoclave_complete=True)
     expts = forms.ModelMultipleChoiceField(label='Select Waste',
             queryset=qs, widget=forms.CheckboxSelectMultiple())
-    
 
-#==============================================================================
-#     def __init__(self, *args, **kwargs):
-# 
-#         if kwargs.get('instance'):
-#             email = kwargs['instance'].email
-#             kwargs.setdefault('initial', {})['confirm_email'] = email
-# 
-#         return super(ContactForm, self).__init__(*args, **kwargs)
-#     
-#==============================================================================
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print("DEBUG:Form_init:", kwargs)
-        #self.fields['expts'].queryset = self.get_queryset()
+        location = kwargs.pop('location', None)
+        super(BulkExptAutoclaveForm, self).__init__(*args, **kwargs)
+        if (location.lower() != 'all'):
+            qs = Experiment.objects.filter(expt_disposed=True).exclude(autoclave_complete=True).filter(
+                expt_location__building=location.upper())
+            self.fields['expts'].queryset=qs
+            self.fields['expts'].label='Select Waste stored at %s' % location.upper()
+        #Adds a bootstrap class
         for field in iter(self.fields):
-         self.fields[field].widget.attrs.update({
+            self.fields[field].widget.attrs.update({
              'class': 'form-control'
-         })
-         
-##TODO: Filter queryset on location - how to pass args to this???    
-    def get_queryset(self):
-        print("DEBUG: Autoclave queryset:", self)
-        mylist = Experiment.objects.order_by('-disposal_date')
-        if (self.kwargs.get('location')):
-            location = self.kwargs.get('location')
-            print("DEBUG: Location=", location)
-            if (location != 'all'):
-                mylist = mylist.filter(expt_location__name=location)
-        return mylist
-        
+            })
+
+
     class Meta:
         model = Experiment
         fields = ('expts',
-                  'autoclave_indicator',
-                  'autoclave_complete')
+                'autoclave_indicator',
+                'autoclave_complete')
 
         
 

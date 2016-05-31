@@ -44,8 +44,11 @@
                         <th>Frog ID</th>
                         <th>QEN</th>
                         <th>AEC</th>
-                        <th>Disposal</th>
+                        <th>Autoclave Date</th>
+                        <th>Autoclave Run#</th>
+                        {% if gender == 'female' %}
                         <th>Operation Details</th>
+                        {% endif %}
                     </tr>
                     </thead>
 
@@ -57,7 +60,8 @@
                         <td>{{frog.frogid}}</td>
                         <td>{{frog.qen}}</td>
                         <td>{{frog.aec}}</td>
-                        <td>{{frog.disposed}}</td>
+                        <td>{{frog.autoclave_date}}</td>
+                        <td>{{frog.autoclave_run}}</td>
                         <td>
                             <table class="table-condensed">
                                 {% if frog.operation_set.count > 0 %}
@@ -65,26 +69,26 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Initials</th>
-                                    <th>Date</th>
-                                    <th>Experiments</th>
-                                    <th>Disposal dates</th>
-                                    <th>Autoclaved</th>
+                                    <th>Op Date</th>
+                                    <th>Oocytes Disposed</th>
+                                    <th>Autoclaved Samples</th>
                                 </tr>
                                 </thead>
                                 {% endif %}
                                 <tbody>
+                                {% if gender == 'female' %}
                                 {% for op in frog.operation_set.all %}
                                 <tr>
                                     <td>{{ op.opnum }}</td>
                                     <td>{{ op.initials }}</td>
                                     <td>{{ op.opdate }}</td>
-                                    <td>{{ op.get_number_expts }}</td>
                                     <td>{{ op.get_expts_disposaldate_range }}</td>
-                                    <td>{{ op.get_expts_number_disposals }}</td>
+                                    <td>{{ op.get_number_autoclaved }}</td>
                                 </tr>
                                 {% empty %}
                                 <p>No operations performed</p>
                                 {% endfor %}
+                                {% endif %}
                                 </tbody>
                             </table>
                         </td>

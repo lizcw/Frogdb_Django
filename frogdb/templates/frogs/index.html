@@ -9,8 +9,8 @@
             oocyte harvests and tracking and disposal of all quarantine material.
         </p>
         <p>The Frog database replaces currently handwritten data forms and manually generated reports.
-           {% if species %}
-            <ol> {% for sp in species %}
+           {% if species and user.is_authenticated %}
+            <h4>Reports</h4><ol> {% for sp in species %}
                 <li><a href="{% url 'frogs:froglog_report' sp.name %}" class="btn btn-default">{{ sp.name }} Report</a></li>
                 {% endfor %}
             </ol>
